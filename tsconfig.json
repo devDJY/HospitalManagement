@@ -1,37 +1,42 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ESNext",
     "useDefineForClassFields": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "types": ["vite/client", "element-plus/global"],
+
+    /* Strict Type-Checking Options */
+    "strict": true /* Enable all strict type-checking options. */,
+    "noImplicitAny": false /* Raise error on expressions and declarations with an implied 'any' type. */,
+    // "strictNullChecks": true,              /* Enable strict null checks. */
+    // "strictFunctionTypes": true,           /* Enable strict checking of function types. */
+    // "strictBindCallApply": true,           /* Enable strict 'bind', 'call', and 'apply' methods on functions. */
+    // "strictPropertyInitialization": true,  /* Enable strict checking of property initialization in classes. */
+    // "noImplicitThis": true,                /* Raise error on 'this' expressions with an implied 'any' type. */
+    // "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
+
     "jsx": "preserve",
-    "sourceMap": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
     "esModuleInterop": true,
-    "jsxImportSource": "vue",
-    "lib": ["esnext", "dom"],
-    "baseUrl": "./",
-    "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
-    "strictFunctionTypes": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "experimentalDecorators": true,
-    "noImplicitAny": false,
+    "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
+    "noEmit": true,
+    "baseUrl": "./",
     "paths": {
+      "@": ["src"],
       "@/*": ["src/*"]
-    },
-    "types": [
-      "@intlify/unplugin-vue-i18n/types",
-      "vite/client",
-      "element-plus/global",
-      "@types/qrcode",
-      "vite-plugin-svg-icons/client"
-    ]
+    }
   },
-  "include": ["src", "types/**/*.d.ts", "mock/**/*.ts"]
-  // "exclude": ["dist", "node_modules"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "build/**/*.ts",
+    "build/**/*.d.ts",
+    "vite.config.ts"
+  ],
+  "exclude": ["node_modules", "dist", "**/*.js"]
 }
