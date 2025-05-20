@@ -69,8 +69,7 @@ import {
   resetUserPassWord,
   exportUserInfo,
   BatchAddUser,
-  getUserStatus,
-  getUserGender
+  getUserStatus
 } from "@/api/modules/user";
 
 const router = useRouter();
@@ -257,7 +256,7 @@ const batchAdd = () => {
 };
 
 // 打开 drawer(新增、查看、编辑)
-const drawerRef = ref<InstanceType<typeof UserDrawer> | null>(null);
+const drawerRef = ref<InstanceType<typeof UserDrawer> | any>(null);
 const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
   const params = {
     title,
@@ -266,6 +265,6 @@ const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
     api: title === "新增" ? addUser : title === "编辑" ? editUser : undefined,
     getTableList: proTable.value?.getTableList
   };
-  drawerRef.value?.acceptParams(params);
+  drawerRef.value!.acceptParams(params);
 };
 </script>

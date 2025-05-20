@@ -4,6 +4,7 @@ import { RouteRecordRaw } from "vue-router";
 import { ElNotification } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
 import { useAuthStore } from "@/stores/modules/auth";
+import { i } from "vite/dist/node/types.d-aGj9QkWt";
 
 // 引入 views 文件夹下所有 vue 文件
 const modules = import.meta.glob("@/views/**/*.vue");
@@ -14,12 +15,10 @@ const modules = import.meta.glob("@/views/**/*.vue");
 export const initDynamicRouter = async () => {
   const userStore = useUserStore();
   const authStore = useAuthStore();
-
   try {
     // 1.获取菜单列表 && 按钮权限列表
-    await authStore.getAuthMenuList();
-    await authStore.getAuthButtonList();
-
+    //await authStore.getAuthMenuList();
+    //await authStore.getAuthButtonList();
     // 2.判断当前用户有没有菜单权限
     if (!authStore.authMenuListGet.length) {
       ElNotification({
@@ -32,6 +31,21 @@ export const initDynamicRouter = async () => {
       router.replace(LOGIN_URL);
       return Promise.reject("No permission");
     }
+    // let data = {
+    //   path: "/home/index",
+    //   name: "home",
+    //   component: "/home/index",
+    //   meta: {
+    //     icon: "HomeFilled",
+    //     title: "首页",
+    //     isLink: "",
+    //     isHide: false,
+    //     isFull: false,
+    //     isAffix: true,
+    //     isKeepAlive: true
+    //   }
+    // };
+    // authStore.flatMenuListGet.push(data);
 
     // 3.添加动态路由
     authStore.flatMenuListGet.forEach(item => {

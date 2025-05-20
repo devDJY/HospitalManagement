@@ -1,7 +1,7 @@
 <template>
   <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
-    <el-form-item prop="username">
-      <el-input v-model="loginForm.username" placeholder="用户名：admin / user">
+    <el-form-item prop="userName">
+      <el-input v-model="loginForm.userName" placeholder="用户名：admin / user">
         <template #prefix>
           <el-icon class="el-input__icon">
             <user />
@@ -17,10 +17,17 @@
           </el-icon>
         </template>
       </el-input>
+      <div class="bar_te">
+        <el-link type="primary" @click="showModal = true" class="login-link">忘记密码</el-link>
+        <el-link type="primary" @click="RegisterModal = true" class="login-link">注册账号</el-link>
+      </div>
     </el-form-item>
   </el-form>
+
   <div class="login-btn">
-    <el-button :icon="CircleClose" round size="large" @click="resetForm(loginFormRef)"> 重置 </el-button>
+    <ForgetPassword v-model="showModal" />
+    <Register v-model="RegisterModal" />
+    <el-button :icon="CircleClose" round size="large" @click="resetForm(loginFormRef)"> 重置 {{ showModal }}</el-button>
     <el-button :icon="UserFilled" round size="large" type="primary" :loading="loading" @click="login(loginFormRef)">
       登录
     </el-button>
@@ -41,23 +48,26 @@ import { useKeepAliveStore } from "@/stores/modules/keepAlive";
 import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
 import { CircleClose, UserFilled } from "@element-plus/icons-vue";
 import type { ElForm } from "element-plus";
-import md5 from "md5";
-
+import { useAuthStore } from "@/stores/modules/auth";
+// import md5 from "md5";
+import ForgetPassword from "./ForgetPassword.vue";
+import Register from "./Register.vue";
+const showModal = ref(false);
+const RegisterModal = ref(false);
 const router = useRouter();
 const userStore = useUserStore();
 const tabsStore = useTabsStore();
 const keepAliveStore = useKeepAliveStore();
-
 type FormInstance = InstanceType<typeof ElForm>;
 const loginFormRef = ref<FormInstance>();
 const loginRules = reactive({
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }]
 });
 
 const loading = ref(false);
 const loginForm = reactive<Login.ReqLoginForm>({
-  username: "",
+  userName: "",
   password: ""
 });
 
@@ -69,31 +79,19 @@ const login = (formEl: FormInstance | undefined) => {
     loading.value = true;
     try {
       // 1.执行登录接口
-      const { data } = await loginApi({ ...loginForm, password: md5(loginForm.password) });
-      userStore.setToken(data.access_token);
-
+      const { data } = await loginApi({ ...loginForm, password: loginForm.password });
+      userStore.setToken(data.token);
+      userStore.setUserInfo(data.userInfo);
+      const authStore = useAuthStore();
+      await authStore.getAuthMenuList(data.routerInfo);
       // 2.添加动态路由
       await initDynamicRouter();
-
       // 3.清空 tabs、keepAlive 数据
       tabsStore.setTabs([]);
       keepAliveStore.setKeepAliveName([]);
-
       // 4.跳转到首页
-      router.push(HOME_URL);
-      // ElNotification({
-      //   title: getTimeState(),
-      //   message: "欢迎登录 Geeker-Admin",
-      //   type: "success",
-      //   duration: 3000
-      // });
-      // ElNotification({
-      //   title: "React 付费版本 🔥🔥🔥",
-      //   dangerouslyUseHTMLString: true,
-      //   message: "预览地址：<a href='https://pro.spicyboy.cn'>https://pro.spicyboy.cn</a>",
-      //   type: "success",
-      //   duration: 8000
-      // });
+      // router.push(HOME_URL);
+      router.push(data.routerInfo[0].children[0].path);
     } finally {
       loading.value = false;
     }
@@ -122,5 +120,11 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
-@import "../index";
+@use "../index" as *;
+.bar_te {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 10px;
+}
 </style>

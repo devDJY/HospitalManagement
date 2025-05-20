@@ -75,7 +75,6 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
         prop: "gender",
         label: "性别",
         width: 100,
-        enum: getUserGender,
         fieldNames: { label: "genderLabel", value: "genderValue" }
       },
       {
