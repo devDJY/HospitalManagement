@@ -33,10 +33,10 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
-        <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
-        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button>
+        <!-- <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button> -->
+        <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">文件遗失审核</el-button>
+        <!-- <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
       </template>
     </ProTable>
     <UserDrawer ref="drawerRef" />
@@ -116,13 +116,16 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "selection", fixed: "left", width: 70 },
-  { prop: "sort", label: "项目立项号", search: { el: "input" } },
   { prop: "expand", label: "项目名称", width: 85, search: { el: "input" } },
-  { prop: "idCard", label: "申办方" },
-  { prop: "idCard", label: "实验分期" },
-  { prop: "idCard", label: "入组列数" },
-  { prop: "idCard", label: " 启动日期" },
-  { prop: "address", label: "居住地址" },
+  { prop: "sort", label: "文件编码", search: { el: "input" } },
+  { prop: "idCard", label: "文件名" },
+  { prop: "idCard", label: "源文件" },
+  { prop: "idCard", label: "受控文件" },
+  { prop: "idCard", label: "受控文件编码" },
+  { prop: "idCard", label: "申报人" },
+  { prop: "idCard", label: "遗失说明" },
+  { prop: "address", label: "附件" },
+  { prop: "idCard", label: " 申报日期" },
   { prop: "operation", label: "操作", fixed: "right", width: 330 }
 ]);
 

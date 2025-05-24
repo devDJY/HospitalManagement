@@ -1,5 +1,6 @@
 <template>
   <div class="echarts">
+    <div class="title">{{ title }}</div>
     <ECharts :option="option" />
   </div>
 </template>
@@ -8,31 +9,38 @@
 import { ref } from "vue";
 import type { ECOption } from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
-
+// 定义 props 类型
+interface Props {
+  title: string;
+  legend: [string, string];
+  data: { reviewedCount: number; total: number; waitReviewCount: number };
+}
+// 接收父组件传递的 props
+const props = defineProps<Props>();
 const option = ref({
   title: {
-    text: "80%",
+    text: `${props.data.reviewedCount}%\n总计`,
     x: "center",
     y: "center",
     textStyle: {
-      fontWeight: "normal",
       color: "#0580f2",
-      fontSize: 14 // 修正：数字类型，去掉引号
+      fontSize: 18 // 修正：数字类型，去掉引号
     }
   },
   color: ["rgba(176, 212, 251, 1)"],
   legend: {
     show: true,
     bottom: 0,
+    center: true,
     itemGap: 12,
-    data: ["01", "02"]
+    data: props.legend
   },
   series: [
     {
       name: "Line 1",
       type: "pie",
       clockwise: true, // 修正：改为小写camelCase
-      radius: ["50%", "66%"],
+      radius: ["70%", "40%"],
       label: {
         show: false
       },
@@ -42,8 +50,8 @@ const option = ref({
       hoverAnimation: false,
       data: [
         {
-          value: 80,
-          name: "01",
+          value: props.data.waitReviewCount,
+          name: props.legend[0],
           itemStyle: {
             color: {
               // 直接使用color配置
@@ -66,8 +74,8 @@ const option = ref({
           }
         },
         {
-          value: 20,
-          name: "02",
+          value: props.data.reviewedCount,
+          name: props.legend[1],
           itemStyle: {
             color: "rgba(176, 212, 251, 1)"
           }
@@ -80,7 +88,11 @@ const option = ref({
 
 <style lang="scss" scoped>
 .echarts {
+  width: 20%;
+  height: 160px;
+}
+.title {
   width: 100%;
-  height: 100%;
+  text-align: center;
 }
 </style>

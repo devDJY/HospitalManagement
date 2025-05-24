@@ -1,14 +1,37 @@
 <template>
   <div class="table-box">
+    <div class="flex tops">
+      <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
+        <el-badge :value="0" class="item" v-if="modeSwitching === ''" color="green">
+          <el-radio-button label="全部" value="" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="全部" value="" />
+        </template>
+        <el-badge :value="0" class="item" v-if="modeSwitching === '0'" color="green">
+          <el-radio-button label="进行中" value="0" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="进行中" value="0" />
+        </template>
+        <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
+          <el-radio-button label="锁库" value="1" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="锁库" value="1" />
+        </template>
+      </el-radio-group>
+      <el-button type="primary" @click="handleAdd()" style="width: 200px" :icon="Plus"> 新增项目 </el-button>
+    </div>
     <ProTable
       ref="proTable"
       title="用户列表"
       highlight-current-row
       :columns="columns"
-      :request-api="getUserList"
+      :request-api="getTableList"
       :row-class-name="tableRowClassName"
       :span-method="objectSpanMethod"
-      :show-summary="true"
+      :show-summary="false"
       :summary-method="getSummaries"
       @row-click="rowClick"
     >
@@ -22,30 +45,55 @@
       </template> -->
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
-        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button>
+        <el-button type="success" link :icon="Search" @click="resetPass(scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="Edit" @click="editBtn(scope.row)">编辑</el-button>
+        <el-button type="warning" link :icon="RemoveFilled" @click="lock(scope.row)">锁库</el-button>
+        <el-button type="danger" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
       </template>
       <!-- <template #append>
         <span style="color: var(--el-color-primary)">我是插入在表格最后的内容。若表格有合计行，该内容会位于合计行之上。</span>
       </template> -->
     </ProTable>
+    <el-dialog v-model="lockDialog" title="锁库" width="500px" :before-close="handleClose">
+      <div class="flex">
+        <div style="width: 90px">锁库说明：</div>
+        <el-input v-model="remark" type="textarea" :rows="4" placeholder="请输入..." resize="none" />
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="lockDialog = false">取消</el-button>
+          <el-button type="primary" @click="lockOK()"> 确定 </el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <ProjectFormDialog ref="projectFormDialog" :user-options="userList" @submit="handleSubmit" />
   </div>
 </template>
 
 <script setup lang="tsx" name="complexProTable">
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import ProTable from "@/components/ProTable/index.vue";
-import { CirclePlus, Pointer, Delete, Refresh } from "@element-plus/icons-vue";
+import ProjectFormDialog from "./ProjectFormDialog.vue";
 import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
-import { getUserList, deleteUser, resetUserPassWord, getUserStatus, getUserGender } from "@/api/modules/user";
-
+import { deleteUser, resetUserPassWord } from "@/api/modules/user";
+import { projectList, projectLock, projectDelete } from "@/api/modules/project";
+import { Search, Delete, Edit, Plus } from "@element-plus/icons-vue";
+const lockDialog = ref(false);
+const remark = ref("");
+const handleClose = () => {
+  lockDialog.value = false;
+};
+const handleCancel = () => {
+  lockDialog.value = false;
+};
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
-
+// 模式切换
+const modeSwitching = ref("0");
 // 自定义渲染表头（使用tsx语法）
 const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
   return <div>{scope.column.label}</div>;
@@ -54,48 +102,34 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "selection", width: 80 },
-  { prop: "index", label: "项目立项号", search: { el: "input", tooltip: "" } },
-  { type: "expand", label: "项目名称", width: 100 },
-  { type: "expand", label: "入组列数", width: 100 },
-  {
-    prop: "username",
-    label: "项目名称",
-    search: { el: "input", tooltip: "项目名称" },
-    render: scope => {
-      return (
-        <el-input type="primary" link>
-          {scope.row.username}
-        </el-input>
-      );
-    }
-  },
+  { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
+  { prop: "projectName", label: "项目名称", width: 100, search: { el: "input", tooltip: "" } },
+  { prop: "enrollCount", label: "入组列数", width: 100 },
   {
     prop: "base",
     label: "文件",
     headerRender,
     _children: [
-      { prop: "username", label: "待审查", width: 110 },
-      { prop: "user.detail.age", label: "待受控", width: 100 },
+      { prop: "waitReviewCount", label: "待审查" },
+      { prop: "waitControllerCount", label: "待受控" },
       {
-        prop: "gender",
-        label: "待回收",
-        width: 100,
-        fieldNames: { label: "genderLabel", value: "genderValue" }
+        prop: "waitRecycleCount",
+        label: "待回收"
       },
       {
-        prop: "details",
+        prop: "waitLoseCount",
         label: "遗失待审核"
       }
     ]
   },
-  { prop: "operation", label: "操作", fixed: "right", width: 230 }
+  { prop: "operation", label: "操作", fixed: "right", width: 300 }
 ]);
 
 // 选择行
-const setCurrent = () => {
-  proTable.value?.element?.setCurrentRow(proTable.value?.tableData[4]);
-  proTable.value?.element?.toggleRowSelection(proTable.value?.tableData[4], true);
-};
+// const setCurrent = () => {
+//   proTable.value?.element?.setCurrentRow(proTable.value?.tableData[4]);
+//   proTable.value?.element?.toggleRowSelection(proTable.value?.tableData[4], true);
+// };
 
 // 表尾合计行（自行根据条件计算）
 interface SummaryMethodProps<T = User.ResUserList> {
@@ -136,27 +170,74 @@ const tableRowClassName = ({ rowIndex }: { row: User.ResUserList; rowIndex: numb
 // 单击行
 const rowClick = (row: User.ResUserList, column: TableColumnCtx<User.ResUserList>) => {
   if (column.property == "radio" || column.property == "operation") return;
-  console.log(row);
   ElMessage.success("当前行被点击了！");
 };
-
-// 删除用户信息
-const deleteAccount = async (params: User.ResUserList) => {
-  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
-  proTable.value?.getTableList();
+watch(
+  () => modeSwitching.value,
+  () => {
+    proTable.value?.getTableList();
+  }
+);
+const getTableList = (params?: any) => {
+  params.status = modeSwitching.value;
+  return projectList(params);
 };
 
+// 删除项目
+const deletePro = async (params: any) => {
+  await useHandleData(projectDelete, { id: [params.id] }, `删除【${params.projectName}】项目（删除后无法恢复)?`);
+  proTable.value?.getTableList();
+};
+// 编辑项目
+const editBtn = (parms: any) => {
+  projectId.value = parms.projectId;
+  projectFormDialog.value.openEditDialog(parms);
+  //projectFormDialog.value.openAddDialog();
+  // proTable.value?.getTableList();
+};
+const projectId = ref("");
 // 批量删除用户信息
-const batchDelete = async (id: string[]) => {
-  await useHandleData(deleteUser, { id }, "删除所选用户信息");
-  proTable.value?.clearSelection();
-  proTable.value?.getTableList();
+const lock = async obj => {
+  projectId.value = obj.projectId;
+  lockDialog.value = true;
 };
-
+const lockOK = async () => {
+  await projectLock({ projectId: projectId.value, remark: remark.value });
+  proTable.value?.getTableList();
+  lockDialog.value = false;
+};
 // 重置用户密码
 const resetPass = async (params: User.ResUserList) => {
   await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
   proTable.value?.getTableList();
+};
+
+const projectFormDialog = ref();
+const userList = ref([
+  { id: "1", name: "张三" },
+  { id: "2", name: "李四" }
+]);
+
+// // 新增项目
+const handleAdd = () => {
+  projectFormDialog.value.openAddDialog();
+};
+
+// // 编辑项目
+// const handleEdit = row => {
+//   projectFormDialog.value.openEditDialog(row);
+// };
+
+// 提交表单
+const handleSubmit = formData => {
+  console.log("提交数据:", formData);
+  // 这里调用API进行保存
+  // if (mode === 'add') {
+  //   await addProjectApi(formData)
+  // } else {
+  //   await updateProjectApi(formData)
+  // }
+  // 然后刷新列表
 };
 </script>
 
@@ -170,5 +251,15 @@ const resetPass = async (params: User.ResUserList) => {
 .el-table .success-row .el-table-fixed-column--right,
 .el-table .success-row .el-table-fixed-column--left {
   background-color: var(--el-color-success-light-9);
+}
+.lock-library-dialog {
+  display: flex;
+}
+.flex {
+  display: flex;
+}
+.tops {
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

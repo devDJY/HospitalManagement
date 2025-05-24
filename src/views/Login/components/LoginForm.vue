@@ -52,6 +52,7 @@ import { useAuthStore } from "@/stores/modules/auth";
 // import md5 from "md5";
 import ForgetPassword from "./ForgetPassword.vue";
 import Register from "./Register.vue";
+import { localSet } from "@/utils";
 const showModal = ref(false);
 const RegisterModal = ref(false);
 const router = useRouter();
@@ -83,6 +84,7 @@ const login = (formEl: FormInstance | undefined) => {
       userStore.setToken(data.token);
       userStore.setUserInfo(data.userInfo);
       const authStore = useAuthStore();
+      localSet("routerInfo", data.routerInfo);
       await authStore.getAuthMenuList(data.routerInfo);
       // 2.添加动态路由
       await initDynamicRouter();

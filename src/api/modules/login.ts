@@ -3,6 +3,8 @@ import { PORT1 } from "@/api/config/servicePort";
 import authMenuList from "@/assets/json/authMenuList.json";
 import authButtonList from "@/assets/json/authButtonList.json";
 import http from "@/api";
+import { lo } from "element-plus/es/locale";
+import { localGet } from "@/utils";
 
 /**
  * @name 登录模块
@@ -16,11 +18,25 @@ export const loginApi = (params: Login.ReqLoginForm) => {
   // return http.get<Login.ResLogin>(PORT1 + `/login?${qs.stringify(params, { arrayFormat: "repeat" })}`); // get 请求可以携带数组等复杂参数
 };
 
+// 忘记密码
+export const forgetPasswordApi = params => {
+  return http.post("/userInfo/resetPwd/phone", params, { loading: false });
+};
+// 修改密码 个人主页-用户修改密码
+export const changePasswordApi = params => {
+  return http.post("/userInfo/update/pwd", params, { loading: false });
+};
+// 发送验证码
+export const sendCodeApi = params => {
+  return http.get("/userInfo/getVerifyCode", params, { loading: false });
+};
 // 获取菜单列表
 export const getAuthMenuListApi = () => {
-  return http.get<Menu.MenuOptions[]>(`/authGroup/groupMenu/list`, {}, { loading: false });
+  let menuList = localGet("routerInfo");
+  return menuList;
+  //return http.get<Menu.MenuOptions[]>(`/authGroup/groupMenu/list`, {}, { loading: false });
   // 如果想让菜单变为本地数据，注释上一行代码，并引入本地 authMenuList.json 数据
-  return authMenuList;
+  //return authMenuList;
 };
 
 // 获取按钮权限

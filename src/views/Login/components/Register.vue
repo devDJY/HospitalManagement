@@ -250,6 +250,7 @@ const states = [
   "Wisconsin",
   "Wyoming"
 ];
+const list = ref([]);
 onMounted(() => {
   list.value = states.map(item => {
     return { value: `value:${item}`, label: `label:${item}` };

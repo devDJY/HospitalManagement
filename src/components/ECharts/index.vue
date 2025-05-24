@@ -11,7 +11,7 @@ import { useGlobalStore } from "@/stores/modules/global";
 import { storeToRefs } from "pinia";
 
 interface Props {
-  option: ECOption;
+  option: any;
   renderer?: "canvas" | "svg";
   resize?: boolean;
   theme?: Object | string;

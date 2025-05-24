@@ -57,7 +57,8 @@ import {
   exportUserInfo,
   BatchAddUser,
   getUserStatus,
-  getUserDepartment
+  getUserDepartment,
+  getUserGender
 } from "@/api/modules/user";
 
 const router = useRouter();

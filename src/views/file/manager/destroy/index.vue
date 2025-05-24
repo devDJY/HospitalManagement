@@ -19,8 +19,21 @@
       <template v-else>
         <el-radio-button label="驳回" value="3" />
       </template>
+      <el-badge :value="0" class="item" v-if="modeSwitching === '4'">
+        <el-radio-button label="拒绝" value="4" />
+      </el-badge>
+      <template v-else>
+        <el-radio-button label="拒绝" value="4" />
+      </template>
     </el-radio-group>
-    <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" @drag-sort="sortTable">
+    <ProTable
+      ref="proTable"
+      :columns="columns"
+      :request-api="getTableList"
+      :init-param="initParam"
+      :data-callback="dataCallback"
+      @drag-sort="sortTable"
+    >
       <!-- 表格 header 按钮 -->
       <!-- <template #tableHeader="scope">
         <el-button v-auth="'add'" type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增用户</el-button>
@@ -46,10 +59,10 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
+        <!-- <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
         <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
-        <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
-        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button>
+        <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button> -->
+        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">文件销毁</el-button>
       </template>
     </ProTable>
     <UserDrawer ref="drawerRef" />
@@ -96,6 +109,15 @@ const proTable = ref<ProTableInstance>();
 // 如果表格需要初始化请求参数，直接定义传给 ProTable (之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
 const initParam = reactive({ type: 1 });
 
+// dataCallback 是对于返回的表格数据做处理，如果你后台返回的数据不是 list && total 这些字段，可以在这里进行处理成这些字段
+// 或者直接去 hooks/useTable.ts 文件中把字段改为你后端对应的就行
+const dataCallback = (data: any) => {
+  return {
+    list: data.list,
+    total: data.total
+  };
+};
+
 // 如果你想在请求之前对当前请求参数做一些操作，可以自定义如下函数：params 为当前所有的请求参数（包括分页），最后返回请求列表接口
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
@@ -125,11 +147,15 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "idCard", label: "文件编码", width: 85, search: { el: "input" } },
   { prop: "idCard", label: "文件名" },
   { prop: "idCard", label: "源文件" },
-  { prop: "address", label: "文件受控编码", width: 85 },
-  { prop: "address", label: "重新打印份数", width: 85 },
-  { prop: "address", label: "申请人", width: 115 },
-  { prop: "address", label: "申请说明", width: 115 },
-  { prop: "address", label: "申请日期", width: 85 },
+  { prop: "idCard", label: "受控文件" },
+  { prop: "idCard", label: "文件受控编码" },
+  { prop: "idCard", label: "文件页数" },
+  { prop: "address", label: "回收原因", width: 85 },
+  { prop: "address", label: "回收说明", width: 85 },
+  { prop: "address", label: "附件", width: 115 },
+  { prop: "address", label: "交件人", width: 85 },
+  { prop: "address", label: "回收人" },
+  { prop: "address", label: "回收日期" },
   { prop: "operation", label: "操作", fixed: "right", width: 80 }
 ]);
 

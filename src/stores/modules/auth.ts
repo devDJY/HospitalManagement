@@ -34,10 +34,9 @@ export const useAuthStore = defineStore({
       // this.authButtonList = data;
     },
     // Get AuthMenuList
-    async getAuthMenuList(data: any) {
-      // const { data } = await getAuthMenuListApi();
-      // 处理完的菜单数据
-      this.authMenuList = data;
+    async getAuthMenuList(data?: any) {
+      this.authMenuList = data || (await getAuthMenuListApi());
+      return;
     },
     // Set RouteName
     async setRouteName(name: string) {

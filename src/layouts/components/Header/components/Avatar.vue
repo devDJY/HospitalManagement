@@ -32,6 +32,7 @@ import { useUserStore } from "@/stores/modules/user";
 import { ElMessageBox, ElMessage } from "element-plus";
 import InfoDialog from "./InfoDialog.vue";
 import PasswordDialog from "./PasswordDialog.vue";
+import { localRemove } from "@/utils";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -48,7 +49,7 @@ const logout = () => {
 
     // 2.清除 Token
     userStore.setToken("");
-
+    localRemove("routerInfo");
     // 3.重定向到登陆页
     router.replace(LOGIN_URL);
     ElMessage.success("退出登录成功！");

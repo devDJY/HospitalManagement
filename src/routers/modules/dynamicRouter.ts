@@ -17,7 +17,7 @@ export const initDynamicRouter = async () => {
   const authStore = useAuthStore();
   try {
     // 1.获取菜单列表 && 按钮权限列表
-    //await authStore.getAuthMenuList();
+    await authStore.getAuthMenuList();
     //await authStore.getAuthButtonList();
     // 2.判断当前用户有没有菜单权限
     if (!authStore.authMenuListGet.length) {
@@ -31,22 +31,6 @@ export const initDynamicRouter = async () => {
       router.replace(LOGIN_URL);
       return Promise.reject("No permission");
     }
-    // let data = {
-    //   path: "/home/index",
-    //   name: "home",
-    //   component: "/home/index",
-    //   meta: {
-    //     icon: "HomeFilled",
-    //     title: "首页",
-    //     isLink: "",
-    //     isHide: false,
-    //     isFull: false,
-    //     isAffix: true,
-    //     isKeepAlive: true
-    //   }
-    // };
-    // authStore.flatMenuListGet.push(data);
-
     // 3.添加动态路由
     authStore.flatMenuListGet.forEach(item => {
       item.children && delete item.children;

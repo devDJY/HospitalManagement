@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
+import { forgetPasswordApi, sendCodeApi } from "@/api/modules/login";
 
 // 接收父组件传来的 `modelValue`
 const props = defineProps({
@@ -93,7 +94,14 @@ const sendCode = () => {
     ElMessage.error("请先输入手机号");
     return;
   }
-  ElMessage.success("验证码已发送");
+  sendCodeApi({ mobile: form.phone })
+    .then(() => {
+      ElMessage.success("验证码已发送");
+    })
+    .catch(err => {
+      console.error(err);
+      ElMessage.error("验证码发送失败");
+    });
   countdown.value = 60;
   timer = setInterval(() => {
     countdown.value--;
@@ -105,7 +113,20 @@ const sendCode = () => {
 const handleReset = () => {
   resetFormRef.value?.validate(valid => {
     if (!valid) return;
-    ElMessage.success("密码重置成功");
+    forgetPasswordApi({
+      mobile: form.phone,
+      verifyCode: form.code,
+      oldPwd: form.password,
+      newPwd: form.confirmPassword
+    })
+      .then(() => {
+        ElMessage.success("密码重置成功");
+        emit("update:modelValue", false); // 关闭弹窗
+      })
+      .catch(err => {
+        console.error(err);
+        ElMessage.error("密码重置失败");
+      });
     emit("update:modelValue", false); // 关闭弹窗
   });
 };

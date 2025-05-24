@@ -147,12 +147,10 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "idCard", label: "文件编码", width: 85, search: { el: "input" } },
   { prop: "idCard", label: "文件名" },
   { prop: "idCard", label: "源文件" },
-  { prop: "idCard", label: "版本号" },
-  { prop: "address", label: "版本日期", width: 85 },
-  { prop: "address", label: "份数", width: 85 },
-  { prop: "address", label: "申请人", width: 115 },
+  { prop: "idCard", label: "申请份数" },
+  { prop: "address", label: "受控方式", width: 85 },
+  { prop: "address", label: "申请人", width: 85 },
   { prop: "address", label: "申请日期", width: 85 },
-  { prop: "address", label: "受控方式" },
   { prop: "operation", label: "操作", fixed: "right", width: 80 }
 ]);
 

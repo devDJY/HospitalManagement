@@ -1,3 +1,4 @@
+import { s } from "vite/dist/node/types.d-aGj9QkWt";
 import { Table } from "./interface";
 import { reactive, computed, toRefs } from "vue";
 
@@ -59,9 +60,9 @@ export const useTable = (
     try {
       // 先把初始化参数和分页参数放到总参数里面
       Object.assign(state.totalParam, initParam, isPageable ? pageParam.value : {});
-      let { data } = await api({ ...state.searchInitParam, ...state.totalParam });
+      let data = await api({ ...state.searchInitParam, ...state.totalParam });
       dataCallBack && (data = dataCallBack(data));
-      state.tableData = isPageable ? data.list : data;
+      state.tableData = isPageable ? data.records : data;
       // 解构后台返回的分页数据 (如果有分页更新分页信息)
       if (isPageable) {
         state.pageable.total = data.total;
