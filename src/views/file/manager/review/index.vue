@@ -1,25 +1,25 @@
 <template>
   <div class="table-box">
     <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
-      <el-badge :value="0" class="item" v-if="modeSwitching === '0'">
+      <el-badge :value="0" class="item" v-if="modeSwitching === '0'" color="green">
         <el-radio-button label="待审查" value="0" />
       </el-badge>
       <template v-else>
         <el-radio-button label="待审查" value="0" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '1'">
+      <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
         <el-radio-button label="通过" value="1" />
       </el-badge>
       <template v-else>
         <el-radio-button label="通过" value="1" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '2'">
+      <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
         <el-radio-button label="驳回" value="2" />
       </el-badge>
       <template v-else>
         <el-radio-button label="驳回" value="2" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '3'">
+      <el-badge :value="0" class="item" v-if="modeSwitching === '3'" color="green">
         <el-radio-button label="拒绝" value="3" />
       </el-badge>
       <template v-else>
@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="tsx" name="useProTable">
-import { ref, reactive } from "vue";
+import { ref, reactive, watch } from "vue";
 import { useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
@@ -96,6 +96,7 @@ import {
 } from "@/api/modules/user";
 
 import { fileInfoList } from "@/api/modules/fileInfo";
+import { pa } from "element-plus/es/locale";
 const router = useRouter();
 
 // 跳转详情页
@@ -118,15 +119,18 @@ const dataCallback = (data: any) => {
     total: data.total
   };
 };
+watch(
+  () => modeSwitching.value,
+  () => {
+    proTable.value?.getTableList();
+  }
+);
 
 // 如果你想在请求之前对当前请求参数做一些操作，可以自定义如下函数：params 为当前所有的请求参数（包括分页），最后返回请求列表接口
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
-  let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
-  return fileInfoList(newParams);
+  params.status = modeSwitching.value;
+  return fileInfoList(params);
 };
 
 // 页面按钮权限（按钮权限既可以使用 hooks，也可以直接使用 v-auth 指令，指令适合直接绑定在按钮上，hooks 适合根据按钮权限显示不同的内容）
@@ -144,16 +148,16 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "selection", fixed: "left", width: 70 },
-  { prop: "expand", label: "项目名称", width: 85, search: { el: "input" } },
-  { prop: "idCard", label: "文件编码", width: 85, search: { el: "input" } },
-  { prop: "idCard", label: "文件名" },
+  { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+  { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+  { prop: "attachmentName", label: "文件名" },
   { prop: "idCard", label: "源文件" },
-  { prop: "idCard", label: "版本号" },
-  { prop: "address", label: "版本日期", width: 85 },
-  { prop: "address", label: "份数", width: 85 },
-  { prop: "address", label: "申请人", width: 115 },
-  { prop: "address", label: "申请日期", width: 85 },
-  { prop: "address", label: "受控方式" },
+  { prop: "fileVersion", label: "版本号" },
+  { prop: "versionTime", label: "版本日期", width: 85 },
+  { prop: "fileCount", label: "份数", width: 85 },
+  { prop: "creatorName", label: "申请人", width: 115 },
+  { prop: "reviewTime", label: "申请日期", width: 85 },
+  { prop: "fileStatus", label: "受控方式" },
   { prop: "operation", label: "操作", fixed: "right", width: 80 }
 ]);
 

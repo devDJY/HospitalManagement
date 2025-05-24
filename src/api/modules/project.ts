@@ -24,3 +24,8 @@ export const projectMoveAuthList = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/project/moveAuth/list", pa, { loading: false });
 };
+///项目-转移权限-查询可向哪些人转移
+export const projectMoveAuthUserQuery = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/project/moveAuth/user/query", pa, { loading: false });
+};

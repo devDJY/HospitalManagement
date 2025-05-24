@@ -176,12 +176,17 @@ const formData = reactive<ProjectForm>({
 });
 
 const phaseOptions = [
-  { value: "I", label: "I期" },
-  { value: "II", label: "II期" },
-  { value: "III", label: "III期" },
-  { value: "IV", label: "IV期" },
-  { value: "BE", label: "生物等效性试验" },
-  { value: "OTHER", label: "其他" }
+  { value: "1", label: "I期/BE" },
+  { value: "2", label: "II期" },
+  { value: "3", label: "III期" },
+  { value: "4", label: "IV期" },
+  { value: "5", label: "医疗器械" },
+  { value: "6", label: "医疗器械II类" },
+  { value: "7", label: "医疗器械III类" },
+  { value: "8", label: "体外诊断试剂II类" },
+  { value: "9", label: "体外诊断试剂III类" },
+  { value: "10", label: "IIT" },
+  { value: "11", label: "其他" }
 ];
 
 const formRules = reactive<FormRules<ProjectForm>>({

@@ -32,7 +32,6 @@
       :row-class-name="tableRowClassName"
       :span-method="objectSpanMethod"
       :show-summary="false"
-      :summary-method="getSummaries"
       @row-click="rowClick"
     >
       <!-- 表格 header 按钮 -->
@@ -45,10 +44,11 @@
       </template> -->
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="success" link :icon="Search" @click="resetPass(scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="Edit" @click="editBtn(scope.row)">编辑</el-button>
-        <el-button type="warning" link :icon="RemoveFilled" @click="lock(scope.row)">锁库</el-button>
-        <el-button type="danger" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
+        <el-button type="success" v-if="modeSwitching == '0'" link :icon="Search" @click="resetPass(scope.row)">查看</el-button>
+        <el-button type="primary" v-if="modeSwitching == '0'" link :icon="Edit" @click="editBtn(scope.row)">编辑</el-button>
+        <el-button type="warning" v-if="modeSwitching == '0'" link :icon="RemoveFilled" @click="lock(scope.row)">锁库</el-button>
+        <el-button type="danger" v-if="modeSwitching == '0'" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
+        <el-button type="success" v-if="modeSwitching == '1'" link :icon="Search" @click="deletePro(scope.row)">查看</el-button>
       </template>
       <!-- <template #append>
         <span style="color: var(--el-color-primary)">我是插入在表格最后的内容。若表格有合计行，该内容会位于合计行之上。</span>
@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="tsx" name="complexProTable">
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, watch, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
@@ -80,7 +80,7 @@ import ProjectFormDialog from "./ProjectFormDialog.vue";
 import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { deleteUser, resetUserPassWord } from "@/api/modules/user";
-import { projectList, projectLock, projectDelete } from "@/api/modules/project";
+import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery } from "@/api/modules/project";
 import { Search, Delete, Edit, Plus, RemoveFilled } from "@element-plus/icons-vue";
 const lockDialog = ref(false);
 const remark = ref("");
@@ -101,7 +101,6 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
-  { type: "selection", width: 80 },
   { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
   { prop: "projectName", label: "项目名称", width: 100, search: { el: "input", tooltip: "" } },
   { prop: "enrollCount", label: "入组列数", width: 100 },
@@ -125,28 +124,6 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "operation", label: "操作", fixed: "right", width: 300 }
 ]);
 
-// 选择行
-// const setCurrent = () => {
-//   proTable.value?.element?.setCurrentRow(proTable.value?.tableData[4]);
-//   proTable.value?.element?.toggleRowSelection(proTable.value?.tableData[4], true);
-// };
-
-// 表尾合计行（自行根据条件计算）
-interface SummaryMethodProps<T = User.ResUserList> {
-  columns: TableColumnCtx<T>[];
-  data: T[];
-}
-const getSummaries = (param: SummaryMethodProps) => {
-  const { columns } = param;
-  const sums: string[] = [];
-  columns.forEach((column, index) => {
-    if (index === 0) return (sums[index] = "合计");
-    else sums[index] = "N/A";
-  });
-  return sums;
-};
-
-// 列合并
 interface SpanMethodProps {
   row: User.ResUserList;
   column: TableColumnCtx<User.ResUserList>;
@@ -154,10 +131,10 @@ interface SpanMethodProps {
   columnIndex: number;
 }
 const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
-  if (columnIndex === 3) {
-    if (rowIndex % 2 === 0) return { rowspan: 2, colspan: 1 };
-    else return { rowspan: 0, colspan: 0 };
-  }
+  // if (columnIndex === 3) {
+  //   if (rowIndex % 2 === 0) return { rowspan: 2, colspan: 1 };
+  //   else return { rowspan: 0, colspan: 0 };
+  // }
 };
 
 // 设置列样式
@@ -179,6 +156,66 @@ watch(
   }
 );
 const getTableList = (params?: any) => {
+  if (modeSwitching.value == "") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
+      { prop: "projectName", label: "项目名称", width: 100, search: { el: "input", tooltip: "" } },
+      { prop: "enrollCount", label: "启动日期" },
+      { prop: "enrollCount", label: "申办方" },
+      { prop: "enrollCount", label: "入组列数" },
+      { prop: "enrollCount", label: "提交人" },
+      { prop: "enrollCount", label: "提交日期" },
+      { prop: "enrollCount", label: "状态" }
+    );
+  } else if (modeSwitching.value == "0") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
+      { prop: "projectName", label: "项目名称", width: 100, search: { el: "input", tooltip: "" } },
+      { prop: "enrollCount", label: "入组列数", width: 100 },
+      {
+        prop: "base",
+        label: "文件",
+        headerRender,
+        _children: [
+          { prop: "waitReviewCount", label: "待审查" },
+          { prop: "waitControllerCount", label: "待受控" },
+          {
+            prop: "waitRecycleCount",
+            label: "待回收"
+          },
+          {
+            prop: "waitLoseCount",
+            label: "遗失待审核"
+          }
+        ]
+      },
+      { prop: "operation", label: "操作", fixed: "right", width: 300 }
+    );
+  } else if (modeSwitching.value == "1") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
+      { prop: "projectName", label: "项目名称", width: 100, search: { el: "input", tooltip: "" } },
+      { prop: "enrollCount", label: "入组列数", width: 100 },
+      {
+        prop: "base",
+        label: "文件",
+        headerRender,
+        _children: [
+          { prop: "recycleCount", label: "已回收" },
+          { prop: "loseCount", label: "已遗失" }
+        ]
+      },
+      { prop: "lockTime", label: "锁库日期" },
+      { prop: "lockRemark", label: "锁库说明" },
+      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+    );
+  }
   params.status = modeSwitching.value;
   return projectList(params);
 };
@@ -217,7 +254,17 @@ const userList = ref([
   { id: "1", name: "张三" },
   { id: "2", name: "李四" }
 ]);
-
+// 页面渲染请求
+const init = async () => {
+  // 获取用户列表
+  // const { data } = await projectMoveAuthUserQuery();
+  // userList.value = data;
+  // 获取项目列表
+  proTable.value?.getTableList();
+};
+onMounted(() => {
+  init();
+});
 // // 新增项目
 const handleAdd = () => {
   projectFormDialog.value.openAddDialog();

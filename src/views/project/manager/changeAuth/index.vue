@@ -34,6 +34,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
+    <TransferPermissionDialog ref="transferDialogRef" />
   </div>
 </template>
 
@@ -48,6 +49,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
+import TransferPermissionDialog from "./TransferPermissionDialog.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import {
@@ -60,7 +62,7 @@ import {
   BatchAddUser
 } from "@/api/modules/user";
 import { projectMoveAuthList } from "@/api/modules/project";
-
+const transferDialogRef = ref();
 const router = useRouter();
 
 // 跳转详情页
@@ -149,13 +151,6 @@ const batchAdd = () => {
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref<InstanceType<typeof UserDrawer> | any>(null);
 const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
-  const params = {
-    title,
-    isView: title === "查看",
-    row: { ...row },
-    api: title === "新增" ? addUser : title === "编辑" ? editUser : undefined,
-    getTableList: proTable.value?.getTableList
-  };
-  drawerRef.value!.acceptParams(params);
+  transferDialogRef.value!.openDialog();
 };
 </script>

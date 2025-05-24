@@ -34,6 +34,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
+    <AuthDialog ref="authDialogRef" />
   </div>
 </template>
 
@@ -49,7 +50,9 @@ import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
+import AuthDialog from "./AuthDialog.vue";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
+const authDialogRef = ref();
 import {
   getUserList,
   deleteUser,
@@ -62,6 +65,7 @@ import {
   getUserStatus
 } from "@/api/modules/user";
 import { projectAuthorizeList } from "@/api/modules/project";
+import { i } from "vite/dist/node/types.d-aGj9QkWt";
 
 const router = useRouter();
 
@@ -153,13 +157,6 @@ const batchAdd = () => {
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref<InstanceType<typeof UserDrawer> | any>(null);
 const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
-  const params = {
-    title,
-    isView: title === "查看",
-    row: { ...row },
-    api: title === "新增" ? addUser : title === "编辑" ? editUser : undefined,
-    getTableList: proTable.value?.getTableList
-  };
-  drawerRef.value!.acceptParams(params);
+  authDialogRef.value.openDialog(title, row);
 };
 </script>
