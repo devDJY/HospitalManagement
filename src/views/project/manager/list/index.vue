@@ -81,7 +81,7 @@ import type { TableColumnCtx } from "element-plus/es/components/table/src/table-
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { deleteUser, resetUserPassWord } from "@/api/modules/user";
 import { projectList, projectLock, projectDelete } from "@/api/modules/project";
-import { Search, Delete, Edit, Plus } from "@element-plus/icons-vue";
+import { Search, Delete, Edit, Plus, RemoveFilled } from "@element-plus/icons-vue";
 const lockDialog = ref(false);
 const remark = ref("");
 const handleClose = () => {
