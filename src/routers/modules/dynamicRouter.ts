@@ -31,21 +31,37 @@ export const initDynamicRouter = async () => {
       router.replace(LOGIN_URL);
       return Promise.reject("No permission");
     }
-    let data = {
-      path: "/archive/ye",
-      name: "archivedFile",
-      component: "/archive/archivedFile/index",
-      meta: {
-        icon: "Finished",
-        title: "文件测试",
-        isLink: "",
-        isHide: false,
-        isFull: false,
-        isAffix: false,
-        isKeepAlive: false
+    let data = [
+      {
+        path: "/archive/archivedFile",
+        name: "archivedFile",
+        component: "/archive/archivedFile/index",
+        meta: {
+          icon: "Finished",
+          title: "文件测试",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
+      },
+      {
+        path: "/project/basicFacts",
+        name: "basicFacts",
+        component: "/project/basicFacts/index",
+        meta: {
+          icon: "Finished",
+          title: "项目概况",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
       }
-    };
-    authStore.flatMenuListGet.push(data);
+    ];
+    authStore.flatMenuListGet.push(...data);
     // 3.添加动态路由
     authStore.flatMenuListGet.forEach(item => {
       item.children && delete item.children;
