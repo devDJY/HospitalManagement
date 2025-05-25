@@ -87,8 +87,9 @@ import {
   BatchAddUser,
   getUserStatus
 } from "@/api/modules/user";
-import { pa } from "element-plus/es/locale";
+import { de, pa } from "element-plus/es/locale";
 import { fileControllerCertList } from "@/api/modules/fileInfo";
+import dayjs from "dayjs";
 
 const router = useRouter();
 
@@ -134,15 +135,24 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "selection", fixed: "left", width: 70 },
-  { prop: "expand", label: "项目名称", width: 85, search: { el: "input" } },
-  { prop: "idCard", label: "文件编码", width: 85, search: { el: "input" } },
-  { prop: "idCard", label: "文件名" },
-  { prop: "idCard", label: "源文件" },
-  { prop: "idCard", label: "申请份数" },
-  { prop: "address", label: "受控方式", width: 85 },
-  { prop: "address", label: "申请人", width: 85 },
-  { prop: "address", label: "申请日期", width: 85 },
-  { prop: "operation", label: "操作", fixed: "right", width: 80 }
+  { prop: "projectName", label: "项目名称", search: { el: "input" } },
+  { prop: "fileId", label: "文件编码", width: 85, search: { el: "input" } },
+  { prop: "attachmentName", label: "文件名", width: 80 },
+  { prop: "attachmentUrl", label: "源文件", width: 90, render(scope) {
+    // @ts-ignore
+    return <a style="color: #3878df" href={scope.row.attachmentUrl} target="_blank">查看</a>
+  }},
+  { prop: "fileCount", label: "申请份数", width: 90 },
+  { prop: "checkType", label: "受控方式", width: 90, render(scope) {
+    // @ts-ignore
+    return <div>{scope.row.checkType === 0 ? "线上受控" : "线下受控"}</div>
+  }},
+  { prop: "reviewerName", label: "申请人", width: 85 },
+  { prop: "reviewerTime", label: "申请日期", width: 120, render(scope) {
+    // @ts-ignore
+    return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : ""}</div>
+  }},
+  { prop: "operation", label: "操作", fixed: "right", width: 120 }
 ]);
 
 // 表格拖拽排序
