@@ -223,7 +223,7 @@ const getTableList = (params?: any) => {
 
 // 删除项目
 const deletePro = async (params: any) => {
-  await useHandleData(projectDelete, { id: [params.id] }, `删除【${params.projectName}】项目（删除后无法恢复)?`);
+  await useHandleData(projectDelete, { projectId: params.projectId }, `删除【${params.projectName}】项目（删除后无法恢复)?`);
   proTable.value?.getTableList();
 };
 // 编辑项目

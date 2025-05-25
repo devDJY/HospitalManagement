@@ -130,8 +130,8 @@ const getTableList = (params: any) => {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
-      { prop: "fileCode", label: "文件编码", search: { el: "input" } },
+      { prop: "projectName", label: "项目名称", width: 105, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 105, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
         prop: "idCard",
@@ -151,8 +151,8 @@ const getTableList = (params: any) => {
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "applyTime", label: "附件", width: 85 },
       { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "applyTime", label: "审核意见", width: 105 },
+      { prop: "applyTime", label: "审核日期", fixed: "right", width: 105 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
