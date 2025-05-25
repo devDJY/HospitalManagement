@@ -19,12 +19,12 @@ interface Props {
 const props = defineProps<Props>();
 const option = ref({
   title: {
-    text: `${props.data.reviewedCount}%\n总计`,
+    text: `${props.data.total}\n总计`,
     x: "center",
     y: "center",
     textStyle: {
       color: "#0580f2",
-      fontSize: 18 // 修正：数字类型，去掉引号
+      fontSize: 16 // 修正：数字类型，去掉引号
     }
   },
   color: ["rgba(176, 212, 251, 1)"],
@@ -40,7 +40,7 @@ const option = ref({
       name: "Line 1",
       type: "pie",
       clockwise: true, // 修正：改为小写camelCase
-      radius: ["70%", "40%"],
+      radius: ["65%", "40%"],
       label: {
         show: false
       },
