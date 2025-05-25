@@ -2,26 +2,19 @@
   <div class="table-box">
     <div class="flex tops">
       <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
-        <el-badge :value="0" class="item" v-if="modeSwitching === ''" color="green">
-          <el-radio-button label="全部" value="" />
-        </el-badge>
-        <template v-else>
-          <el-radio-button label="全部" value="" />
-        </template>
-        <el-badge :value="0" class="item" v-if="modeSwitching === '0'" color="green">
-          <el-radio-button label="进行中" value="0" />
-        </el-badge>
-        <template v-else>
-          <el-radio-button label="进行中" value="0" />
-        </template>
         <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
-          <el-radio-button label="锁库" value="1" />
+          <el-radio-button label="进行中" value="1" />
         </el-badge>
         <template v-else>
-          <el-radio-button label="锁库" value="1" />
+          <el-radio-button label="进行中" value="1" />
+        </template>
+        <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
+          <el-radio-button label="锁库" value="2" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="锁库" value="2" />
         </template>
       </el-radio-group>
-      <el-button type="primary" @click="handleAdd()" style="width: 200px" :icon="Plus"> 新增项目 </el-button>
     </div>
     <ProTable
       ref="proTable"
@@ -44,11 +37,8 @@
       </template> -->
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="success" v-if="modeSwitching == '0'" link :icon="Search" @click="resetPass(scope.row)">查看</el-button>
-        <el-button type="primary" v-if="modeSwitching == '0'" link :icon="Edit" @click="editBtn(scope.row)">编辑</el-button>
-        <el-button type="warning" v-if="modeSwitching == '0'" link :icon="RemoveFilled" @click="lock(scope.row)">锁库</el-button>
-        <el-button type="danger" v-if="modeSwitching == '0'" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
-        <el-button type="success" v-if="modeSwitching == '1'" link :icon="Search" @click="deletePro(scope.row)">查看</el-button>
+        <el-button type="success" link :icon="Search" @click="resetPass(scope.row)">查看</el-button>
+        <el-button type="success" link :icon="Download" @click="deletePro(scope.row)">导出</el-button>
       </template>
       <!-- <template #append>
         <span style="color: var(--el-color-primary)">我是插入在表格最后的内容。若表格有合计行，该内容会位于合计行之上。</span>
@@ -62,11 +52,10 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="lockDialog = false">取消</el-button>
-          <el-button type="primary" @click="lockOK()"> 确定 </el-button>
+          <!-- <el-button type="primary" @click="lockOK()"> 确定 </el-button> -->
         </div>
       </template>
     </el-dialog>
-    <ProjectFormDialog ref="projectFormDialog" :user-options="userList" @submit="handleSubmit" />
   </div>
 </template>
 
@@ -76,21 +65,11 @@ import { ElMessage } from "element-plus";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import ProTable from "@/components/ProTable/index.vue";
-import ProjectFormDialog from "./ProjectFormDialog.vue";
 import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { deleteUser, resetUserPassWord } from "@/api/modules/user";
-import {
-  projectList,
-  projectLock,
-  projectDelete,
-  projectMoveAuthUserQuery,
-  projectQueryManager,
-  projectAdd,
-  projectUpdate
-} from "@/api/modules/project";
-import { Search, Delete, Edit, Plus, RemoveFilled } from "@element-plus/icons-vue";
-import router from "@/routers";
+import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery } from "@/api/modules/project";
+import { Search, Download } from "@element-plus/icons-vue";
 const lockDialog = ref(false);
 const remark = ref("");
 const handleClose = () => {
@@ -102,7 +81,7 @@ const handleCancel = () => {
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
 // 模式切换
-const modeSwitching = ref("0");
+const modeSwitching = ref("1");
 // 自定义渲染表头（使用tsx语法）
 const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
   return <div>{scope.column.label}</div>;
@@ -118,19 +97,28 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
     label: "文件",
     headerRender,
     _children: [
-      { prop: "waitReviewCount", label: "待审查" },
-      { prop: "waitControllerCount", label: "待受控" },
+      { prop: "waitReviewCount", label: "存档" },
+      { prop: "waitControllerCount", label: "打印" },
       {
         prop: "waitRecycleCount",
-        label: "待回收"
+        label: "使用"
       },
       {
         prop: "waitLoseCount",
-        label: "遗失待审核"
+        label: "回收"
+      },
+      {
+        prop: "waitLoseCount",
+        label: "销毁"
+      },
+      {
+        prop: "waitLoseCount",
+        label: "遗失"
       }
     ]
   },
-  { prop: "operation", label: "操作", fixed: "right", width: 300 }
+  { prop: "enrollCount", label: "管理员", width: 100 },
+  { prop: "operation", label: "操作", fixed: "right", width: 150 }
 ]);
 
 interface SpanMethodProps {
@@ -165,20 +153,7 @@ watch(
   }
 );
 const getTableList = (params?: any) => {
-  if (modeSwitching.value == "") {
-    columns.splice(
-      0,
-      columns.length,
-      { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
-      { prop: "projectName", label: "项目名称", width: 100, search: { el: "input", tooltip: "" } },
-      { prop: "enrollCount", label: "启动日期" },
-      { prop: "enrollCount", label: "申办方" },
-      { prop: "enrollCount", label: "入组列数" },
-      { prop: "enrollCount", label: "提交人" },
-      { prop: "enrollCount", label: "提交日期" },
-      { prop: "enrollCount", label: "状态" }
-    );
-  } else if (modeSwitching.value == "0") {
+  if (modeSwitching.value == "1") {
     columns.splice(
       0,
       columns.length,
@@ -190,21 +165,30 @@ const getTableList = (params?: any) => {
         label: "文件",
         headerRender,
         _children: [
-          { prop: "waitReviewCount", label: "待审查" },
-          { prop: "waitControllerCount", label: "待受控" },
+          { prop: "waitReviewCount", label: "存档" },
+          { prop: "waitControllerCount", label: "打印" },
           {
             prop: "waitRecycleCount",
-            label: "待回收"
+            label: "使用"
           },
           {
             prop: "waitLoseCount",
-            label: "遗失待审核"
+            label: "回收"
+          },
+          {
+            prop: "waitLoseCount",
+            label: "销毁"
+          },
+          {
+            prop: "waitLoseCount",
+            label: "遗失"
           }
         ]
       },
-      { prop: "operation", label: "操作", fixed: "right", width: 300 }
+      { prop: "enrollCount", label: "管理员", width: 100 },
+      { prop: "operation", label: "操作", fixed: "right", width: 150 }
     );
-  } else if (modeSwitching.value == "1") {
+  } else if (modeSwitching.value == "2") {
     columns.splice(
       0,
       columns.length,
@@ -216,13 +200,30 @@ const getTableList = (params?: any) => {
         label: "文件",
         headerRender,
         _children: [
-          { prop: "recycleCount", label: "已回收" },
-          { prop: "loseCount", label: "已遗失" }
+          { prop: "waitReviewCount", label: "存档" },
+          { prop: "waitControllerCount", label: "打印" },
+          {
+            prop: "waitRecycleCount",
+            label: "使用"
+          },
+          {
+            prop: "waitLoseCount",
+            label: "回收"
+          },
+          {
+            prop: "waitLoseCount",
+            label: "销毁"
+          },
+          {
+            prop: "waitLoseCount",
+            label: "遗失"
+          }
         ]
       },
-      { prop: "lockTime", label: "锁库日期" },
-      { prop: "lockRemark", label: "锁库说明" },
-      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+      { prop: "enrollCount", label: "管理员", width: 100 },
+      { prop: "enrollCount", label: "锁库说明", width: 100 },
+      { prop: "enrollCount", label: "锁库日期", width: 100 },
+      { prop: "operation", label: "操作", fixed: "right", width: 150 }
     );
   }
   params.status = modeSwitching.value;
@@ -234,74 +235,24 @@ const deletePro = async (params: any) => {
   await useHandleData(projectDelete, { id: [params.id] }, `删除【${params.projectName}】项目（删除后无法恢复)?`);
   proTable.value?.getTableList();
 };
-// 编辑项目
-const editBtn = (parms: any) => {
-  projectId.value = parms.projectId;
-  projectFormDialog.value.openEditDialog(parms);
-  //projectFormDialog.value.openAddDialog();
-  // proTable.value?.getTableList();
-};
 const projectId = ref("");
-// 批量删除用户信息
-const lock = async obj => {
-  projectId.value = obj.projectId;
-  lockDialog.value = true;
-};
-const lockOK = async () => {
-  await projectLock({ projectId: projectId.value, remark: remark.value });
-  proTable.value?.getTableList();
-  lockDialog.value = false;
-};
 // 重置用户密码
 const resetPass = async (params: User.ResUserList) => {
-  router.push(`/archive/archivedFile`);
-  // await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
-  // proTable.value?.getTableList();
+  await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
+  proTable.value?.getTableList();
 };
 
-const projectFormDialog = ref();
-const userList = ref([
-  {
-    userId: "1",
-    nickName: "admin"
-  }
-]);
 // 页面渲染请求
 const init = async () => {
   // 获取用户列表
-  const { data } = await projectQueryManager({});
-  userList.value = (data as { userId: number; nickName: string }[]).map(item => ({
-    userId: String(item.userId),
-    nickName: item.nickName
-  }));
+  // const { data } = await projectMoveAuthUserQuery();
+  // userList.value = data;
   // 获取项目列表
   proTable.value?.getTableList();
 };
 onMounted(() => {
   init();
 });
-// // 新增项目
-const handleAdd = () => {
-  projectFormDialog.value.openAddDialog();
-};
-
-// // 编辑项目
-// const handleEdit = row => {
-//   projectFormDialog.value.openEditDialog(row);
-// };
-
-// 提交表单
-const handleSubmit = async formData => {
-  // 这里调用API进行保存
-  if (projectFormDialog.value.mode === "add") {
-    await projectAdd(formData);
-  } else {
-    await projectUpdate(formData);
-  }
-  proTable.value?.getTableList();
-  ElMessage.success(projectFormDialog.value.mode.value === "add" ? "新增成功" : "编辑成功");
-  // 然后刷新列表
-};
 </script>
 
 <style lang="scss">

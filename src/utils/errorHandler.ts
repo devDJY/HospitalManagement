@@ -16,12 +16,13 @@ const errorHandler = (error: any) => {
     URIError: "URI错误"
   };
   let errorName = errorMap[error.name] || "未知错误";
-  ElNotification({
-    title: errorName,
-    message: error,
-    type: "error",
-    duration: 3000
-  });
+  console.log("error", error, errorName);
+  // ElNotification({
+  //   title: errorName,
+  //   message: error,
+  //   type: "error",
+  //   duration: 3000
+  // });
 };
 
 export default errorHandler;

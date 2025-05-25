@@ -29,3 +29,17 @@ export const projectMoveAuthUserQuery = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/project/moveAuth/user/query", pa, { loading: false });
 };
+//项目-添加项目查询审查员
+export const projectQueryManager = params => {
+  return http.get("/project/query/manager", params, { loading: false });
+};
+//项目-添加项目查询审查员
+export const projectAdd = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/project/add", pa, { loading: false });
+};
+//编辑项目
+export const projectUpdate = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/project/update", pa, { loading: false });
+};

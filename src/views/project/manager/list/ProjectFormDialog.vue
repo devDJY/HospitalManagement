@@ -17,7 +17,7 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="药物/器械名称">
-            <el-input v-model="formData.drugName" placeholder="请输入" clearable />
+            <el-input v-model="formData.deviceName" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -29,8 +29,8 @@
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="申办方" prop="sponsor">
-            <el-input v-model="formData.sponsor" placeholder="请输入" clearable />
+          <el-form-item label="申办方" prop="applicant">
+            <el-input v-model="formData.applicant" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -47,9 +47,9 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="试验/研究分期" prop="phase">
-            <el-select v-model="formData.phase" placeholder="请选择" style="width: 100%" clearable>
-              <el-option v-for="item in phaseOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-form-item label="试验/研究分期" prop="stageNo">
+            <el-select v-model="formData.stageNo" placeholder="请选择" style="width: 100%" clearable>
+              <el-option v-for="item in stageNoOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -57,29 +57,23 @@
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="文件审查员" prop="reviewer">
-            <el-select v-model="formData.reviewer" placeholder="请选择" style="width: 100%" clearable>
-              <el-option v-for="user in userOptions" :key="user.id" :label="user.name" :value="user.id" />
+          <el-form-item label="文件审查员" prop="managerId">
+            <el-select v-model="formData.managerId" placeholder="请选择" style="width: 100%" clearable>
+              <el-option v-for="user in userOptions" :key="user.userId" :label="user.nickName" :value="user.userId" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="入组例数" prop="enrollment">
-            <el-input v-model="formData.enrollment" placeholder="请输入（本中心入组例数）" clearable type="number" />
+          <el-form-item label="入组例数" prop="enrollCount">
+            <el-input v-model="formData.enrollCount" placeholder="请输入（本中心入组例数）" clearable type="number" />
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="启动日期" prop="startDate">
-            <el-date-picker
-              v-model="formData.startDate"
-              type="date"
-              placeholder="请选择"
-              style="width: 100%"
-              value-format="YYYY-MM-DD"
-            />
+          <el-form-item label="启动日期" prop="startTime">
+            <el-date-picker v-model="formData.startTime" type="date" placeholder="请选择" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -91,8 +85,8 @@
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="PM手机" prop="pmPhone">
-            <el-input v-model="formData.pmPhone" placeholder="请输入" clearable />
+          <el-form-item label="PM手机" prop="pmMobile">
+            <el-input v-model="formData.pmMobile" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -103,7 +97,7 @@
       </el-row>
 
       <el-form-item label="试验介绍">
-        <el-input v-model="formData.description" type="textarea" :rows="4" placeholder="请输入" />
+        <el-input v-model="formData.projectDesc" type="textarea" :rows="4" placeholder="请输入" />
       </el-form-item>
     </el-form>
 
@@ -124,24 +118,24 @@ import { ElMessage } from "element-plus";
 interface ProjectForm {
   projectCode: string;
   projectName: string;
-  drugName: string;
+  deviceName: string;
   indication: string;
-  sponsor: string;
+  applicant: string;
   cro: string;
   protocolNumber: string;
-  phase: string;
-  reviewer: string;
-  enrollment: string;
-  startDate: string;
+  stageNo: string;
+  managerId: string;
+  enrollCount: string;
+  startTime: string;
   pmName: string;
-  pmPhone: string;
+  pmMobile: string;
   pmEmail: string;
-  description: string;
+  projectDesc: string;
 }
 
 interface UserOption {
-  id: string;
-  name: string;
+  userId: string;
+  nickName: string;
 }
 
 const props = defineProps<{
@@ -160,22 +154,22 @@ const currentId = ref<string>("");
 const formData = reactive<ProjectForm>({
   projectCode: "",
   projectName: "",
-  drugName: "",
+  deviceName: "",
   indication: "",
-  sponsor: "",
+  applicant: "",
   cro: "",
   protocolNumber: "",
-  phase: "",
-  reviewer: "",
-  enrollment: "",
-  startDate: "",
+  stageNo: "",
+  managerId: "",
+  enrollCount: "",
+  startTime: "",
   pmName: "",
-  pmPhone: "",
+  pmMobile: "",
   pmEmail: "",
-  description: ""
+  projectDesc: ""
 });
 
-const phaseOptions = [
+const stageNoOptions = [
   { value: "1", label: "I期/BE" },
   { value: "2", label: "II期" },
   { value: "3", label: "III期" },
@@ -192,13 +186,13 @@ const phaseOptions = [
 const formRules = reactive<FormRules<ProjectForm>>({
   projectCode: [{ required: true, message: "请输入项目立项号", trigger: "blur" }],
   projectName: [{ required: true, message: "请输入项目名称", trigger: "blur" }],
-  sponsor: [{ required: true, message: "请输入申办方", trigger: "blur" }],
-  phase: [{ required: true, message: "请选择试验分期", trigger: "change" }],
-  reviewer: [{ required: true, message: "请选择文件审查员", trigger: "change" }],
-  enrollment: [{ required: true, message: "请输入入组例数", trigger: "blur" }],
-  startDate: [{ required: true, message: "请选择启动日期", trigger: "change" }],
+  applicant: [{ required: true, message: "请输入申办方", trigger: "blur" }],
+  stageNo: [{ required: true, message: "请选择试验分期", trigger: "change" }],
+  managerId: [{ required: true, message: "请选择文件审查员", trigger: "change" }],
+  enrollCount: [{ required: true, message: "请输入入组例数", trigger: "blur" }],
+  startTime: [{ required: true, message: "请选择启动日期", trigger: "change" }],
   pmName: [{ required: true, message: "请输入PM姓名", trigger: "blur" }],
-  pmPhone: [
+  pmMobile: [
     { required: true, message: "请输入PM手机", trigger: "blur" },
     { pattern: /^1[3-9]\d{9}$/, message: "请输入正确的手机号", trigger: "blur" }
   ],
@@ -244,7 +238,6 @@ const handleSubmit = async () => {
     await formRef.value?.validate();
     emit("submit", { ...formData });
     visible.value = false;
-    ElMessage.success(mode.value === "add" ? "新增成功" : "编辑成功");
   } catch (error) {
     console.error("表单验证失败:", error);
   }
@@ -252,7 +245,8 @@ const handleSubmit = async () => {
 
 defineExpose({
   openAddDialog,
-  openEditDialog
+  openEditDialog,
+  mode
 });
 </script>
 
