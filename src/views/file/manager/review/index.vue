@@ -20,10 +20,10 @@
         <el-radio-button label="驳回" value="2" />
       </template>
       <el-badge :value="0" class="item" v-if="modeSwitching === '3'" color="green">
-        <el-radio-button label="拒绝" value="3" />
+        <el-radio-button label="拒绝" value="4" />
       </el-badge>
       <template v-else>
-        <el-radio-button label="拒绝" value="3" />
+        <el-radio-button label="拒绝" value="4" />
       </template>
     </el-radio-group>
     <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" :data-callback="dataCallback" @drag-sort="sortTable">
@@ -112,7 +112,7 @@ watch(
 // 如果你想在请求之前对当前请求参数做一些操作，可以自定义如下函数：params 为当前所有的请求参数（包括分页），最后返回请求列表接口
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
-  params.status = modeSwitching.value;
+  params.fileStatus = modeSwitching.value;
   return fileInfoList(params);
 };
 
