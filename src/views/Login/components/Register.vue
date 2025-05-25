@@ -11,11 +11,9 @@
       <el-row :gutter="20">
         <!-- 第一行 -->
         <el-col :span="12">
-          <el-form-item label="申请角色" prop="role" :rules="[{ required: true, message: '请选择申请角色', trigger: 'change' }]">
-            <el-select v-model="form.role" placeholder="请选择...">
-              <el-option label="角色1" value="role1" />
-              <el-option label="角色2" value="role2" />
-              <el-option label="角色3" value="role3" />
+          <el-form-item label="申请角色" prop="permissionGroupId" :rules="[{ required: true, message: '请选择申请角色', trigger: 'change' }]">
+            <el-select v-model="form.permissionGroupId" placeholder="请选择...">
+              <el-option v-for="item in registerGroups" :key="item.id" :label="item.groupName" :value="item.id" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -23,8 +21,8 @@
 
         <!-- 第二行 -->
         <el-col :span="8">
-          <el-form-item label="账号" prop="account" :rules="[{ required: true, message: '请输入账号', trigger: 'blur' }]">
-            <el-input v-model="form.account" placeholder="请输入账号" />
+          <el-form-item label="账号" prop="userName" :rules="[{ required: true, message: '请输入账号', trigger: 'blur' }]">
+            <el-input v-model="form.userName" placeholder="请输入账号" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -50,23 +48,22 @@
             :rules="[{ required: true, message: '请选择单位类型', trigger: 'change' }]"
           >
             <el-select v-model="form.companyType" placeholder="请选择单位类型">
-              <el-option label="企业" value="enterprise" />
-              <el-option label="事业单位" value="institution" />
-              <el-option label="政府机关" value="government" />
-              <el-option label="社会团体" value="organization" />
-              <el-option label="其他" value="other" />
+              <el-option label="临床实验机构" value="1" />
+              <el-option label="合同研究组织" value="2" />
+              <el-option label="申办方" value="3" />
+              <el-option label="SMO" value="4" />
+              <el-option label="其他" value="5" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item
             label="单位名称"
-            prop="companyName"
+            prop="companyNo"
             :rules="[{ required: true, message: '请选择单位名称', trigger: 'change' }]"
           >
             <el-select
-              v-model="form.companyName"
-              multiple
+              v-model="form.companyNo"
               filterable
               remote
               reserve-keyword
@@ -74,7 +71,7 @@
               :remote-method="remoteMethod"
               :loading="loading"
             >
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option v-for="item in options" :key="item.value" :label="item.companyName" :value="item.id" />
               <template #loading>
                 <svg class="circular" viewBox="0 0 50 50">
                   <circle class="path" cx="25" cy="25" r="20" fill="none" />
@@ -90,8 +87,8 @@
 
         <!-- 第四行 -->
         <el-col :span="8">
-          <el-form-item label="真实姓名" prop="userName" :rules="[{ required: true, message: '请输入姓名', trigger: 'blur' }]">
-            <el-input v-model="form.userName" placeholder="请输入姓名" />
+          <el-form-item label="真实姓名" prop="nickName" :rules="[{ required: true, message: '请输入姓名', trigger: 'blur' }]">
+            <el-input v-model="form.nickName" placeholder="请输入姓名" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -101,8 +98,8 @@
         </el-col>
         <el-col :span="8"> </el-col>
         <el-col :span="8">
-          <el-form-item label="手机号码" prop="phone" :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' }]">
-            <el-input v-model="form.phone" placeholder="请输入手机号" />
+          <el-form-item label="手机号码" prop="mobile" :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' }]">
+            <el-input v-model="form.mobile" placeholder="请输入手机号" />
           </el-form-item>
         </el-col>
 
@@ -110,12 +107,12 @@
         <el-col :span="12">
           <el-form-item
             label="验证码"
-            prop="verificationCode"
+            prop="verifyCode"
             :rules="[{ required: true, message: '请输入验证码', trigger: 'blur' }]"
             style="display: flex; align-items: center"
           >
-            <el-input v-model="form.verificationCode" placeholder="请输入手机验证码" style="width: 50%; margin-right: 10px" />
-            <el-button @click="getVerificationCode" :disabled="countdown > 0">
+            <el-input v-model="form.verifyCode" placeholder="请输入手机验证码" style="width: 50%; margin-right: 10px" />
+            <el-button @click="getVerificationCode" :disabled="countdown > 0 || formHasError">
               {{ countdown > 0 ? countdown + "秒后重发" : "获取验证码" }}
             </el-button>
           </el-form-item>
@@ -132,25 +129,31 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, onUnmounted } from "vue";
+import { ref, onMounted, reactive, onUnmounted,watch } from "vue";
 import { ElMessage } from "element-plus";
 import AddUnitDialog from "./AddUnitDialog.vue";
+import { getRegisterGroups, companyInfoList, getVerifyCode, register } from "@/api/modules/register";
+
+
 defineProps({ modelValue: Boolean });
 const emit = defineEmits(["update:modelValue"]);
 const dialogVisible = ref(false);
 const options = ref([]);
 const formRef = ref();
+const registerGroups = ref([]);
+const companyInfos = ref([]);
 const form = reactive({
-  role: "",
-  account: "",
+  permissionGroupId: "",
+  userName: "",
   companyType: "",
   password: "",
-  userName: "",
+  nickName: "",
   confirmPassword: "",
-  phone: "",
+  mobile: "",
   email: "",
   companyName: "",
-  verificationCode: ""
+  companyNo: "",
+  verifyCode: ""
 });
 
 const loading = ref(false);
@@ -163,40 +166,65 @@ const validatePass = (rule, value, callback) => {
   }
 };
 
+// 在其他 ref 变量声明后添加
+const formHasError = ref(false);
+
+// 添加表单验证函数
+const validateForm = async () => {
+  try {
+    await formRef.value.validate();
+    formHasError.value = false;
+  } catch (error) {
+    // 检查是否有除 verifyCode 之外的其他字段错误
+    const hasOtherErrors = Object.keys(error).some(key => key !== 'verifyCode');
+    formHasError.value = hasOtherErrors;
+  }
+};
+
+// 添加表单监听
+watch(() => form, () => {
+  validateForm();
+}, { deep: true });
+
 const rules = {
-  role: [{ required: true, message: "请选择申请角色", trigger: "change" }],
-  account: [{ required: true, message: "请输入账号", trigger: "blur" }],
+  permissionGroupId: [{ required: true, message: "请选择申请角色", trigger: "change" }],
+  userName: [{ required: true, message: "请输入账号", trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
   confirmPassword: [
     { required: true, message: "请输入确认密码", trigger: "blur" },
     { validator: validatePass, trigger: "blur" }
   ],
-  phone: [
+  mobile: [
     { required: true, message: "请输入手机号", trigger: "blur" },
-    { pattern: /^1[3-9]\d{9}$/, message: "请输入正确的手机号", trigger: "blur" }
+    { pattern: /^1(3[0-9]|4[5-9]|5[0-35-9]|6[6]|7[0-8]|8[0-9]|9[8-9])\d{8}$/, message: "请输入正确的手机号", trigger: "blur" }
   ],
   email: [
     { required: true, message: "请输入电子邮箱", trigger: "blur" },
     { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }
   ],
-  verificationCode: [{ required: true, message: "请输入验证码", trigger: "blur" }]
+  verifyCode: [{ required: true, message: "请输入验证码", trigger: "blur" }]
 };
 
 const countdown = ref(0);
 let timer = null;
 
 const getVerificationCode = () => {
-  if (!form.phone) {
+  if (!form.mobile) {
     ElMessage.error("请先输入手机号");
     return;
   }
-
-  ElMessage.success("验证码已发送");
-  countdown.value = 60;
-  timer = setInterval(() => {
-    countdown.value--;
-    if (countdown.value <= 0) clearInterval(timer);
-  }, 1000);
+  getVerifyCode({ mobile: form.mobile }).then(res => {
+    if (res.data.code === 200) {
+      ElMessage.success("验证码已发送");
+      countdown.value = 60;
+      timer = setInterval(() => {
+        countdown.value--;
+        if (countdown.value <= 0) clearInterval(timer);
+      }, 1000);
+    } else {
+      ElMessage.error(res.data.message);
+    }
+  });
 };
 const states = [
   "Alabama",
@@ -252,6 +280,12 @@ const states = [
 ];
 const list = ref([]);
 onMounted(() => {
+  getRegisterGroups().then(res => {
+    registerGroups.value = res.data;
+  });
+  companyInfoList().then(res => {
+    companyInfos.value = res.data;
+  });
   list.value = states.map(item => {
     return { value: `value:${item}`, label: `label:${item}` };
   });
@@ -264,24 +298,35 @@ const handleUnitConfirm = unitData => {
 const remoteMethod = query => {
   if (query) {
     loading.value = true;
-    setTimeout(() => {
+    companyInfoList().then(res => {
       loading.value = false;
-      options.value = list.value.filter(item => {
-        return item.label.toLowerCase().includes(query.toLowerCase());
+      options.value = res.data.filter(item => {
+        return item.companyName.toLowerCase().includes(query.toLowerCase());
       });
-    }, 3000);
+    });
   } else {
-    options.value = [];
+    options.value = companyInfos.value
   }
 };
 
 const handleSubmit = async () => {
   try {
     await formRef.value.validate();
+    console.log(form);
+    const submitForm = {
+      ...form,
+      companyName: companyInfos.value.find(e => e.id === form.companyNo).companyName
+    }
     // 验证通过，提交表单
-    ElMessage.success("注册成功");
-    resetForm();
-    emit("update:modelValue", false);
+    register(submitForm).then(res => {
+      if (res.data.code === 200) {
+        ElMessage.success("注册成功");
+        resetForm();
+        emit("update:modelValue", false);
+      } else {
+        ElMessage.error(res.data.message);
+      }
+    });
   } catch (error) {
     ElMessage.error("请填写完整的表单信息");
   }
