@@ -53,9 +53,9 @@
       <!-- 表格操作 -->
       <template #operation="scope">
         <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
+        <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
-        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button>
+        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
       </template>
     </ProTable>
     <UserDrawer ref="drawerRef" />
@@ -76,17 +76,7 @@ import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
-import {
-  getUserList,
-  deleteUser,
-  editUser,
-  addUser,
-  changeUserStatus,
-  resetUserPassWord,
-  exportUserInfo,
-  BatchAddUser,
-  getUserStatus
-} from "@/api/modules/user";
+import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
 import { de, pa } from "element-plus/es/locale";
 import { fileControllerCertList } from "@/api/modules/fileInfo";
 import dayjs from "dayjs";
@@ -138,20 +128,37 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "projectName", label: "项目名称", search: { el: "input" } },
   { prop: "fileId", label: "文件编码", width: 85, search: { el: "input" } },
   { prop: "attachmentName", label: "文件名", width: 80 },
-  { prop: "attachmentUrl", label: "源文件", width: 90, render(scope) {
-    // @ts-ignore
-    return <a style="color: #3878df" href={scope.row.attachmentUrl} target="_blank">查看</a>
-  }},
+  {
+    prop: "attachmentUrl",
+    label: "源文件",
+    width: 90,
+    render(scope) {
+      return (
+        <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+          查看
+        </a>
+      );
+    }
+  },
   { prop: "fileCount", label: "申请份数", width: 90 },
-  { prop: "checkType", label: "受控方式", width: 90, render(scope) {
-    // @ts-ignore
-    return <div>{scope.row.checkType === 0 ? "线上受控" : "线下受控"}</div>
-  }},
+  {
+    prop: "checkType",
+    label: "受控方式",
+    width: 90,
+    render(scope) {
+      return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
+    }
+  },
   { prop: "reviewerName", label: "申请人", width: 85 },
-  { prop: "reviewerTime", label: "申请日期", width: 120, render(scope) {
-    // @ts-ignore
-    return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : ""}</div>
-  }},
+  {
+    prop: "reviewerTime",
+    label: "申请日期",
+    width: 120,
+    render(scope) {
+      // @ts-ignore
+      return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : ""}</div>;
+    }
+  },
   { prop: "operation", label: "操作", fixed: "right", width: 120 }
 ]);
 
@@ -181,24 +188,12 @@ const changeStatus = async (row: User.ResUserList) => {
 };
 
 // 导出用户列表
-const downloadFile = async () => {
-  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
-    useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam)
-  );
-};
+// const downloadFile = async () => {
+//   ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam));
+// };
 
 // 批量添加用户
 const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);
-const batchAdd = () => {
-  const params = {
-    title: "用户",
-    tempApi: exportUserInfo,
-    importApi: BatchAddUser,
-    getTableList: proTable.value?.getTableList
-  };
-  dialogRef.value?.acceptParams(params);
-};
-
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref<InstanceType<typeof UserDrawer> | any>(null);
 const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {

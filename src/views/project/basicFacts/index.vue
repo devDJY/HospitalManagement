@@ -3,7 +3,40 @@
     <div style="width: 79%">
       <div class="card echats mb-10">
         <div classs="title">概况</div>
-        <div class="flex"></div>
+        <div class="flex item">
+          <div>
+            <div class="echats-title">文件申请</div>
+            <div class="echats-num">1</div>
+          </div>
+          <div>
+            <div class="echats-title">驳回/拒绝申请</div>
+            <div class="echats-num">1</div>
+          </div>
+          <div>
+            <div class="echats-title">文件受控</div>
+            <div class="echats-num">{{ listdata.certNum }}</div>
+          </div>
+          <div>
+            <div class="echats-title">文件作废</div>
+            <div class="echats-num">{{ listdata.certNum }}</div>
+          </div>
+          <div>
+            <div class="echats-title">文件打印</div>
+            <div class="echats-num">{{ listdata.certNum }}</div>
+          </div>
+          <div>
+            <div class="echats-title">文件使用</div>
+            <div class="echats-num">{{ listdata.certNum }}</div>
+          </div>
+          <div>
+            <div class="echats-title">文件回收</div>
+            <div class="echats-num">{{ listdata.certNum }}</div>
+          </div>
+          <div>
+            <div class="echats-title">遗失文件</div>
+            <div class="echats-num">{{ listdata.certNum }}</div>
+          </div>
+        </div>
       </div>
       <div class="card mb-10">
         <div class="title">形式审查</div>
@@ -80,7 +113,6 @@
 
 <script setup lang="ts" name="home">
 import { onMounted, ref } from "vue";
-import { loginApi } from "@/api/modules/login";
 import { getHomeInfoForManager, getHomeNews } from "@/api/modules/home";
 import { useUserStore } from "@/stores/modules/user";
 const userStore = useUserStore();
@@ -112,7 +144,20 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .echats {
-  height: 236px;
+  height: 136px;
+}
+.echats-title {
+  padding-bottom: 10px;
+  font-size: 14px;
+  color: #333333;
+}
+.item {
+  padding: 20px 40px;
+  text-align: center;
+}
+.echats-num {
+  font-size: 20px;
+  font-weight: bold;
 }
 .title {
   width: 100%;

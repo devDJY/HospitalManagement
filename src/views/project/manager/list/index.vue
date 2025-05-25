@@ -48,9 +48,9 @@
         <el-button type="primary" v-if="modeSwitching == '0'" link :icon="Edit" @click="editBtn(scope.row)">编辑</el-button>
         <el-button type="warning" v-if="modeSwitching == '0'" link :icon="RemoveFilled" @click="lock(scope.row)">锁库</el-button>
         <el-button type="danger" v-if="modeSwitching == '0'" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
-        <el-button type="success" v-if="modeSwitching == '1'" link :icon="Search" @click="deletePro(scope.row)">查看</el-button>
+        <el-button type="success" v-if="modeSwitching == '1'" link :icon="Search" @click="documentTest(scope.row)">查看</el-button>
       </template>
-      <!-- <template #append>
+      <!-- <template #append>项目测试
         <span style="color: var(--el-color-primary)">我是插入在表格最后的内容。若表格有合计行，该内容会位于合计行之上。</span>
       </template> -->
     </ProTable>
@@ -80,15 +80,7 @@ import ProjectFormDialog from "./ProjectFormDialog.vue";
 import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { deleteUser, resetUserPassWord } from "@/api/modules/user";
-import {
-  projectList,
-  projectLock,
-  projectDelete,
-  projectMoveAuthUserQuery,
-  projectQueryManager,
-  projectAdd,
-  projectUpdate
-} from "@/api/modules/project";
+import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery, projectQueryManager, projectAdd, projectUpdate } from "@/api/modules/project";
 import { Search, Delete, Edit, Plus, RemoveFilled } from "@element-plus/icons-vue";
 import router from "@/routers";
 const lockDialog = ref(false);
@@ -252,11 +244,14 @@ const lockOK = async () => {
   proTable.value?.getTableList();
   lockDialog.value = false;
 };
-// 重置用户密码
-const resetPass = async (params: User.ResUserList) => {
-  router.push(`/archive/archivedFile`);
+// 查看项目详情
+const resetPass = async params => {
+  router.push(`/project/basicFacts?projectId=${params.projectId}`);
   // await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
   // proTable.value?.getTableList();
+};
+const documentTest = async (params: any) => {
+  router.push(`/archive/archivedFile`);
 };
 
 const projectFormDialog = ref();
