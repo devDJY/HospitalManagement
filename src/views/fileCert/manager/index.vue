@@ -49,8 +49,8 @@
           <el-table-column prop="projectName" label="项目名称" />
           <el-table-column prop="fileCode" label="文件编码" />
           <el-table-column prop="fileName" label="文件名" />
-          <el-table-column prop="address" label="文件受控编码" />
-          <el-table-column prop="address" label="回收原因" />
+          <el-table-column prop="fileControllerCode" label="文件受控编码" width="120" />
+          <el-table-column prop="applyReason" label="回收原因" />
           <el-table-column prop="applyUserName" label="申请人" />
           <el-table-column prop="applyTime" label="申请日期" />
           <el-table-column prop="status" label="状态" />
@@ -62,8 +62,8 @@
           <el-table-column prop="projectName" label="项目名称" />
           <el-table-column prop="fileCode" label="文件编码" />
           <el-table-column prop="fileName" label="文件名" />
-          <el-table-column prop="address" label="文件受控编码" />
-          <el-table-column prop="address" label="回收原因" />
+          <el-table-column prop="fileControllerCode" label="文件受控编码" />
+          <el-table-column prop="applyReason" label="回收原因" />
           <el-table-column prop="applyUserName" label="交件人" />
           <el-table-column prop="applyTime" label="交件日期" />
           <el-table-column prop="status" label="状态" />
@@ -75,7 +75,7 @@
           <el-table-column prop="projectName" label="项目名称" />
           <el-table-column prop="fileCode" label="文件编码" />
           <el-table-column prop="fileName" label="文件名" />
-          <el-table-column prop="address" label="文件受控编码" />
+          <el-table-column prop="fileControllerCode" label="文件受控编码" />
           <el-table-column prop="applyUserName" label="申报人" />
           <el-table-column prop="applyTime" label="申请日期" />
           <el-table-column prop="status" label="状态" />
