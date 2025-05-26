@@ -113,6 +113,7 @@ const getTableList = (params: any) => {
       {
         prop: "idCard",
         label: "源文件",
+        width: 80,
         render(scope) {
           return (
             <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
@@ -126,9 +127,14 @@ const getTableList = (params: any) => {
       { prop: "pageTotal", label: "文件页数", width: 115 },
       { prop: "applyUserName", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "申请日期", width: 85 },
+      { prop: "applyAttachmentName", label: "附件", width: 85, render(scope) {
+        return (
+          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+            { (scope.row as any).applyAttachmentName  }
+          </a>
+        )
+      } },
+      { prop: "reviewerTime", label: "受控时间", width: 115 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else if (modeSwitching.value == "2") {

@@ -292,14 +292,14 @@ const getTableList = (params: any) => {
       },
       { prop: "fileControllerCode", label: "文件受控码", width: 105 },
       { prop: "fileCount", label: "作废份数", width: 90 },
-      { prop: "creatorName", label: "作废说明", width: 85 },
+      { prop: "remark", label: "作废说明", width: 85 },
       {
-        prop: "createTime",
+        prop: "reviewerTime",
         label: "作废日期",
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{anyRow.createTime ? dayjs(anyRow.createTime).format("YYYY-MM-DD") : ""}</div>;
+          return <div>{anyRow.reviewerTime ? dayjs(anyRow.reviewerTime).format("YYYY-MM-DD") : ""}</div>;
         }
       }
     );
