@@ -102,6 +102,7 @@ watch(
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
   params.reviewStatus = modeSwitching.value;
+  params.isManager = true;
   if (modeSwitching.value == "0") {
     columns.splice(
       0,
