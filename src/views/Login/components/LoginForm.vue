@@ -27,8 +27,8 @@
   <div class="login-btn">
     <ForgetPassword v-model="showModal" />
     <Register v-model="RegisterModal" />
-    <el-button :icon="CircleClose" round size="large" @click="resetForm(loginFormRef)"> 重置 {{ showModal }}</el-button>
-    <el-button :icon="UserFilled" round size="large" type="primary" :loading="loading" @click="login(loginFormRef)">
+    <!-- <el-button :icon="CircleClose" round size="large" @click="resetForm(loginFormRef)"> 重置 {{ showModal }}</el-button> -->
+    <el-button style="width: 100%;" :icon="UserFilled" round size="large" type="primary" :loading="loading" @click="login(loginFormRef)">
       登录
     </el-button>
   </div>
