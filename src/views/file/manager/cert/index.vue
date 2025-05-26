@@ -121,6 +121,8 @@ const getTableList = (params: any) => {
     case "4":
       return fileControllerCancelCertList(params);
       break;
+    default:
+      return fileControllerWaitList(params);
   }
 };
 
