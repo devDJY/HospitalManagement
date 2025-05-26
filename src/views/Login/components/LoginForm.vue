@@ -50,6 +50,7 @@ import { CircleClose, UserFilled } from "@element-plus/icons-vue";
 import type { ElForm } from "element-plus";
 import { useAuthStore } from "@/stores/modules/auth";
 // import md5 from "md5";
+// @ts-ignore
 import ForgetPassword from "./ForgetPassword.vue";
 import Register from "./Register.vue";
 import { localSet } from "@/utils";

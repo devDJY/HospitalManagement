@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts" name="login">
+// @ts-ignore
 import LoginForm from "./components/LoginForm.vue";
 import SwitchDark from "@/components/SwitchDark/index.vue";
 </script>

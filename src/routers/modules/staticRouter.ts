@@ -12,6 +12,7 @@ export const staticRouter: RouteRecordRaw[] = [
   {
     path: LOGIN_URL,
     name: "login",
+    // @ts-ignore
     component: () => import("@/views/login/index.vue"),
     meta: {
       title: "登录"
