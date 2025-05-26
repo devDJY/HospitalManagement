@@ -78,8 +78,9 @@ import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/P
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
 import { de, pa } from "element-plus/es/locale";
-import { fileControllerCertList } from "@/api/modules/fileInfo";
+import { fileControllerCancelCertList, fileControllerCertList, fileControllerPrintCertList, fileControllerWaitList } from "@/api/modules/fileInfo";
 import dayjs from "dayjs";
+import { c } from "vite/dist/node/types.d-aGj9QkWt";
 
 const router = useRouter();
 
@@ -107,7 +108,20 @@ watch(
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
   params.status = modeSwitching.value;
-  return fileControllerCertList(params);
+  switch (modeSwitching.value) {
+    case "1":
+      return fileControllerWaitList(params);
+      break;
+    case "2":
+      return fileControllerCertList(params);
+      break;
+    case "3":
+      return fileControllerPrintCertList(params);
+      break;
+    case "4":
+      return fileControllerCancelCertList(params);
+      break;
+  }
 };
 
 // 页面按钮权限（按钮权限既可以使用 hooks，也可以直接使用 v-auth 指令，指令适合直接绑定在按钮上，hooks 适合根据按钮权限显示不同的内容）

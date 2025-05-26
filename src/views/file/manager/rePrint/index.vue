@@ -72,7 +72,7 @@ import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, BatchAddUser } from "@/api/modules/user";
-import { fileControllerCertList } from "@/api/modules/fileInfo";
+import { fileControllerCertList, fileControllerRePrintList } from "@/api/modules/fileInfo";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
@@ -102,6 +102,7 @@ watch(
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
   params.reviewStatus = modeSwitching.value;
+  params.isManager = true;
   if (modeSwitching.value == "0") {
     columns.splice(
       0,
@@ -180,7 +181,7 @@ const getTableList = (params: any) => {
       { prop: "reviewerTime", label: "审核日期", width: 85 }
     );
   }
-  return fileControllerCertList(params);
+  return fileControllerRePrintList(params);
 };
 
 // 表格配置项

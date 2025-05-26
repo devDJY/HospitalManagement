@@ -52,15 +52,7 @@ import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import TransferPermissionDialog from "./TransferPermissionDialog.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
-import {
-  deleteUser,
-  editUser,
-  addUser,
-  changeUserStatus,
-  resetUserPassWord,
-  exportUserInfo,
-  BatchAddUser
-} from "@/api/modules/user";
+import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser } from "@/api/modules/user";
 import { projectMoveAuthList } from "@/api/modules/project";
 const transferDialogRef = ref();
 const router = useRouter();
@@ -98,7 +90,7 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "selection", fixed: "left", width: 70 },
   { prop: "nickName", label: "姓名", search: { el: "input" } },
-  { prop: "groupId", label: "权限组", width: 85 },
+  { prop: "groupName", label: "权限组", width: 85 },
   { prop: "companyName", label: "单位名称", search: { el: "input" } },
   { prop: "projectCode", label: "项目立项号", search: { el: "input" } },
   { prop: "operation", label: "操作", fixed: "right", width: 330 }
@@ -131,9 +123,7 @@ const changeStatus = async (row: User.ResUserList) => {
 
 // 导出用户列表
 const downloadFile = async () => {
-  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
-    useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam)
-  );
+  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam));
 };
 
 // 批量添加用户

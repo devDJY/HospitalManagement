@@ -6,10 +6,30 @@ export const fileInfoList = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/fileInfo/list", pa, { loading: false });
 };
-///fileController/cert/list
+//文件-受控-待受控列表
+export const fileControllerWaitList = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/wait/list", pa, { loading: false });
+};
+//已受控-查询列表
 export const fileControllerCertList = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/fileController/cert/list", pa, { loading: false });
+};
+//已打印：
+export const fileControllerPrintCertList = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/print/cert/list", pa, { loading: false });
+};
+//已作废
+export const fileControllerCancelCertList = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/cancel/cert/list", pa, { loading: false });
+};
+//文件-重新打印-查询列表
+export const fileControllerRePrintList = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/rePrint/list", pa, { loading: false });
 };
 //件-回收-查询列表
 export const fileControllerRecycleList = params => {
