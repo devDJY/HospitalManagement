@@ -7,17 +7,17 @@
       <template v-else>
         <el-radio-button label="待审核" value="0" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
-        <el-radio-button label="通过" value="1" />
-      </el-badge>
-      <template v-else>
-        <el-radio-button label="通过" value="1" />
-      </template>
       <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
-        <el-radio-button label="驳回" value="2" />
+        <el-radio-button label="通过" value="2" />
       </el-badge>
       <template v-else>
-        <el-radio-button label="驳回" value="2" />
+        <el-radio-button label="通过" value="2" />
+      </template>
+      <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
+        <el-radio-button label="驳回" value="1" />
+      </el-badge>
+      <template v-else>
+        <el-radio-button label="驳回" value="1" />
       </template>
     </el-radio-group>
     <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" @drag-sort="sortTable">
@@ -129,7 +129,7 @@ const getTableList = (params: any) => {
       { prop: "applyTime", label: "申请日期", width: 85 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
-  } else if (modeSwitching.value == "1") {
+  } else if (modeSwitching.value == "2") {
     columns.splice(
       0,
       columns.length,
@@ -154,7 +154,7 @@ const getTableList = (params: any) => {
       { prop: "applyRemark", label: "申请说明", width: 115 },
       { prop: "applyTime", label: "申请日期", width: 85 }
     );
-  } else if (modeSwitching.value == "2") {
+  } else if (modeSwitching.value == "1") {
     columns.splice(
       0,
       columns.length,

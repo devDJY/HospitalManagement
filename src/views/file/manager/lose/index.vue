@@ -7,13 +7,13 @@
       <template v-else>
         <el-radio-button label="待审核" value="0" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
+      <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
         <el-radio-button label="通过" value="2" />
       </el-badge>
       <template v-else>
         <el-radio-button label="通过" value="2" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
+      <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
         <el-radio-button label="驳回" value="1" />
       </el-badge>
       <template v-else>
