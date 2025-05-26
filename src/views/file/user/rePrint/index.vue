@@ -72,7 +72,7 @@ import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, BatchAddUser } from "@/api/modules/user";
-import { fileControllerLoseList } from "@/api/modules/fileInfo";
+import { fileControllerCertList, fileControllerRePrintList } from "@/api/modules/fileInfo";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
@@ -123,20 +123,10 @@ const getTableList = (params: any) => {
       },
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
-      { prop: "applyUserName", label: "申报人", width: 115 },
-      { prop: "applyRemark", label: "遗失说明", width: 115 },
-      {
-        prop: "applyAttachmentName",
-        label: "附件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).applyAttachmentName} target="_blank">
-              查看
-            </a>
-          );
-        }
-      },
-      { prop: "applyTime", label: "申报日期", width: 85 },
+      { prop: "printCount", label: "重新打印份数", width: 115 },
+      { prop: "applyUserName", label: "申请人", width: 85 },
+      { prop: "applyRemark", label: "申请说明", width: 115 },
+      { prop: "applyTime", label: "申请日期", width: 85 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else if (modeSwitching.value == "2") {
@@ -158,12 +148,11 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "address", label: "受控文件", width: 115 },
-      { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
-      { prop: "pageTotal", label: "申报人", width: 115 },
-      { prop: "applyUserName", label: "遗失说明", width: 85 },
-      { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "address", label: "文件受控编码", width: 115, search: { el: "input" } },
+      { prop: "printCount", label: "重新打印份数", width: 115 },
+      { prop: "applyUserName", label: "申请人", width: 85 },
+      { prop: "applyRemark", label: "申请说明", width: 115 },
+      { prop: "applyTime", label: "申请日期", width: 85 }
     );
   } else if (modeSwitching.value == "1") {
     columns.splice(
@@ -184,15 +173,15 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "address", label: "受控文件", width: 115 },
-      { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
-      { prop: "pageTotal", label: "申报人", width: 115 },
-      { prop: "applyUserName", label: "遗失说明", width: 85 },
-      { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "address", label: "文件受控编码", width: 115, search: { el: "input" } },
+      { prop: "printCount", label: "重新打印份数", width: 115 },
+      { prop: "applyUserName", label: "申请人", width: 85 },
+      { prop: "applyRemark", label: "申请说明", width: 115 },
+      { prop: "reviewRemark", label: "审核意见", width: 85 },
+      { prop: "reviewerTime", label: "审核日期", width: 85 }
     );
   }
-  return fileControllerLoseList(params);
+  return fileControllerRePrintList(params);
 };
 
 // 表格配置项
@@ -237,9 +226,21 @@ const changeStatus = async (row: User.ResUserList) => {
 };
 
 // 导出用户列表
+// const downloadFile = async () => {
+//   ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam));
+// };
 
 // 批量添加用户
 const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);
+// const batchAdd = () => {
+//   const params = {
+//     title: "用户",
+//     tempApi: exportUserInfo,
+//     importApi: BatchAddUser,
+//     getTableList: proTable.value?.getTableList
+//   };
+//   dialogRef.value?.acceptParams(params);
+// };
 
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref<InstanceType<typeof UserDrawer> | any>(null);

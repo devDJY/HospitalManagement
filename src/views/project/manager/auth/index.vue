@@ -26,7 +26,7 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">授权[0]人</el-button>
+        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">授权[{{ scope.row.userCount }}]人</el-button>
         <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
@@ -53,17 +53,7 @@ import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/P
 import AuthDialog from "./AuthDialog.vue";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 const authDialogRef = ref();
-import {
-  getUserList,
-  deleteUser,
-  editUser,
-  addUser,
-  changeUserStatus,
-  resetUserPassWord,
-  exportUserInfo,
-  BatchAddUser,
-  getUserStatus
-} from "@/api/modules/user";
+import { getUserList, deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
 import { projectAuthorizeList } from "@/api/modules/project";
 import { i } from "vite/dist/node/types.d-aGj9QkWt";
 
@@ -101,11 +91,11 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "selection", fixed: "left", width: 70 },
-  { prop: "projectId", label: "项目立项号", search: { el: "input" } },
+  { prop: "projectCode", label: "项目立项号", search: { el: "input" } },
   { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
   { prop: "applicant", label: "申办方" },
-  { prop: "idCard", label: "试验分期" },
-  { prop: "idCard", label: "入组列数" },
+  { prop: "stageNo", label: "试验分期" },
+  { prop: "enrollCount", label: "入组列数" },
   { prop: "startTime", label: " 启动日期" },
   { prop: "operation", label: "操作", fixed: "right", width: 330 }
 ]);
@@ -137,9 +127,7 @@ const changeStatus = async (row: User.ResUserList) => {
 
 // 导出用户列表
 const downloadFile = async () => {
-  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
-    useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam)
-  );
+  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam));
 };
 
 // 批量添加用户
