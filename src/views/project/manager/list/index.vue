@@ -47,7 +47,7 @@
         <el-button type="success" v-if="modeSwitching == '0'" link :icon="Search" @click="resetPass(scope.row)">查看</el-button>
         <el-button type="primary" v-if="modeSwitching == '0'" link :icon="Edit" @click="editBtn(scope.row)">编辑</el-button>
         <el-button type="warning" v-if="modeSwitching == '0'" link :icon="RemoveFilled" @click="lock(scope.row)">锁库</el-button>
-        <el-button type="danger" v-if="modeSwitching == '0'" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
+        <el-button type="danger" v-if="modeSwitching == '0' && scope.row.canDeleted" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
         <el-button type="success" v-if="modeSwitching == '1'" link :icon="Search" @click="documentTest(scope.row)">查看</el-button>
       </template>
       <!-- <template #append>项目测试
@@ -218,6 +218,7 @@ const getTableList = (params?: any) => {
     );
   }
   params.status = modeSwitching.value;
+  params.isManager = true;
   return projectList(params);
 };
 
@@ -246,7 +247,12 @@ const lockOK = async () => {
 };
 // 查看项目详情
 const resetPass = async params => {
-  router.push(`/project/basicFacts?projectId=${params.projectId}`);
+  try {
+    await router.push(`/project/basicFacts?projectId=${params.projectId}&isManager=1`);
+  } catch (error) {
+    ElMessage.error("跳转失败，请稍后再试");
+    console.error("路由跳转错误:", error);
+  }
   // await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
   // proTable.value?.getTableList();
 };

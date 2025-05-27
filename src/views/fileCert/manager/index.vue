@@ -86,8 +86,9 @@
       <div class="card mb-10">
         <div classs="title">最新动态</div>
         <el-timeline style="max-width: 600px">
-          <el-timeline-item center timestamp="2018/4/2" placement="top"> Event start </el-timeline-item>
-          <el-timeline-item timestamp="2018/4/2" placement="top"> Event end </el-timeline-item>
+          <el-timeline-item :timestamp="dayjs(item.updateTime).format('YYYY-MM-DD')" placement="top" v-for="(item, index) in newsData" :key="index">
+            <div>{{ item.creatorName }}的[{{ item.fileName }}]{{ item.msgTitle }}</div>
+          </el-timeline-item>
         </el-timeline>
       </div>
     </div>
@@ -98,10 +99,12 @@
 import { onMounted, ref } from "vue";
 import Pie from "../components/pie.vue";
 import { loginApi } from "@/api/modules/login";
-import { getHomeInfoForManager, getHomeNews } from "@/api/modules/home";
+import { getHomeInfoForManager, getHomeNewsForManager } from "@/api/modules/home";
 import { useUserStore } from "@/stores/modules/user";
+import dayjs from "dayjs";
 const userStore = useUserStore();
 const listdata = ref();
+const newsData = ref();
 const fetchData = async () => {
   try {
     const { data } = await getHomeInfoForManager({ userId: userStore.userInfo.id });
@@ -114,8 +117,8 @@ const fetchData = async () => {
 };
 const getHomelist = async () => {
   try {
-    const { data } = await getHomeNews({ userId: userStore.userInfo.id });
-    console.log("Fetched home news:", data);
+    const data: any = await getHomeNewsForManager({ userId: userStore.userInfo.id });
+    newsData.value = data.records;
   } catch (error) {
     console.error("Error fetching home news:", error);
   }

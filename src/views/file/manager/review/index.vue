@@ -126,7 +126,18 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
   { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
   { prop: "attachmentName", label: "文件名" },
-  { prop: "idCard", label: "源文件" },
+  {
+    prop: "attachmentUrl",
+    label: "源文件",
+    width: 90,
+    render(scope) {
+      return (
+        <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+          查看
+        </a>
+      );
+    }
+  },
   { prop: "fileVersion", label: "版本号" },
   { prop: "versionTime", label: "版本日期", width: 85 },
   { prop: "fileCount", label: "份数", width: 85 },

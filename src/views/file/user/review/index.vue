@@ -20,6 +20,12 @@
         <el-radio-button label="驳回" value="2" />
       </template>
       <el-badge :value="0" class="item" v-if="modeSwitching === '3'" color="green">
+        <el-radio-button label="撤回" value="3" />
+      </el-badge>
+      <template v-else>
+        <el-radio-button label="撤回" value="3" />
+      </template>
+      <el-badge :value="0" class="item" v-if="modeSwitching === '4'" color="green">
         <el-radio-button label="拒绝" value="4" />
       </el-badge>
       <template v-else>
@@ -52,10 +58,10 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
+        <el-button type="primary" link icon="Delete" @click="deleteAccount(scope.row)">撤回</el-button>
+        <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
-        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button>
+        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
       </template>
     </ProTable>
     <UserDrawer ref="drawerRef" />
@@ -105,6 +111,67 @@ watch(
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
   params.fileStatus = modeSwitching.value;
+  if (modeSwitching.value == "1") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "attachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileCount", label: "份数", width: 85 },
+      {
+        prop: "checkType",
+        label: "受控方式",
+        width: 105,
+        render(scope) {
+          return <div>{(scope.row as any).checkType == 0 ? "线上" : "线下"}</div>;
+        }
+      },
+      { prop: "reviewerName", label: "审查人", width: 115 },
+      { prop: "reviewRemark", label: "审查意见", width: 115 },
+      { prop: "reviewTime", label: "申请日期", width: 85 },
+      { prop: "reviewTime", label: "受控状态", width: 105 },
+      { prop: "reviewTime", label: "复用状态", width: 85 },
+      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+    );
+  } else {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "attachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileCount", label: "份数", width: 85 },
+      { prop: "reviewTime", label: "申请日期", width: 85 },
+      { prop: "fileStatus", label: "受控方式" },
+      { prop: "reviewerName", label: "审查人", width: 115 },
+      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+    );
+  }
   return fileInfoList(params);
 };
 
@@ -122,17 +189,25 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
-  { type: "selection", fixed: "left", width: 70 },
   { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
   { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
   { prop: "attachmentName", label: "文件名" },
-  { prop: "idCard", label: "源文件" },
-  { prop: "fileVersion", label: "版本号" },
-  { prop: "versionTime", label: "版本日期", width: 85 },
+  {
+    prop: "attachmentUrl",
+    label: "源文件",
+    width: 90,
+    render(scope) {
+      return (
+        <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+          查看
+        </a>
+      );
+    }
+  },
   { prop: "fileCount", label: "份数", width: 85 },
-  { prop: "creatorName", label: "申请人", width: 115 },
   { prop: "reviewTime", label: "申请日期", width: 85 },
   { prop: "fileStatus", label: "受控方式" },
+  { prop: "reviewerName", label: "审查人", width: 115 },
   { prop: "operation", label: "操作", fixed: "right", width: 80 }
 ]);
 
