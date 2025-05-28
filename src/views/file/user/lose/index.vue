@@ -186,7 +186,7 @@ const getTableList = (params: any) => {
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "applyUserName", label: "遗失说明", width: 85 },
       { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "reviewerName", label: "", width: 115 },
+      { prop: "reviewerName", label: "审核人", width: 115 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
       { prop: "reviewerTime", label: "审核日期", width: 115 }
     );

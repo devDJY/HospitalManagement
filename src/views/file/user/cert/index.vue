@@ -170,7 +170,7 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "fileControllerCode", label: "文件受控码" },
+      { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" } },
       { prop: "fileCount", label: "申请份数", width: 90 },
       {
         prop: "checkType",
@@ -223,7 +223,7 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "fileControllerCode", label: "文件受控码" },
+      { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" } },
       { prop: "fileCount", label: "打印份数", width: 90 },
       {
         prop: "checkType",
@@ -275,7 +275,7 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "fileControllerCode", label: "文件受控码", width: 105 },
+      { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" }, width: 105 },
       { prop: "fileCount", label: "作废份数", width: 90 },
       { prop: "reviewerName", label: "作废人", width: 90 },
       { prop: "creatorName", label: "作废说明", width: 85 },
@@ -320,7 +320,7 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "fileControllerCode", label: "文件受控码", width: 105 },
+      { prop: "fileControllerCode", label: "文件受控码", width: 105, search: { el: "input" } },
       { prop: "fileCount", label: "使用份数", width: 90 },
       {
         prop: "checkType",

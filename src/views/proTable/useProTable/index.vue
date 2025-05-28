@@ -1,22 +1,13 @@
 <template>
   <div class="table-box">
-    <ProTable
-      ref="proTable"
-      :columns="columns"
-      :request-api="getTableList"
-      :init-param="initParam"
-      :data-callback="dataCallback"
-      @drag-sort="sortTable"
-    >
+    <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" :data-callback="dataCallback" @drag-sort="sortTable">
       <!-- 表格 header 按钮 -->
       <template #tableHeader="scope">
         <el-button v-auth="'add'" type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增用户</el-button>
         <el-button v-auth="'batchAdd'" type="primary" :icon="Upload" plain @click="batchAdd">批量添加用户</el-button>
         <el-button v-auth="'export'" type="primary" :icon="Download" plain @click="downloadFile">导出用户数据</el-button>
         <el-button type="primary" plain @click="toDetail">To 子集详情页面</el-button>
-        <el-button type="danger" :icon="Delete" plain :disabled="!scope.isSelected" @click="batchDelete(scope.selectedListIds)">
-          批量删除用户
-        </el-button>
+        <el-button type="danger" :icon="Delete" plain :disabled="!scope.isSelected" @click="batchDelete(scope.selectedListIds)"> 批量删除用户 </el-button>
       </template>
       <!-- Expand -->
       <template #expand="scope">
@@ -60,18 +51,7 @@ import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
-import {
-  getUserList,
-  deleteUser,
-  editUser,
-  addUser,
-  changeUserStatus,
-  resetUserPassWord,
-  exportUserInfo,
-  BatchAddUser,
-  getUserStatus,
-  getUserGender
-} from "@/api/modules/user";
+import { getUserList, deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus, getUserGender } from "@/api/modules/user";
 
 const router = useRouter();
 
@@ -239,9 +219,7 @@ const changeStatus = async (row: User.ResUserList) => {
 
 // 导出用户列表
 const downloadFile = async () => {
-  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
-    useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam)
-  );
+  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam));
 };
 
 // 批量添加用户

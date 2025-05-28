@@ -2,17 +2,23 @@
   <div class="table-box">
     <div class="flex tops">
       <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
-        <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
-          <el-radio-button label="进行中" value="1" />
+        <el-badge :value="0" class="item" v-if="modeSwitching === ''" color="green">
+          <el-radio-button label="全部" value="" />
         </el-badge>
         <template v-else>
-          <el-radio-button label="进行中" value="1" />
+          <el-radio-button label="全部" value="" />
+        </template>
+        <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
+          <el-radio-button label="下载记录" value="1" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="下载记录" value="1" />
         </template>
         <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
-          <el-radio-button label="锁库" value="2" />
+          <el-radio-button label="作废文件" value="2" />
         </el-badge>
         <template v-else>
-          <el-radio-button label="锁库" value="2" />
+          <el-radio-button label="作废文件" value="2" />
         </template>
       </el-radio-group>
     </div>

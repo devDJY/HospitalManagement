@@ -88,6 +88,28 @@ const toDetail = () => {
 const modeSwitching = ref("0");
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
+const applyReasonArr = [
+  {
+    label: "污渍",
+    value: "污渍"
+  },
+  {
+    label: "破损",
+    value: "破损"
+  },
+  {
+    label: "剩余",
+    value: "剩余"
+  },
+  {
+    label: "销毁",
+    value: "销毁"
+  },
+  {
+    label: "其他",
+    value: "其他"
+  }
+];
 
 // 如果表格需要初始化请求参数，直接定义传给 ProTable (之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
 const initParam = reactive({ type: 1 });
@@ -124,7 +146,13 @@ const getTableList = (params: any) => {
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
-      { prop: "applyUserName", label: "回收原因", width: 85 },
+      {
+        prop: "applyReason",
+        label: "回收原因",
+        width: 85,
+        enum: applyReasonArr,
+        search: { el: "select", props: { filterable: true } }
+      },
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "applyTime", label: "附件", width: 85 },
       { prop: "applyTime", label: "申请日期", width: 85 },
@@ -151,7 +179,13 @@ const getTableList = (params: any) => {
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
-      { prop: "applyUserName", label: "回收原因", width: 85 },
+      {
+        prop: "applyReason",
+        label: "回收原因",
+        width: 85,
+        enum: applyReasonArr,
+        search: { el: "select", props: { filterable: true } }
+      },
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "applyTime", label: "附件", width: 85 },
       { prop: "reviewerName", label: "审核人", width: 115 },
@@ -179,7 +213,13 @@ const getTableList = (params: any) => {
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
-      { prop: "applyUserName", label: "回收原因", width: 85 },
+      {
+        prop: "applyReason",
+        label: "回收原因",
+        width: 85,
+        enum: applyReasonArr,
+        search: { el: "select", props: { filterable: true } }
+      },
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "attachmentName", label: "附件", width: 85 },
       { prop: "reviewerName", label: "审核人", width: 115 },
