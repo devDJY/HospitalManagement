@@ -7,17 +7,17 @@
       <template v-else>
         <el-radio-button label="待审核" value="0" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
-        <el-radio-button label="通过" value="2" />
-      </el-badge>
-      <template v-else>
-        <el-radio-button label="通过" value="2" />
-      </template>
       <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
-        <el-radio-button label="驳回" value="1" />
+        <el-radio-button label="已回收" value="1" />
       </el-badge>
       <template v-else>
-        <el-radio-button label="驳回" value="1" />
+        <el-radio-button label="已回收" value="1" />
+      </template>
+      <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
+        <el-radio-button label="驳回" value="2" />
+      </el-badge>
+      <template v-else>
+        <el-radio-button label="驳回" value="2" />
       </template>
     </el-radio-group>
     <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" @drag-sort="sortTable">
@@ -108,7 +108,7 @@ const getTableList = (params: any) => {
       0,
       columns.length,
       { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
-      { prop: "fileCode", label: "文件编码", search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 115, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
         prop: "idCard",
@@ -127,15 +127,14 @@ const getTableList = (params: any) => {
       { prop: "applyUserName", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "申请人", width: 85 },
       { prop: "applyTime", label: "申请日期", width: 85 },
-      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+      { prop: "reviewerName", label: "审核人", width: 85 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "projectName", label: "项目名称", width: 105, search: { el: "input" } },
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
@@ -155,9 +154,9 @@ const getTableList = (params: any) => {
       { prop: "applyUserName", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "reviewerName", label: "审核人", width: 115 },
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   } else if (modeSwitching.value == "1") {
     columns.splice(
@@ -183,9 +182,9 @@ const getTableList = (params: any) => {
       { prop: "applyUserName", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "attachmentName", label: "附件", width: 85 },
-      { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "reviewerName", label: "审核人", width: 115 },
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   }
   return fileControllerRecycleList(params);

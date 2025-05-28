@@ -85,7 +85,7 @@ import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@e
 import { getUserList, deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
 
 import { fileInfoList } from "@/api/modules/fileInfo";
-import { pa } from "element-plus/es/locale";
+import { el, pa } from "element-plus/es/locale";
 const router = useRouter();
 
 // 跳转详情页
@@ -136,7 +136,7 @@ const getTableList = (params: any) => {
         label: "受控方式",
         width: 105,
         render(scope) {
-          return <div>{(scope.row as any).checkType == 0 ? "线上" : "线下"}</div>;
+          return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
         }
       },
       { prop: "reviewerName", label: "审查人", width: 115 },
@@ -144,6 +144,98 @@ const getTableList = (params: any) => {
       { prop: "reviewTime", label: "申请日期", width: 85 },
       { prop: "reviewTime", label: "受控状态", width: 105 },
       { prop: "reviewTime", label: "复用状态", width: 85 },
+      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+    );
+  } else if (modeSwitching.value == "2") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "rejectAttachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).rejectAttachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileCount", label: "份数", width: 85 },
+      {
+        prop: "fileStatus",
+        label: "受控方式",
+        width: 105,
+        render(scope) {
+          return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
+        }
+      },
+      { prop: "reviewerName", label: "审查人", width: 115 },
+      { prop: "reviewRemark", label: "审查意见", width: 115 },
+      { prop: "reviewTime", label: "审查日期", width: 85 },
+      { prop: "reviewTime", label: "附件", width: 105 },
+      { prop: "remark", label: "备注", width: 105 },
+      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+    );
+  } else if (modeSwitching.value == "3") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "attachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileCount", label: "份数", width: 85 },
+      {
+        prop: "fileStatus",
+        label: "受控方式",
+        width: 105,
+        render(scope) {
+          return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
+        }
+      },
+      { prop: "reviewTime", label: "撤回日期", width: 85 },
+      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+    );
+  } else if (modeSwitching.value == "4") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "attachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileCount", label: "份数", width: 85 },
+      { prop: "fileStatus", label: "受控方式", width: 105 },
+      { prop: "reviewerName", label: "审查人", width: 115 },
+      { prop: "reviewRemark", label: "审查意见", width: 115 },
+      { prop: "reviewTime", label: "审查日期", width: 85 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else {
@@ -167,7 +259,13 @@ const getTableList = (params: any) => {
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "reviewTime", label: "申请日期", width: 85 },
-      { prop: "fileStatus", label: "受控方式" },
+      {
+        prop: "fileStatus",
+        label: "受控方式",
+        render(scope) {
+          return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
+        }
+      },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
@@ -206,7 +304,13 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   },
   { prop: "fileCount", label: "份数", width: 85 },
   { prop: "reviewTime", label: "申请日期", width: 85 },
-  { prop: "fileStatus", label: "受控方式" },
+  {
+    prop: "fileStatus",
+    label: "受控方式",
+    render(scope) {
+      return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
+    }
+  },
   { prop: "reviewerName", label: "审查人", width: 115 },
   { prop: "operation", label: "操作", fixed: "right", width: 80 }
 ]);

@@ -127,13 +127,18 @@ const getTableList = (params: any) => {
       { prop: "pageTotal", label: "文件页数", width: 115 },
       { prop: "applyUserName", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "applyAttachmentName", label: "附件", width: 85, render(scope) {
-        return (
-          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
-            { (scope.row as any).applyAttachmentName  }
-          </a>
-        )
-      } },
+      {
+        prop: "applyAttachmentName",
+        label: "附件",
+        width: 85,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+              {(scope.row as any).applyAttachmentName}
+            </a>
+          );
+        }
+      },
       { prop: "reviewerTime", label: "受控时间", width: 115 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
@@ -162,8 +167,8 @@ const getTableList = (params: any) => {
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "applyTime", label: "附件", width: 85 },
       { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   } else if (modeSwitching.value == "1") {
     columns.splice(
@@ -190,8 +195,8 @@ const getTableList = (params: any) => {
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "attachmentName", label: "附件", width: 85 },
       { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   }
   return fileControllerRecycleList(params);

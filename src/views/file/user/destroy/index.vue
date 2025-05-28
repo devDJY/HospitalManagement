@@ -150,9 +150,9 @@ const getTableList = (params: any) => {
       { prop: "applyUserName", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "审核意见", width: 105 },
-      { prop: "applyTime", label: "审核日期", fixed: "right", width: 105 }
+      { prop: "applyUserName", label: "申请人", width: 85 },
+      { prop: "reviewRemark", label: "审核意见", width: 105 },
+      { prop: "reviewerTime", label: "审核日期", fixed: "right", width: 105 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
@@ -178,9 +178,9 @@ const getTableList = (params: any) => {
       { prop: "applyUserName", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
       { prop: "attachmentName", label: "附件", width: 85 },
-      { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "reviewerName", label: "审核人", width: 115 },
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   }
   return fileControllerDestroyList(params);

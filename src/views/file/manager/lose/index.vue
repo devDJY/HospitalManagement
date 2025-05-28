@@ -162,8 +162,8 @@ const getTableList = (params: any) => {
       { prop: "pageTotal", label: "申报人", width: 115 },
       { prop: "applyUserName", label: "遗失说明", width: 85 },
       { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   } else if (modeSwitching.value == "1") {
     columns.splice(
@@ -188,8 +188,8 @@ const getTableList = (params: any) => {
       { prop: "pageTotal", label: "申报人", width: 115 },
       { prop: "applyUserName", label: "遗失说明", width: 85 },
       { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   }
   return fileControllerLoseList(params);

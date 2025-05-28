@@ -11,6 +11,11 @@ export const fileControllerWaitList = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/fileController/wait/list", pa, { loading: false });
 };
+//文件 - 受控 - 已使用列表;
+export const fileControllerUsedCertList = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/used/cert/list", pa, { loading: false });
+};
 //已受控-查询列表
 export const fileControllerCertList = params => {
   let pa = { userId: userStore.userInfo.id, ...params };

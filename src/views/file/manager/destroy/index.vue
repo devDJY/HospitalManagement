@@ -66,7 +66,7 @@ import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, BatchAddUser } from "@/api/modules/user";
-import { fileControllerDestroyList } from "@/api/modules/fileInfo";
+import { fileControllerRecycleList } from "@/api/modules/fileInfo";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
@@ -183,7 +183,7 @@ const getTableList = (params: any) => {
       { prop: "applyTime", label: "审核日期" }
     );
   }
-  return fileControllerDestroyList(params);
+  return fileControllerRecycleList(params);
 };
 
 // 表格配置项

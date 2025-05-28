@@ -2,10 +2,10 @@
   <div class="table-box">
     <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
       <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
-        <el-radio-button label="待受控" value="1" />
+        <el-radio-button label="受控中" value="1" />
       </el-badge>
       <template v-else>
-        <el-radio-button label="待受控" value="1" />
+        <el-radio-button label="受控中" value="1" />
       </template>
       <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
         <el-radio-button label="已受控" value="2" />
@@ -18,6 +18,12 @@
       </el-badge>
       <template v-else>
         <el-radio-button label="已打印" value="3" />
+      </template>
+      <el-badge :value="0" class="item" v-if="modeSwitching === '5'" color="green">
+        <el-radio-button label="已使用" value="5" />
+      </el-badge>
+      <template v-else>
+        <el-radio-button label="已使用" value="5" />
       </template>
       <el-badge :value="0" class="item" v-if="modeSwitching === '4'" color="green">
         <el-radio-button label="已作废" value="4" />
@@ -79,7 +85,7 @@ import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/P
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
 import { de, pa } from "element-plus/es/locale";
-import { fileControllerCancelCertList, fileControllerCertList, fileControllerPrintCertList, fileControllerWaitList } from "@/api/modules/fileInfo";
+import { fileControllerCancelCertList, fileControllerCertList, fileControllerPrintCertList, fileControllerUsedCertList, fileControllerWaitList } from "@/api/modules/fileInfo";
 import dayjs from "dayjs";
 import { c } from "vite/dist/node/types.d-aGj9QkWt";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
@@ -117,14 +123,12 @@ const getTableList = (params: any) => {
     columns.splice(
       0,
       columns.length,
-      { type: "selection", fixed: "left", width: 70 },
       { prop: "projectName", label: "项目名称", search: { el: "input" } },
-      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
-      { prop: "attachmentName", label: "文件名", width: 80 },
+      { prop: "fileCode", label: "文件编码", search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
         render(scope) {
           return (
             <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
@@ -133,26 +137,7 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "fileCount", label: "申请份数", width: 90 },
-      {
-        prop: "checkType",
-        label: "受控方式",
-        width: 90,
-        render(scope) {
-          return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
-        }
-      },
-      { prop: "creatorName", label: "申请人", width: 85 },
-      {
-        prop: "applyTime",
-        label: "申请日期",
-        width: 120,
-        render(scope) {
-          const anyRow = scope.row as any;
-          return <div>{anyRow.applyTime ? dayjs(anyRow.applyTime).format("YYYY-MM-DD") : ""}</div>;
-        }
-      },
-      { prop: "operation", label: "操作", fixed: "right", width: 120 }
+      { prop: "fileCount", label: "申请份数" }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
@@ -185,7 +170,7 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "fileControllerCode", label: "文件受控码", width: 90 },
+      { prop: "fileControllerCode", label: "文件受控码" },
       { prop: "fileCount", label: "申请份数", width: 90 },
       {
         prop: "checkType",
@@ -195,10 +180,10 @@ const getTableList = (params: any) => {
           return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
         }
       },
-      { prop: "creatorName", label: "申请人", width: 85 },
+      { prop: "creatorName", label: "受控发放人" },
       {
         prop: "applyTime",
-        label: "申请日期",
+        label: "受控发放日期",
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
@@ -238,7 +223,7 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "fileControllerCode", label: "文件受控码", width: 90 },
+      { prop: "fileControllerCode", label: "文件受控码" },
       { prop: "fileCount", label: "打印份数", width: 90 },
       {
         prop: "checkType",
@@ -248,7 +233,6 @@ const getTableList = (params: any) => {
           return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
         }
       },
-      { prop: "creatorName", label: "打印人", width: 85 },
       {
         prop: "createTime",
         label: "打印日期",
@@ -257,7 +241,8 @@ const getTableList = (params: any) => {
           const anyRow = scope.row as any;
           return <div>{anyRow.createTime ? dayjs(anyRow.createTime).format("YYYY-MM-DD") : ""}</div>;
         }
-      }
+      },
+      { prop: "operation", label: "操作", fixed: "right", width: 120 }
     );
   } else if (modeSwitching.value == "4") {
     columns.splice(
@@ -292,10 +277,62 @@ const getTableList = (params: any) => {
       },
       { prop: "fileControllerCode", label: "文件受控码", width: 105 },
       { prop: "fileCount", label: "作废份数", width: 90 },
+      { prop: "reviewerName", label: "作废人", width: 90 },
       { prop: "creatorName", label: "作废说明", width: 85 },
       {
         prop: "createTime",
         label: "作废日期",
+        width: 120,
+        render(scope) {
+          const anyRow = scope.row as any;
+          return <div>{anyRow.createTime ? dayjs(anyRow.createTime).format("YYYY-MM-DD") : ""}</div>;
+        }
+      }
+    );
+  } else if (modeSwitching.value == "5") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名", width: 80 },
+      {
+        prop: "attachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      {
+        prop: "attachmentUrl",
+        label: "受控文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileControllerCode", label: "文件受控码", width: 105 },
+      { prop: "fileCount", label: "使用份数", width: 90 },
+      {
+        prop: "checkType",
+        label: "受控方式",
+        width: 90,
+        render(scope) {
+          return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
+        }
+      },
+      {
+        prop: "createTime",
+        label: "使用登记日期",
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
@@ -316,6 +353,9 @@ const getTableList = (params: any) => {
       break;
     case "4":
       return fileControllerCancelCertList(params);
+      break;
+    case "5":
+      return fileControllerUsedCertList(params);
       break;
     default:
       return fileControllerWaitList(params);

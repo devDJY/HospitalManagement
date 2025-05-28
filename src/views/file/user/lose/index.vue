@@ -123,7 +123,6 @@ const getTableList = (params: any) => {
       },
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
-      { prop: "applyUserName", label: "申报人", width: 115 },
       { prop: "applyRemark", label: "遗失说明", width: 115 },
       {
         prop: "applyAttachmentName",
@@ -137,7 +136,7 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "applyTime", label: "申报日期", width: 85 },
-      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+      { prop: "reviewerName", label: "审核人", width: 115 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
@@ -159,11 +158,11 @@ const getTableList = (params: any) => {
       },
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
-      { prop: "pageTotal", label: "申报人", width: 115 },
       { prop: "applyUserName", label: "遗失说明", width: 85 },
       { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "reviewerName", label: "审核人", width: 115 },
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   } else if (modeSwitching.value == "1") {
     columns.splice(
@@ -185,11 +184,11 @@ const getTableList = (params: any) => {
       },
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
-      { prop: "pageTotal", label: "申报人", width: 115 },
       { prop: "applyUserName", label: "遗失说明", width: 85 },
       { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "reviewerName", label: "", width: 115 },
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   }
   return fileControllerLoseList(params);

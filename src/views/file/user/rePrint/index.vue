@@ -46,7 +46,7 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openAuditDialog(scope.row)">审核</el-button>
+        <el-button type="primary" link :icon="View" @click="openAuditDialog(scope.row)">撤回</el-button>
         <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
@@ -108,7 +108,7 @@ const getTableList = (params: any) => {
       0,
       columns.length,
       { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
-      { prop: "fileCode", label: "文件编码", search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 115, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
         prop: "idCard",
@@ -124,10 +124,9 @@ const getTableList = (params: any) => {
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
-      { prop: "applyUserName", label: "申请人", width: 85 },
       { prop: "applyRemark", label: "申请说明", width: 115 },
       { prop: "applyTime", label: "申请日期", width: 85 },
-      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+      { prop: "reviewerName", label: "审核人", width: 85 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
@@ -150,9 +149,11 @@ const getTableList = (params: any) => {
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "address", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
-      { prop: "applyUserName", label: "申请人", width: 85 },
       { prop: "applyRemark", label: "申请说明", width: 115 },
-      { prop: "applyTime", label: "申请日期", width: 85 }
+      { prop: "reviewerName", label: "审核人", width: 115 },
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 },
+      { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else if (modeSwitching.value == "1") {
     columns.splice(
@@ -175,10 +176,9 @@ const getTableList = (params: any) => {
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "address", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
-      { prop: "applyUserName", label: "申请人", width: 85 },
-      { prop: "applyRemark", label: "申请说明", width: 115 },
-      { prop: "reviewRemark", label: "审核意见", width: 85 },
-      { prop: "reviewerTime", label: "审核日期", width: 85 }
+      { prop: "reviewerName", label: "", width: 115 },
+      { prop: "reviewRemark", label: "审核意见", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
   }
   return fileControllerRePrintList(params);
