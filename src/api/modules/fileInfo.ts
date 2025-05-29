@@ -52,3 +52,34 @@ export const fileControllerLoseList = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/fileController/lose/list", pa, { loading: false });
 };
+//----- 操作栏部分--------
+export const fileControllerCert = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileController/cert", pa, { loading: false });
+};
+
+//文件 - 文件申请 - 撤回申请;
+export const fileInfoRevoke = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileInfo/revoke", pa, { loading: false });
+};
+//文件-形式审查-申请复用-查询申请记录
+export const fileInfoGetReuseList = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileInfo/getReuseList", pa, { loading: false });
+};
+//文件 - 形式审查 - 通过 - 使用复用创建文件;
+export const fileInfoAddByReuse = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileInfo/addByReuse", pa, { loading: false });
+};
+//文件 - 形式审查 - 通过 - 获取复用状态修改历史;
+export const fileInfoReuseGetHistory = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileInfo/reuse/getHistory", pa, { loading: false });
+};
+//文件-形式审查-通过-审批申请禁用/恢复复用
+export const fileInfoReviewEditReuse = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileInfo/review/edit/reuse", pa, { loading: false });
+};

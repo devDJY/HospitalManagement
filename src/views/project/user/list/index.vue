@@ -1,7 +1,7 @@
 <template>
   <div class="table-box">
     <div class="flex tops">
-      <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
+      <el-radio-group v-model="modeSwitching" size="large">
         <el-badge :value="0" class="item" v-if="modeSwitching === ''" color="green">
           <el-radio-button label="全部" value="" />
         </el-badge>
@@ -328,5 +328,6 @@ const handleSubmit = async formData => {
 .tops {
   align-items: center;
   justify-content: space-between;
+  padding-bottom: 10px;
 }
 </style>

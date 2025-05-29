@@ -1,37 +1,40 @@
 <template>
   <div class="table-box">
-    <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
-      <el-badge :value="0" class="item" v-if="modeSwitching === '0'" color="green">
-        <el-radio-button label="待审查" value="0" />
-      </el-badge>
-      <template v-else>
-        <el-radio-button label="待审查" value="0" />
-      </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
-        <el-radio-button label="通过" value="1" />
-      </el-badge>
-      <template v-else>
-        <el-radio-button label="通过" value="1" />
-      </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
-        <el-radio-button label="驳回" value="2" />
-      </el-badge>
-      <template v-else>
-        <el-radio-button label="驳回" value="2" />
-      </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '3'" color="green">
-        <el-radio-button label="撤回" value="3" />
-      </el-badge>
-      <template v-else>
-        <el-radio-button label="撤回" value="3" />
-      </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '4'" color="green">
-        <el-radio-button label="拒绝" value="4" />
-      </el-badge>
-      <template v-else>
-        <el-radio-button label="拒绝" value="4" />
-      </template>
-    </el-radio-group>
+    <div class="flex tops">
+      <el-radio-group v-model="modeSwitching" size="large">
+        <el-badge :value="0" class="item" v-if="modeSwitching === '0'" color="green">
+          <el-radio-button label="待审查" value="0" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="待审查" value="0" />
+        </template>
+        <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
+          <el-radio-button label="通过" value="1" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="通过" value="1" />
+        </template>
+        <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
+          <el-radio-button label="驳回" value="2" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="驳回" value="2" />
+        </template>
+        <el-badge :value="0" class="item" v-if="modeSwitching === '3'" color="green">
+          <el-radio-button label="撤回" value="3" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="撤回" value="3" />
+        </template>
+        <el-badge :value="0" class="item" v-if="modeSwitching === '4'" color="green">
+          <el-radio-button label="拒绝" value="4" />
+        </el-badge>
+        <template v-else>
+          <el-radio-button label="拒绝" value="4" />
+        </template>
+      </el-radio-group>
+      <el-button type="primary" @click="handleAdd()" style="width: 200px" :icon="Plus"> 文件申请 </el-button>
+    </div>
     <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" @drag-sort="sortTable">
       <!-- 表格 header 按钮 -->
       <!-- <template #tableHeader="scope">
@@ -58,14 +61,26 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link icon="Delete" @click="deleteAccount(scope.row)">撤回</el-button>
-        <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
-        <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
-        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
+        <el-button type="primary" link icon="Delete" v-if="modeSwitching == '0'" @click="deleteAccount(scope.row)">撤回</el-button>
+        <div v-if="modeSwitching == '1'">
+          <div v-if="scope.row.reuseApplyStatus">
+            {{ scope.row.reuseApplyStatus == 1 ? "禁止复用申请中" : "恢复复用申请中" }}
+          </div>
+          <div v-else>
+            <el-button type="primary" link :icon="Refresh" @click="applicationForReuse(scope.row)">申请复用</el-button>
+            <el-button type="danger" link icon="CircleCloseFilled" @click="reuseProhibited(scope.row)">禁止复用</el-button>
+          </div>
+        </div>
+        <el-button v-if="modeSwitching == '2'" type="primary" link :icon="EditPen" @click="handleAdd(scope.row)"></el-button>
+
+        <!-- <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
       </template>
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
+    <ReuseApplicationDialog ref="reuseDialog" />
+    <BanReuseDialog ref="banReuseDialog" />
+    <FileApplicationDialog ref="fileApplicationDialog" />
   </div>
 </template>
 
@@ -81,11 +96,16 @@ import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
-import { getUserList, deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
-
-import { fileInfoList } from "@/api/modules/fileInfo";
+import { CirclePlus, Delete, Plus, Download, CircleCloseFilled, View, Refresh, EditPen } from "@element-plus/icons-vue";
+import { getUserList, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
+import { fileInfoList, fileInfoRevoke } from "@/api/modules/fileInfo";
 import { el, pa } from "element-plus/es/locale";
+import ReuseApplicationDialog from "./ReuseApplicationDialog.vue";
+import BanReuseDialog from "./BanReuseDialog.vue";
+import FileApplicationDialog from "./FileApplicationDialog.vue";
+const fileApplicationDialog = ref();
+const banReuseDialog = ref();
+const reuseDialog = ref();
 const router = useRouter();
 
 // 跳转详情页
@@ -142,9 +162,16 @@ const getTableList = (params: any) => {
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
       { prop: "reviewTime", label: "申请日期", width: 85 },
-      { prop: "reviewTime", label: "受控状态", width: 105 },
-      { prop: "reviewTime", label: "复用状态", width: 85 },
-      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+      { prop: "reuseApplyStatus", label: "受控状态", width: 105 },
+      {
+        prop: "reuseStatus",
+        label: "复用状态",
+        width: 85,
+        render(scope) {
+          return <div>{(scope.row as any).reuseStatus === 0 ? "禁用" : "复用"}</div>;
+        }
+      },
+      { prop: "operation", label: "操作", fixed: "right", width: 205 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
@@ -235,7 +262,7 @@ const getTableList = (params: any) => {
       { prop: "fileStatus", label: "受控方式", width: 105 },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
-      { prop: "reviewTime", label: "审查日期", width: 85 },
+      { prop: "reviewTimev", label: "审查日期", width: 85 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else {
@@ -323,21 +350,17 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
 };
 
 // 删除用户信息
-const deleteAccount = async (params: User.ResUserList) => {
-  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
+const deleteAccount = async params => {
+  await useHandleData(fileInfoRevoke, { fileId: params.fileId }, `撤回${params.projectName}】用户`);
   proTable.value?.getTableList();
 };
-
-// 重置用户密码
-const resetPass = async (params: User.ResUserList) => {
-  await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
-  proTable.value?.getTableList();
+const applicationForReuse = params => {
+  reuseDialog.value.openDialog(params);
 };
 
 // 切换用户状态
-const changeStatus = async (row: User.ResUserList) => {
-  await useHandleData(changeUserStatus, { id: row.id, status: row.status == 1 ? 0 : 1 }, `切换【${row.username}】用户状态`);
-  proTable.value?.getTableList();
+const reuseProhibited = async (row: User.ResUserList) => {
+  banReuseDialog.value.openDialog(row);
 };
 
 // 导出用户列表
@@ -360,15 +383,21 @@ const batchAdd = () => {
 };
 
 // 打开 drawer(新增、查看、编辑)
-const drawerRef = ref<InstanceType<typeof UserDrawer> | any>(null);
-const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
-  const params = {
-    title,
-    isView: title === "查看",
-    row: { ...row },
-    api: title === "新增" ? addUser : title === "编辑" ? editUser : undefined,
-    getTableList: proTable.value?.getTableList
-  };
-  drawerRef.value!.acceptParams(params);
+const handleAdd = (params?: any) => {
+  if (params) {
+    fileApplicationDialog.value.openDialog(params);
+  } else {
+    fileApplicationDialog.value.openDialog({});
+  }
 };
 </script>
+<style scoped>
+.flex {
+  display: flex;
+}
+.tops {
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+}
+</style>
