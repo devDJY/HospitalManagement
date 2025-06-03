@@ -83,3 +83,29 @@ export const fileInfoReviewEditReuse = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/fileInfo/review/edit/reuse", pa, { loading: false });
 };
+//附件上传
+export const fileInfoupload = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileInfo/upload", pa, { loading: false });
+};
+//文件 - 文件申请;
+export const fileInfoAdd = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileInfo/add", pa, { loading: false });
+};
+//
+//文件 - 受控 - 已受控列表 - 打印;
+export const fileControllerCertPrint = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileController/cert/print", pa, { loading: false });
+};
+//文件 - 受控 - 已受控列表 - 打印次数查询;
+export const fileControllerCertPrintQueryCount = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/cert/print/queryCount", pa, { loading: false });
+};
+//文件 - 受控 - 已打印 - 使用登记;
+export const fileControllerPrintCertUpdateUsed = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileController/print/cert/update/used", pa, { loading: false });
+};

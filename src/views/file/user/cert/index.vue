@@ -58,7 +58,18 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="Delete" @click="openAuditDialog(scope.row)">作废</el-button>
+        <el-dropdown placement="bottom-end" v-if="modeSwitching == '3'">
+          <el-icon><Grid /></el-icon>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="operate(scope.row, 1)">使用登记</el-dropdown-item>
+              <el-dropdown-item @click="operate(scope.row, 2)">遗失审核</el-dropdown-item>
+              <el-dropdown-item @click="operate(scope.row, 3)">文件回收</el-dropdown-item>
+              <el-dropdown-item @click="operate(scope.row, 4)">重新打印</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-button type="primary" v-else link :icon="Delete" @click="openAuditDialog(scope.row)">作废</el-button>
         <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
@@ -67,6 +78,10 @@
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
     <RePrintAuditDialog ref="auditDialog" />
+    <registration1 ref="registration1s" />
+    <registration2 ref="registration2s" />
+    <registration3 ref="registration3s" />
+    <registration4 ref="registration4s" />
   </div>
 </template>
 
@@ -89,7 +104,15 @@ import { fileControllerCancelCertList, fileControllerCertList, fileControllerPri
 import dayjs from "dayjs";
 import { c } from "vite/dist/node/types.d-aGj9QkWt";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
+import registration1 from "./registration1.vue";
+import registration2 from "./registration2.vue";
+import registration3 from "./registration3.vue";
+import registration4 from "./registration4.vue";
 const auditDialog = ref();
+const registration1s = ref();
+const registration2s = ref();
+const registration3s = ref();
+const registration4s = ref();
 const openAuditDialog = (params: any) => {
   auditDialog.value.openDialog();
 };
@@ -410,9 +433,22 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
 };
 
 // 删除用户信息
-const deleteAccount = async (params: User.ResUserList) => {
-  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
-  proTable.value?.getTableList();
+const operate = async (params, index) => {
+  switch (index) {
+    case 1:
+      registration1s.value.openDialog(params);
+      break;
+    case 2:
+      registration2s.value.openDialog(params);
+      break;
+      break;
+    case 3:
+      registration3s.value.openDialog(params);
+      break;
+    case 4:
+      registration4s.value.openDialog(params);
+      break;
+  }
 };
 
 // 重置用户密码

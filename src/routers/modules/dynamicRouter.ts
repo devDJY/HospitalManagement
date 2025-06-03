@@ -38,7 +38,7 @@ export const initDynamicRouter = async () => {
         component: "/archive/archivedFile/index",
         meta: {
           icon: "Finished",
-          title: "文件测试",
+          title: "文件详情",
           isLink: "",
           isHide: false,
           isFull: false,

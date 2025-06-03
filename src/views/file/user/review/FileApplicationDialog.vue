@@ -45,27 +45,27 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="份数" prop="quantity" required>
-            <el-input-number v-model="form.quantity" :min="1" controls-position="right" style="width: 100%" />
+          <el-form-item label="份数" prop="fileCount" required>
+            <el-input-number v-model="form.fileCount" :min="1" controls-position="right" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="版本号">
-            <el-input v-model="form.fileName" placeholder="请输入..." />
+            <el-input v-model="form.fileVersion" placeholder="请输入..." />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="版本日期">
-            <el-date-picker v-model="form.version" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width: 100%" />
+            <el-date-picker v-model="form.versionTime" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width: 100%" />
           </el-form-item>
         </el-col>
       </el-row>
 
       <!-- 受控方式 -->
-      <el-form-item label="受控方式" prop="controlType" required>
-        <el-radio-group v-model="form.controlType">
-          <el-radio label="online">线上受控</el-radio>
-          <el-radio label="offline">线下受控</el-radio>
+      <el-form-item label="受控方式" prop="checkType" required>
+        <el-radio-group v-model="form.checkType">
+          <el-radio label="0">线上受控</el-radio>
+          <el-radio label="1">线下受控</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -102,17 +102,18 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { ElMessage, type FormInstance, type FormRules, type UploadProps, type UploadUserFile } from "element-plus";
-
+import { fileInfoAdd, fileInfoupload } from "@/api/modules/fileInfo";
 interface FormData {
   projectName: string;
   fileCode: string;
   file: File | null;
-  fileName: string;
-  quantity: number;
-  version: string;
-  controlType: "online" | "offline";
+  fileVersion: string;
+  fileCount: number;
+  versionTime: string;
+  checkType: "online" | "offline";
   reviewer: string;
   reason: string;
+  fileName: string;
 }
 
 const dialogVisible = ref(false);
@@ -124,10 +125,11 @@ const form = reactive<FormData>({
   projectName: "",
   fileCode: "",
   file: null,
+  fileVersion: "",
+  fileCount: 1,
   fileName: "",
-  quantity: 1,
-  version: "",
-  controlType: "online",
+  versionTime: "",
+  checkType: "online",
   reviewer: "",
   reason: ""
 });
@@ -150,11 +152,11 @@ const rules = reactive<FormRules>({
   ],
   file: [{ required: true, message: "请上传文件", trigger: "change" }],
   fileName: [{ required: true, message: "请输入文件名", trigger: "blur" }],
-  quantity: [
+  fileCount: [
     { required: true, message: "请输入份数", trigger: "blur" },
     { type: "number", min: 1, message: "份数必须大于0", trigger: "blur" }
   ],
-  controlType: [{ required: true, message: "请选择受控方式", trigger: "change" }],
+  checkType: [{ required: true, message: "请选择受控方式", trigger: "change" }],
   reviewer: [{ required: true, message: "请选择审查人", trigger: "change" }],
   reason: [
     { required: true, message: "请输入申请说明", trigger: "blur" },
@@ -178,7 +180,8 @@ const beforeUpload: UploadProps["beforeUpload"] = file => {
     ElMessage.error("只能上传PDF文件");
     return false;
   }
-  form.file = file;
+  fileInfoupload(file).then(res => {});
+  //form.file = file;
   return false; // 手动上传
 };
 
@@ -212,8 +215,7 @@ const handleSubmit = async () => {
     });
 
     // console.log("提交数据:", Object.fromEntries(formData.entries()));
-    await new Promise(resolve => setTimeout(resolve, 1000)); // 模拟API调用
-
+    await fileInfoAdd(formData);
     dialogVisible.value = false;
     ElMessage.success("文件申请提交成功");
   } catch (error) {

@@ -61,7 +61,7 @@
 
 <script setup lang="tsx" name="complexProTable">
 import { reactive, ref, watch, onMounted } from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import ProTable from "@/components/ProTable/index.vue";
@@ -70,6 +70,9 @@ import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/P
 import { deleteUser, resetUserPassWord } from "@/api/modules/user";
 import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery } from "@/api/modules/project";
 import { Search, Download } from "@element-plus/icons-vue";
+import { archiveExcelReport, archiveFileDownload } from "@/api/modules/archives";
+import { useDownload } from "@/hooks/useDownload";
+import router from "@/routers";
 const lockDialog = ref(false);
 const remark = ref("");
 const handleClose = () => {
@@ -232,14 +235,11 @@ const getTableList = (params?: any) => {
 
 // 删除项目
 const deletePro = async (params: any) => {
-  await useHandleData(projectDelete, { id: [params.id] }, `删除【${params.projectName}】项目（删除后无法恢复)?`);
-  proTable.value?.getTableList();
+  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload(archiveExcelReport, `${params.projectName}项目详情`, params));
 };
-const projectId = ref("");
 // 重置用户密码
-const resetPass = async (params: User.ResUserList) => {
-  await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
-  proTable.value?.getTableList();
+const resetPass = async params => {
+  router.push(`/archive/archivedFile`);
 };
 
 // 页面渲染请求

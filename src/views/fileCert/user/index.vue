@@ -64,7 +64,7 @@
         <div classs="title">最新动态</div>
         <el-timeline style="max-width: 600px">
           <el-timeline-item center :timestamp="dayjs(item.updateTime).format('YYYY-MM-DD')" placement="top" v-for="(item, index) in newsData" :key="index">
-            <div>{{ item.creatorName }}的[{{ item.fileName }}]{{ item.msgTitle }}</div>
+            <div>{{ item.msgContext }}</div>
           </el-timeline-item>
         </el-timeline>
       </div>

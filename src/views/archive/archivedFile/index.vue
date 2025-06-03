@@ -1,285 +1,265 @@
 <template>
   <div class="table-box">
-    <div class="flex tops">
-      <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
-        <el-badge :value="0" class="item" v-if="modeSwitching === ''" color="green">
-          <el-radio-button label="全部" value="" />
-        </el-badge>
-        <template v-else>
-          <el-radio-button label="全部" value="" />
-        </template>
-        <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
-          <el-radio-button label="下载记录" value="1" />
-        </el-badge>
-        <template v-else>
-          <el-radio-button label="下载记录" value="1" />
-        </template>
-        <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
-          <el-radio-button label="作废文件" value="2" />
-        </el-badge>
-        <template v-else>
-          <el-radio-button label="作废文件" value="2" />
-        </template>
-      </el-radio-group>
-    </div>
-    <ProTable
-      ref="proTable"
-      title="用户列表"
-      highlight-current-row
-      :columns="columns"
-      :request-api="getTableList"
-      :row-class-name="tableRowClassName"
-      :span-method="objectSpanMethod"
-      :show-summary="false"
-      @row-click="rowClick"
-    >
+    <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
+      <el-badge :value="0" class="item" v-if="modeSwitching === '0'" color="green">
+        <el-radio-button label="全部" value="0" />
+      </el-badge>
+      <template v-else>
+        <el-radio-button label="全部" value="0" />
+      </template>
+      <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
+        <el-radio-button label="下载记录" value="1" />
+      </el-badge>
+      <template v-else>
+        <el-radio-button label="下载记录" value="1" />
+      </template>
+      <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
+        <el-radio-button label="作废文件" value="2" />
+      </el-badge>
+      <template v-else>
+        <el-radio-button label="作废文件" value="2" />
+      </template>
+    </el-radio-group>
+    <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" @drag-sort="sortTable">
       <!-- 表格 header 按钮 -->
       <!-- <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" @click="proTable?.element?.toggleAllSelection">全选 / 全不选</el-button>
-        <el-button type="primary" :icon="Pointer" plain @click="setCurrent">选中第五行</el-button>
-        <el-button type="danger" :icon="Delete" plain :disabled="!scope.isSelected" @click="batchDelete(scope.selectedListIds)">
-          批量删除用户
-        </el-button>
+        <el-button v-auth="'add'" type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增用户</el-button>
+        <el-button v-auth="'batchAdd'" type="primary" :icon="Upload" plain @click="batchAdd">批量添加用户</el-button>
+        <el-button v-auth="'export'" type="primary" :icon="Download" plain @click="downloadFile">导出用户数据</el-button>
+        <el-button type="primary" plain @click="toDetail">To 子集详情页面</el-button>
       </template> -->
+      <!-- Expand -->
+      <template #expand="scope">
+        {{ scope.row }}
+      </template>
+      <!-- usernameHeader -->
+      <template #usernameHeader="scope">
+        <el-button type="primary" @click="ElMessage.success('我是通过作用域插槽渲染的表头')">
+          {{ scope.column.label }}
+        </el-button>
+      </template>
+      <!-- createTime -->
+      <template #createTime="scope">
+        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
+          {{ scope.row.createTime }}
+        </el-button>
+      </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="success" link :icon="Search" @click="resetPass(scope.row)">查看</el-button>
-        <el-button type="success" link :icon="Download" @click="deletePro(scope.row)">导出</el-button>
+        <el-button type="primary" link :icon="View" @click="openAuditDialog(scope.row)">文件登记表</el-button>
+        <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button> -->
+
+        <el-button type="primary" link :icon="ChatDotRound" @click="exceptionNotes(scope.row)">异常备注</el-button>
+        <el-button type="primary" link :icon="Download" @click="download(scope.row)">下载</el-button>
       </template>
-      <!-- <template #append>
-        <span style="color: var(--el-color-primary)">我是插入在表格最后的内容。若表格有合计行，该内容会位于合计行之上。</span>
-      </template> -->
     </ProTable>
-    <el-dialog v-model="lockDialog" title="锁库" width="500px" :before-close="handleClose">
-      <div class="flex">
-        <div style="width: 90px">锁库说明：</div>
-        <el-input v-model="remark" type="textarea" :rows="4" placeholder="请输入..." resize="none" />
-      </div>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="lockDialog = false">取消</el-button>
-          <!-- <el-button type="primary" @click="lockOK()"> 确定 </el-button> -->
-        </div>
-      </template>
-    </el-dialog>
+    <UserDrawer ref="drawerRef" />
+    <ExceptionNotesDialog ref="exceptionNotesDialog" />
+    <!-- <RePrintAuditDialog ref="auditDialog" /> -->
   </div>
 </template>
 
-<script setup lang="tsx" name="complexProTable">
-import { reactive, ref, watch, onMounted } from "vue";
-import { ElMessage } from "element-plus";
+<script setup lang="tsx" name="useProTable">
+import { ref, reactive, watch } from "vue";
+import { useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
+import { useDownload } from "@/hooks/useDownload";
+import { useAuthButtons } from "@/hooks/useAuthButtons";
+import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
-import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults";
+import ImportExcel from "@/components/ImportExcel/index.vue";
+import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
-import { deleteUser, resetUserPassWord } from "@/api/modules/user";
-import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery } from "@/api/modules/project";
-import { Search, Download } from "@element-plus/icons-vue";
-const lockDialog = ref(false);
-const remark = ref("");
-const handleClose = () => {
-  lockDialog.value = false;
+import { CirclePlus, ChatDotRound, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
+import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, BatchAddUser } from "@/api/modules/user";
+import { archiveCancelList, archiveDownloadList, archiveExcelReport, archiveFileDownload, archiveFileList } from "@/api/modules/archives";
+import { c } from "vite/dist/node/types.d-aGj9QkWt";
+import ExceptionNotesDialog from "./ExceptionNotesDialog.vue";
+const exceptionNotesDialog = ref();
+const exceptionNotes = (params: any) => {
+  exceptionNotesDialog.value.openDialog(params);
 };
-const handleCancel = () => {
-  lockDialog.value = false;
+const router = useRouter();
+
+// 跳转详情页
+const toDetail = () => {
+  router.push(`/proTable/useProTable/detail/${Math.random().toFixed(3)}?params=detail-page`);
 };
+// 模式切换
+const modeSwitching = ref("0");
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
-// 模式切换
-const modeSwitching = ref("1");
-// 自定义渲染表头（使用tsx语法）
-const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
-  return <div>{scope.column.label}</div>;
-};
 
-// 表格配置项
-const columns = reactive<ColumnProps<User.ResUserList>[]>([
-  { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
-  { prop: "projectName", label: "项目名称", width: 100, search: { el: "input", tooltip: "" } },
-  { prop: "enrollCount", label: "入组列数", width: 100 },
-  {
-    prop: "base",
-    label: "文件",
-    headerRender,
-    _children: [
-      { prop: "waitReviewCount", label: "存档" },
-      { prop: "waitControllerCount", label: "打印" },
-      {
-        prop: "waitRecycleCount",
-        label: "使用"
-      },
-      {
-        prop: "waitLoseCount",
-        label: "回收"
-      },
-      {
-        prop: "waitLoseCount",
-        label: "销毁"
-      },
-      {
-        prop: "waitLoseCount",
-        label: "遗失"
-      }
-    ]
-  },
-  { prop: "enrollCount", label: "管理员", width: 100 },
-  { prop: "operation", label: "操作", fixed: "right", width: 150 }
-]);
+// 如果表格需要初始化请求参数，直接定义传给 ProTable (之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
+const initParam = reactive({ type: 1 });
 
-interface SpanMethodProps {
-  row: User.ResUserList;
-  column: TableColumnCtx<User.ResUserList>;
-  rowIndex: number;
-  columnIndex: number;
-}
-const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
-  // if (columnIndex === 3) {
-  //   if (rowIndex % 2 === 0) return { rowspan: 2, colspan: 1 };
-  //   else return { rowspan: 0, colspan: 0 };
-  // }
-};
-
-// 设置列样式
-const tableRowClassName = ({ rowIndex }: { row: User.ResUserList; rowIndex: number }) => {
-  if (rowIndex === 2) return "warning-row";
-  if (rowIndex === 6) return "success-row";
-  return "";
-};
-
-// 单击行
-const rowClick = (row: User.ResUserList, column: TableColumnCtx<User.ResUserList>) => {
-  if (column.property == "radio" || column.property == "operation") return;
-  ElMessage.success("当前行被点击了！");
-};
 watch(
   () => modeSwitching.value,
   () => {
     proTable.value?.getTableList();
   }
 );
-const getTableList = (params?: any) => {
-  if (modeSwitching.value == "1") {
+// 如果你想在请求之前对当前请求参数做一些操作，可以自定义如下函数：params 为当前所有的请求参数（包括分页），最后返回请求列表接口
+// 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
+const getTableList = (params: any) => {
+  params.reviewStatus = modeSwitching.value;
+  params.isManager = true;
+  if (modeSwitching.value == "0") {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
-      { prop: "projectName", label: "项目名称", width: 100, search: { el: "input", tooltip: "" } },
-      { prop: "enrollCount", label: "入组列数", width: 100 },
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
       {
-        prop: "base",
-        label: "文件",
-        headerRender,
-        _children: [
-          { prop: "waitReviewCount", label: "存档" },
-          { prop: "waitControllerCount", label: "打印" },
-          {
-            prop: "waitRecycleCount",
-            label: "使用"
-          },
-          {
-            prop: "waitLoseCount",
-            label: "回收"
-          },
-          {
-            prop: "waitLoseCount",
-            label: "销毁"
-          },
-          {
-            prop: "waitLoseCount",
-            label: "遗失"
-          }
-        ]
+        prop: "idCard",
+        label: "源文件",
+        width: 80,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
       },
-      { prop: "enrollCount", label: "管理员", width: 100 },
-      { prop: "operation", label: "操作", fixed: "right", width: 150 }
+      { prop: "address", label: "受控文件", width: 115 },
+      { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
+      { prop: "pageTotal", label: "页数", width: 115 },
+      { prop: "applyUserName", label: "打印页数", width: 85 },
+      { prop: "applyRemark", label: "审查人", width: 115 },
+      { prop: "applyRemark", label: "受控发放人", width: 115 },
+      { prop: "operation", label: "操作", fixed: "right", width: 130 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
-      { prop: "projectName", label: "项目名称", width: 100, search: { el: "input", tooltip: "" } },
-      { prop: "enrollCount", label: "入组列数", width: 100 },
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
       {
-        prop: "base",
-        label: "文件",
-        headerRender,
-        _children: [
-          { prop: "waitReviewCount", label: "存档" },
-          { prop: "waitControllerCount", label: "打印" },
-          {
-            prop: "waitRecycleCount",
-            label: "使用"
-          },
-          {
-            prop: "waitLoseCount",
-            label: "回收"
-          },
-          {
-            prop: "waitLoseCount",
-            label: "销毁"
-          },
-          {
-            prop: "waitLoseCount",
-            label: "遗失"
-          }
-        ]
+        prop: "idCard",
+        label: "源文件",
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
       },
-      { prop: "enrollCount", label: "管理员", width: 100 },
-      { prop: "enrollCount", label: "锁库说明", width: 100 },
-      { prop: "enrollCount", label: "锁库日期", width: 100 },
-      { prop: "operation", label: "操作", fixed: "right", width: 150 }
+      { prop: "address", label: "受控文件", width: 115 },
+      { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
+      { prop: "pageTotal", label: "页数", width: 115 },
+      { prop: "pageTotal", label: "作废份数", width: 85 },
+      { prop: "creatorName", label: "作废人", width: 115 },
+      { prop: "remark", label: "作废说明", width: 85 },
+      { prop: "versionTime", label: "作废日期", width: 115 }
+    );
+  } else if (modeSwitching.value == "1") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "idCard",
+        label: "源文件",
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
+      { prop: "pageTotal", label: "页数", width: 115 },
+      { prop: "fileType", label: "文件类型", width: 85 },
+      { prop: "versionTime", label: "下载日期", width: 115 }
     );
   }
-  params.status = modeSwitching.value;
-  return projectList(params);
+  switch (modeSwitching.value) {
+    case "0":
+      return archiveFileList(params);
+    case "1":
+      return archiveDownloadList(params);
+    case "2":
+      return archiveCancelList(params);
+    default:
+      return archiveFileList(params);
+  }
 };
 
-// 删除项目
-const deletePro = async (params: any) => {
-  await useHandleData(projectDelete, { id: [params.id] }, `删除【${params.projectName}】项目（删除后无法恢复)?`);
+// 表格配置项
+const columns = reactive<ColumnProps<User.ResUserList>[]>([
+  { type: "selection", fixed: "left", width: 70 },
+  { prop: "expand", label: "项目名称", width: 85, search: { el: "input" } },
+  { prop: "idCard", label: "文件编码", width: 85, search: { el: "input" } },
+  { prop: "idCard", label: "文件名" },
+  { prop: "idCard", label: "源文件" },
+  { prop: "address", label: "受控文件", width: 115 },
+  { prop: "address", label: "文件受控编码", width: 115 },
+  { prop: "address", label: "重新打印份数", width: 115 },
+  { prop: "address", label: "申请人", width: 85 },
+  { prop: "address", label: "申请说明", width: 115 },
+  { prop: "address", label: "申请日期", width: 85 },
+  { prop: "operation", label: "操作", fixed: "right", width: 80 }
+]);
+
+// 表格拖拽排序
+const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: number }) => {
+  console.log(newIndex, oldIndex);
+  console.log(proTable.value?.tableData);
+  ElMessage.success("修改列表排序成功");
+};
+
+// 删除用户信息
+const deleteAccount = async (params: User.ResUserList) => {
+  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
   proTable.value?.getTableList();
 };
-const projectId = ref("");
+
 // 重置用户密码
 const resetPass = async (params: User.ResUserList) => {
   await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
   proTable.value?.getTableList();
 };
 
-// 页面渲染请求
-const init = async () => {
-  // 获取用户列表
-  // const { data } = await projectMoveAuthUserQuery();
-  // userList.value = data;
-  // 获取项目列表
-  proTable.value?.getTableList();
+// 切换用户状态
+const download = async (row: any) => {
+  await archiveFileDownload(row);
+  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload(archiveExcelReport, `${row.projectName}项目详情`, row));
 };
-onMounted(() => {
-  init();
-});
-</script>
 
-<style lang="scss">
-.el-table .warning-row,
-.el-table .warning-row .el-table-fixed-column--right,
-.el-table .warning-row .el-table-fixed-column--left {
-  background-color: var(--el-color-warning-light-9);
-}
-.el-table .success-row,
-.el-table .success-row .el-table-fixed-column--right,
-.el-table .success-row .el-table-fixed-column--left {
-  background-color: var(--el-color-success-light-9);
-}
-.lock-library-dialog {
-  display: flex;
-}
-.flex {
-  display: flex;
-}
-.tops {
-  align-items: center;
-  justify-content: space-between;
-}
-</style>
+// 导出用户列表
+const openAuditDialog = async (params: any) => {};
+
+// 批量添加用户
+const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);
+// const batchAdd = () => {
+//   const params = {
+//     title: "用户",
+//     tempApi: exportUserInfo,
+//     importApi: BatchAddUser,
+//     getTableList: proTable.value?.getTableList
+//   };
+//   dialogRef.value?.acceptParams(params);
+// };
+
+// 打开 drawer(新增、查看、编辑)
+const drawerRef = ref<InstanceType<typeof UserDrawer> | any>(null);
+const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
+  const params = {
+    title,
+    isView: title === "查看",
+    row: { ...row },
+    api: title === "新增" ? addUser : title === "编辑" ? editUser : undefined,
+    getTableList: proTable.value?.getTableList
+  };
+  drawerRef.value!.acceptParams(params);
+};
+</script>

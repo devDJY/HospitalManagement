@@ -46,7 +46,7 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openAuditDialog(scope.row)">撤回</el-button>
+        <el-button type="primary" link :icon="Paperclip" @click="openAuditDialog(scope.row)">打印</el-button>
         <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
@@ -70,13 +70,13 @@ import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Download, Upload, Paperclip, Refresh } from "@element-plus/icons-vue";
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, BatchAddUser } from "@/api/modules/user";
 import { fileControllerCertList, fileControllerRePrintList } from "@/api/modules/fileInfo";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
-  auditDialog.value.openDialog();
+  auditDialog.value.openDialog(params);
 };
 const router = useRouter();
 
