@@ -52,14 +52,19 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
-        <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
-        <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button>
+        <div v-if="modeSwitching == '0'">
+          <el-button type="primary" link :icon="Coordinate" @click="handleReview(scope.row)">审查</el-button>
+          <el-button type="success" link :icon="Download" @click="exportTab(scope.row)">导出</el-button>
+        </div>
+        <div v-if="modeSwitching == '1'">
+          <el-button type="primary" link :icon="RemoveFilled" @click="handleBanReuse(scope.row)">禁止复用</el-button>
+        </div>
       </template>
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
+    <FileReviewDialog ref="fileReviewDialog" />
+    <BanReuseDialog ref="banReuseDialog" />
   </div>
 </template>
 
@@ -75,25 +80,38 @@ import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Download, Upload, View, RemoveFilled, Coordinate } from "@element-plus/icons-vue";
 import { getUserList, deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
-
+import FileReviewDialog from "./FileReviewDialog.vue";
+import BanReuseDialog from "./BanReuseDialog.vue";
 import { fileInfoList } from "@/api/modules/fileInfo";
 import { pa } from "element-plus/es/locale";
 const router = useRouter();
 
-// 跳转详情页
-const toDetail = () => {
-  router.push(`/proTable/useProTable/detail/${Math.random().toFixed(3)}?params=detail-page`);
-};
 // 模式切换
 const modeSwitching = ref("0");
+const fileReviewDialog = ref();
+const banReuseDialog = ref();
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
 
 // 如果表格需要初始化请求参数，直接定义传给 ProTable (之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
 const initParam = reactive({ type: 1 });
-
+// 审查文件操作
+const handleReview = (params: any) => {
+  // 可以传入审查数据（可选）
+  fileReviewDialog.value?.open({
+    quantity: 15,
+    description: "其他申请说明...",
+    applyDate: "2025-06-04 09:30",
+    status: "待审查"
+  });
+};
+// 禁止复用操作
+const handleBanReuse = (params: any) => {
+  // 传入文件ID
+  banReuseDialog.value?.open("file123"); // file123是示例文件ID
+};
 watch(
   () => modeSwitching.value,
   () => {
@@ -105,6 +123,113 @@ watch(
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
   params.fileStatus = modeSwitching.value;
+  if (modeSwitching.value == "0") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "attachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 85 },
+      { prop: "fileCount", label: "份数", width: 85 },
+      { prop: "creatorName", label: "申请人", width: 115 },
+      { prop: "reviewTime", label: "申请日期", width: 85 },
+      { prop: "fileStatus", label: "受控方式" },
+      { prop: "operation", label: "操作", fixed: "right", width: 180 }
+    );
+  } else if (modeSwitching.value == "1") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "attachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileCount", label: "份数", width: 85 },
+      { prop: "creatorName", label: "申请人", width: 115 },
+      { prop: "fileStatus", label: "受控方式" },
+      { prop: "reviewTime", label: "审查意见", width: 85 },
+      { prop: "reviewTime", label: "审查日期", width: 85 },
+      { prop: "reviewTime", label: "复用状态", width: 85 },
+      { prop: "operation", label: "操作", fixed: "right", width: 180 }
+    );
+  } else if (modeSwitching.value == "2") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "attachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileCount", label: "份数", width: 85 },
+      { prop: "creatorName", label: "申请人", width: 115 },
+      { prop: "fileStatus", label: "受控方式" },
+      { prop: "reviewTime", label: "审查意见", width: 85 },
+      { prop: "reviewTime", label: "附件", width: 85 },
+      { prop: "reviewTime", label: "审查日期", width: 85 },
+      { prop: "reviewTime", label: "备注", width: 85 }
+    );
+  } else if (modeSwitching.value == "2") {
+    columns.splice(
+      0,
+      columns.length,
+      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
+      { prop: "attachmentName", label: "文件名" },
+      {
+        prop: "attachmentUrl",
+        label: "源文件",
+        width: 90,
+        render(scope) {
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
+        }
+      },
+      { prop: "fileCount", label: "份数", width: 85 },
+      { prop: "creatorName", label: "申请人", width: 115 },
+      { prop: "fileStatus", label: "受控方式" },
+      { prop: "reviewTime", label: "审查意见", width: 85 },
+      { prop: "reviewTime", label: "审查日期", width: 85 }
+    );
+  }
   return fileInfoList(params);
 };
 
@@ -122,7 +247,6 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
-  { type: "selection", fixed: "left", width: 70 },
   { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
   { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
   { prop: "attachmentName", label: "文件名" },
@@ -144,7 +268,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "creatorName", label: "申请人", width: 115 },
   { prop: "reviewTime", label: "申请日期", width: 85 },
   { prop: "fileStatus", label: "受控方式" },
-  { prop: "operation", label: "操作", fixed: "right", width: 80 }
+  { prop: "operation", label: "操作", fixed: "right", width: 180 }
 ]);
 
 // 表格拖拽排序
@@ -154,22 +278,9 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   ElMessage.success("修改列表排序成功");
 };
 
-// 删除用户信息
-const deleteAccount = async (params: User.ResUserList) => {
-  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
-  proTable.value?.getTableList();
-};
-
-// 重置用户密码
-const resetPass = async (params: User.ResUserList) => {
-  await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
-  proTable.value?.getTableList();
-};
-
-// 切换用户状态
-const changeStatus = async (row: User.ResUserList) => {
-  await useHandleData(changeUserStatus, { id: row.id, status: row.status == 1 ? 0 : 1 }, `切换【${row.username}】用户状态`);
-  proTable.value?.getTableList();
+// 导出表
+const exportTab = async params => {
+  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam));
 };
 
 // 导出用户列表

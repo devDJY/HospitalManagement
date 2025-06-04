@@ -69,3 +69,7 @@ export const getUserDepartment = () => {
 export const getUserRole = () => {
   return http.get<User.ResRole[]>(PORT1 + `/user/role`);
 };
+// //用户管理 - 分页查询;
+// export const getUserInfoList = (params: any) => {
+//   return http.get("/project/authorize/list", params);
+// };

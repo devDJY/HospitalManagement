@@ -55,9 +55,9 @@
       </template> -->
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="success" v-if="modeSwitching == '1'" link :icon="Search" @click="resetPass(scope.row)">查看</el-button>
-        <!-- <el-button type="primary" v-if="modeSwitching == '1'" link :icon="Edit" @click="editBtn(scope.row)">编辑</el-button>
-        <el-button type="warning" v-if="modeSwitching == '1'" link :icon="RemoveFilled" @click="lock(scope.row)">锁库</el-button> -->
+        <el-button type="success" v-if="modeSwitching == '1'" link :icon="Edit" @click="resetPass(scope.row)">编辑</el-button>
+        <el-button type="warning" v-if="modeSwitching == '1'" link :icon="Plus" @click="joinAnOrganization(scope.row)">加入组织</el-button>
+        <el-button type="info" v-if="modeSwitching == '1'" link :icon="Refresh" @click="reset(scope.row)">重置</el-button>
         <el-button type="danger" v-if="modeSwitching == '1'" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
       </template>
       <!-- <template #append>
@@ -89,7 +89,7 @@ import type { TableColumnCtx } from "element-plus/es/components/table/src/table-
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { deleteUser, resetUserPassWord } from "@/api/modules/user";
 import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery } from "@/api/modules/project";
-import { Search, Delete, Edit, Plus, RemoveFilled } from "@element-plus/icons-vue";
+import { Search, Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 const lockDialog = ref(false);
 const remark = ref("");
 const handleClose = () => {
@@ -178,15 +178,18 @@ const getTableList = (params?: any) => {
       0,
       columns.length,
       { prop: "projectCode", label: "账号", search: { el: "input", tooltip: "" } },
-      { prop: "projectName", label: "真实姓名", width: 100, search: { el: "input", tooltip: "" } },
-      { prop: "enrollCount", label: "性别" },
-      { prop: "enrollCount", label: "手机号" },
-      { prop: "enrollCount", label: "电子邮箱" },
-      { prop: "enrollCount", label: "单位名称" },
-      { prop: "enrollCount", label: "角色" },
-      { prop: "enrollCount", label: "权限组" },
-      { prop: "enrollCount", label: "注册日期" },
-      { prop: "operation", label: "操作", fixed: "right", width: 150 }
+      { prop: "nickName", label: "真实姓名", width: 100, search: { el: "input", tooltip: "" } },
+      {
+        prop: "gender",
+        label: "性别"
+      },
+      { prop: "mobile", label: "手机号" },
+      { prop: "email", label: "电子邮箱" },
+      { prop: "companyName", label: "单位名称" },
+      { prop: "roleId", label: "角色" },
+      { prop: "permissionGroupName", label: "权限组" },
+      { prop: "registerTime", label: "注册日期" },
+      { prop: "operation", label: "操作", fixed: "right", width: 200 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
@@ -201,7 +204,7 @@ const getTableList = (params?: any) => {
       { prop: "enrollCount", label: "角色" },
       { prop: "enrollCount", label: "权限组" },
       { prop: "enrollCount", label: "注册日期" },
-      { prop: "operation", label: "操作", fixed: "right", width: 150 }
+      { prop: "operation", label: "操作", fixed: "right", width: 200 }
     );
   }
   params.status = modeSwitching.value;
@@ -219,7 +222,8 @@ const resetPass = async (params: User.ResUserList) => {
   await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
   proTable.value?.getTableList();
 };
-
+const joinAnOrganization = async params => {};
+const reset = async params => {};
 // 页面渲染请求
 const init = async () => {
   // 获取用户列表
