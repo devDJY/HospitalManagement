@@ -109,3 +109,13 @@ export const fileControllerPrintCertUpdateUsed = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/fileController/print/cert/update/used", pa, { loading: false });
 };
+//文件 - 文件申请 - 审批文件;
+export const fileInfoReview = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileInfo/review", pa, { loading: false });
+};
+//文件 - 形式审查 - 通过 - 申请禁用 / 恢复复用;
+export const fileInfoApplyEditReuse = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileInfo/apply/edit/reuse", pa, { loading: false });
+};

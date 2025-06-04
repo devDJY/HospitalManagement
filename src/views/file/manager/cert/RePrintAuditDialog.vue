@@ -2,7 +2,7 @@
   <el-dialog title="作废" v-model="dialogVisible" width="500px" :close-on-click-modal="false">
     <el-form label-width="100px">
       <el-form-item label="作废文件">
-        <el-input v-model="auditStatus" type="textarea" :rows="4" placeholder="请输入..." clearable />
+        <el-input v-model="auditStatus" disabled type="textarea" :rows="4" placeholder="请输入..." clearable />
       </el-form-item>
 
       <el-form-item label="作废说明" required>
@@ -22,12 +22,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { fileControllerCertCancel } from "@/api/modules/filecontroller";
 const dialogVisible = ref(false);
 const auditStatus = ref("");
 const auditOpinion = ref("");
-
+const fileId = ref(""); // 假设你有一个文件ID需要传递给API
 // 打开对话框方法
-const openDialog = () => {
+const openDialog = data => {
+  fileId.value = data.fileId;
+  auditStatus.value = data.attachmentName;
   dialogVisible.value = true;
   auditOpinion.value = "";
 };
@@ -39,6 +42,10 @@ const handleConfirm = () => {
     return;
   }
   // 这里可以调用API提交审核意见
+  fileControllerCertCancel({
+    fileId: fileId.value,
+    remark: auditOpinion.value
+  });
   console.log("作废说明:", auditOpinion.value);
   dialogVisible.value = false;
   ElMessage.success("作废提交成功");

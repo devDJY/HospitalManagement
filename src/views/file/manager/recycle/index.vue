@@ -76,7 +76,7 @@ import { fileControllerRecycleList } from "@/api/modules/fileInfo";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
-  auditDialog.value.openDialog();
+  auditDialog.value.openDialog(params);
 };
 const router = useRouter();
 

@@ -52,7 +52,9 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="Delete" @click="openAuditDialog(scope.row)">作废</el-button>
+        <el-button type="primary" v-if="modeSwitching == '1'" link :icon="Star" @click="controlledDialog(scope.row)">受控</el-button>
+        <el-button type="primary" v-if="modeSwitching == '1'" link :icon="CloseBold" @click="cancelTheControlledDialog(scope.row)">取消受控</el-button>
+        <el-button type="primary" v-if="modeSwitching == '2'" link :icon="Delete" @click="openAuditDialog(scope.row)">作废</el-button>
         <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
@@ -61,6 +63,28 @@
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
     <RePrintAuditDialog ref="auditDialog" />
+    <el-dialog v-model="dialogVisible" title="受控" width="500">
+      <span>是否确定给该文件加受控编码、水印，并发放使用？</span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="issuanceAndUse()"> 确定 </el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="lockDialog" title="取消受控" width="500px">
+      <el-tag type="warning" style="margin-bottom: 10px">温馨提示：取消受控后，文件将进入【形式审查-驳回】 列表</el-tag>
+      <div class="flex">
+        <div class="required-label">取消原因</div>
+        <el-input v-model="remark" type="textarea" :rows="4" placeholder="请输入..." resize="none" />
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="lockDialog = false">取消</el-button>
+          <el-button type="primary" @click="lockOK()"> 确定 </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -76,25 +100,25 @@ import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Download, Upload, View, Star, CloseBold } from "@element-plus/icons-vue";
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
 import { de, pa } from "element-plus/es/locale";
 import { fileControllerCancelCertList, fileControllerCertList, fileControllerPrintCertList, fileControllerWaitList } from "@/api/modules/fileInfo";
 import dayjs from "dayjs";
 import { c } from "vite/dist/node/types.d-aGj9QkWt";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
+import { fileControllerFileCert } from "@/api/modules/filecontroller";
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
-  auditDialog.value.openDialog();
+  auditDialog.value.openDialog(params);
 };
 const router = useRouter();
 
-// 跳转详情页
-const toDetail = () => {
-  router.push(`/proTable/useProTable/detail/${Math.random().toFixed(3)}?params=detail-page`);
-};
 // 模式切换
 const modeSwitching = ref("1");
+const dialogVisible = ref(false);
+const lockDialog = ref(false);
+const remark = ref("");
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
 
@@ -321,7 +345,35 @@ const getTableList = (params: any) => {
       return fileControllerWaitList(params);
   }
 };
-
+const fileId = ref("");
+const controlledDialog = (row: any) => {
+  fileId.value = row.fileId;
+  dialogVisible.value = true;
+};
+const cancelTheControlledDialog = (row: any) => {
+  fileId.value = row.fileId;
+  lockDialog.value = true;
+};
+const issuanceAndUse = () => {
+  fileControllerFileCert({ fileId: fileId.value }).then((res: any) => {
+    ElMessage.success("受控成功");
+    dialogVisible.value = false;
+    proTable.value?.getTableList();
+  });
+};
+const lockOK = () => {
+  if (remark.value == "") {
+    ElMessage.error("请输入取消原因");
+    return;
+  } else {
+    fileControllerFileCert({ fileId: fileId.value, remark: remark.value }).then((res: any) => {
+      ElMessage.success("取消受控成功");
+      lockDialog.value = false;
+      remark.value = "";
+      proTable.value?.getTableList();
+    });
+  }
+};
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "selection", fixed: "left", width: 70 },
@@ -375,12 +427,6 @@ const deleteAccount = async (params: User.ResUserList) => {
   proTable.value?.getTableList();
 };
 
-// 重置用户密码
-const resetPass = async (params: User.ResUserList) => {
-  await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
-  proTable.value?.getTableList();
-};
-
 // 切换用户状态
 const changeStatus = async (row: User.ResUserList) => {
   await useHandleData(changeUserStatus, { id: row.id, status: row.status == 1 ? 0 : 1 }, `切换【${row.username}】用户状态`);
@@ -407,3 +453,16 @@ const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
   drawerRef.value!.acceptParams(params);
 };
 </script>
+<style scoped>
+.required-label {
+  position: relative;
+  width: 90px;
+  padding-left: 12px;
+}
+.required-label::before {
+  position: absolute;
+  left: 0;
+  color: #f56c6c;
+  content: "*";
+}
+</style>

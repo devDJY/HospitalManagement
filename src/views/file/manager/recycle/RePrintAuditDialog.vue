@@ -3,8 +3,8 @@
     <el-form label-width="100px">
       <el-form-item label="审核状态" required>
         <el-select v-model="auditStatus" placeholder="请选择审核状态">
-          <el-option label="通过" value="1" />
-          <el-option label="不通过" value="2" />
+          <el-option label="驳回" value="1" />
+          <el-option label="通过" value="2" />
         </el-select>
       </el-form-item>
 
@@ -25,24 +25,30 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { fileControllerRecycleReview } from "@/api/modules/filecontroller";
 const dialogVisible = ref(false);
 const auditStatus = ref("");
 const auditOpinion = ref("");
-
+const rePrintId = ref(""); // 假设你有一个文件ID需要传递给API
 // 打开对话框方法
-const openDialog = () => {
+const openDialog = data => {
+  rePrintId.value = data.rePrintId;
   dialogVisible.value = true;
   auditOpinion.value = "";
 };
 
 // 确认提交
-const handleConfirm = () => {
+const handleConfirm = async () => {
   if (!auditOpinion.value.trim()) {
     ElMessage.warning("请输入审核意见");
     return;
   }
-  // 这里可以调用API提交审核意见
-  console.log("提交审核意见:", auditOpinion.value);
+  let obj = {
+    rePrintId: rePrintId.value,
+    remark: auditOpinion.value,
+    reviewStatus: auditStatus.value
+  };
+  await fileControllerRecycleReview(obj);
   dialogVisible.value = false;
   ElMessage.success("审核提交成功");
 };

@@ -1,7 +1,7 @@
 <template>
-  <el-dialog title="禁止复用" v-model="visible" width="500px" :close-on-click-modal="false">
+  <el-dialog :title="title" v-model="visible" width="500px" :close-on-click-modal="false">
     <div class="ban-reuse-dialog">
-      <p class="confirm-text">● 是否确定禁止该文件的申请复用？</p>
+      <p class="confirm-text">● {{ title == "禁止复用" ? "是否确定禁止该文件的申请复用？" : "是否确定解除禁止该文件的申请复用？" }}</p>
 
       <el-form>
         <el-form-item label="备注" label-width="60px">
@@ -13,7 +13,7 @@
         <p class="history-title">历史记录</p>
         <div class="history-list">
           <div v-for="(record, index) in banData.history" :key="index" class="history-item">
-            <p class="history-time">{{ record.time }}，{{ record.operator }} {{ record.action }}</p>
+            <p class="history-time">{{ record.createTime }}，{{ record.nickName }} {{ record.operationName }}</p>
             <p class="history-remark">{{ record.remark }}</p>
           </div>
         </div>
@@ -28,13 +28,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, defineEmits } from "vue";
 import { ElMessage } from "element-plus";
+import { fileInfoApplyEditReuse, fileInfoReuseGetHistory } from "@/api/modules/fileInfo";
 
 interface BanRecord {
-  time: string;
-  operator: string;
-  action: string;
+  operationName: string;
+  createTime: string;
+  nickName: string;
   remark: string;
 }
 
@@ -44,44 +45,49 @@ interface BanData {
 }
 
 const visible = ref(false);
-const fileId = ref<string | number>("");
-
+const fileId = ref();
+const title = ref("禁止复用");
 const banData = reactive<BanData>({
   remark: "",
-  history: [
-    {
-      time: "2025-06-03 09:57:49",
-      operator: "杨洛淞",
-      action: "禁用文件复用",
-      remark: "111111"
-    },
-    {
-      time: "2025-06-03 09:58:05",
-      operator: "杨洛淞",
-      action: "解禁文件复用",
-      remark: "11"
-    }
-  ]
+  history: []
 });
-
+const isMultiplexed = ref(0);
 // 打开弹窗的方法
-const open = (id: string | number) => {
-  fileId.value = id;
-  visible.value = true;
+const open = (data, t) => {
+  isMultiplexed.value = t;
+  if (isMultiplexed.value == 1) {
+    title.value = "禁止复用";
+  } else {
+    title.value = "解除禁止复用";
+  }
+  fileId.value = data;
+  fileInfoReuseGetHistory({ fileId: data }).then((res: any) => {
+    if (res.data) {
+      banData.history = res.data;
+      visible.value = true;
+    }
+  });
 };
-
+// 定义可触发的事件（新增）
+const emit = defineEmits(["refresh"]);
 // 确认禁止复用
 const handleConfirm = async () => {
   if (!banData.remark.trim()) {
     ElMessage.warning("请填写备注信息");
     return;
   }
-
+  let obj = {
+    fileId: fileId.value,
+    isManager: true,
+    remark: "string",
+    reuseStatus: isMultiplexed.value === 1 ? 0 : 1,
+    userId: 0
+  };
   try {
     // 这里调用API禁止复用
-    // await banReuseAPI(fileId.value, banData.remark)
-
-    ElMessage.success("已成功禁止文件复用");
+    await fileInfoApplyEditReuse(obj);
+    ElMessage.success("操作成功");
+    emit("refresh");
     visible.value = false;
   } catch (error) {
     ElMessage.error("操作失败");
@@ -101,7 +107,7 @@ defineExpose({
 .confirm-text {
   margin: 0 0 20px;
   font-size: 15px;
-  color: var(--el-text-color-primary);
+  color: var(--el-color-danger);
 }
 .history-section {
   padding-top: 15px;

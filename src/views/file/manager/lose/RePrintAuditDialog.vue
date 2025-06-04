@@ -25,23 +25,30 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { fileControllerLoseReview } from "@/api/modules/filecontroller";
 const dialogVisible = ref(false);
 const auditStatus = ref("");
 const auditOpinion = ref("");
-
+const fileControllerIds = ref(); // 假设你有一个文件ID需要传递给API
 // 打开对话框方法
-const openDialog = () => {
+const openDialog = data => {
+  fileControllerIds.value = [data.fileControllerIds];
   dialogVisible.value = true;
   auditOpinion.value = "";
 };
 
 // 确认提交
-const handleConfirm = () => {
+const handleConfirm = async () => {
   if (!auditOpinion.value.trim()) {
     ElMessage.warning("请输入审核意见");
     return;
   }
-  // 这里可以调用API提交审核意见
+  let obj = {
+    fileControllerIds: [0],
+    remark: auditOpinion.value,
+    reviewStatus: auditStatus.value
+  };
+  await fileControllerLoseReview(obj);
   console.log("提交审核意见:", auditOpinion.value);
   dialogVisible.value = false;
   ElMessage.success("审核提交成功");

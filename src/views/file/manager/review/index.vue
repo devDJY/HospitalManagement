@@ -57,14 +57,15 @@
           <el-button type="success" link :icon="Download" @click="exportTab(scope.row)">导出</el-button>
         </div>
         <div v-if="modeSwitching == '1'">
-          <el-button type="primary" link :icon="RemoveFilled" @click="handleBanReuse(scope.row)">禁止复用</el-button>
+          <el-button type="primary" link v-if="scope.row.reuseStatus == 1" :icon="RemoveFilled" @click="handleBanReuse(scope.row)">禁止复用</el-button>
+          <el-button type="primary" link v-if="scope.row.reuseStatus == 0" :icon="RemoveFilled" @click="liftingTheProhibitionOnReuse(scope.row)">解除禁止复用</el-button>
         </div>
       </template>
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
     <FileReviewDialog ref="fileReviewDialog" />
-    <BanReuseDialog ref="banReuseDialog" />
+    <BanReuseDialog ref="banReuseDialog" @refresh="handleRefresh" />
   </div>
 </template>
 
@@ -100,17 +101,16 @@ const initParam = reactive({ type: 1 });
 // 审查文件操作
 const handleReview = (params: any) => {
   // 可以传入审查数据（可选）
-  fileReviewDialog.value?.open({
-    quantity: 15,
-    description: "其他申请说明...",
-    applyDate: "2025-06-04 09:30",
-    status: "待审查"
-  });
+  fileReviewDialog.value?.open(params);
 };
 // 禁止复用操作
 const handleBanReuse = (params: any) => {
   // 传入文件ID
-  banReuseDialog.value?.open("file123"); // file123是示例文件ID
+  banReuseDialog.value?.open(params.fileId, 1); // file123是示例文件ID
+};
+const liftingTheProhibitionOnReuse = (params: any) => {
+  // 传入文件ID
+  banReuseDialog.value?.open(params.fileId, 2); // file123是示例文件ID
 };
 watch(
   () => modeSwitching.value,
@@ -171,10 +171,27 @@ const getTableList = (params: any) => {
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
-      { prop: "fileStatus", label: "受控方式" },
-      { prop: "reviewTime", label: "审查意见", width: 85 },
+      {
+        prop: "checkType",
+        label: "受控方式",
+        render(scope) {
+          const status = (scope.row as any).reuseStatus;
+          const tagType = status === 1 ? "success" : "danger";
+          return <el-tag type={tagType}>{status === 0 ? "线上" : "线下"}</el-tag>;
+        }
+      },
+      { prop: "reviewRemark", label: "审查意见", width: 85 },
       { prop: "reviewTime", label: "审查日期", width: 85 },
-      { prop: "reviewTime", label: "复用状态", width: 85 },
+      {
+        prop: "reuseStatus",
+        label: "复用状态",
+        width: 85,
+        render(scope) {
+          const status = (scope.row as any).reuseStatus;
+          const tagType = status === 1 ? "success" : "danger";
+          return <el-tag type={tagType}>{status === 1 ? "不复用" : "可复用"}</el-tag>;
+        }
+      },
       { prop: "operation", label: "操作", fixed: "right", width: 180 }
     );
   } else if (modeSwitching.value == "2") {
@@ -232,7 +249,9 @@ const getTableList = (params: any) => {
   }
   return fileInfoList(params);
 };
-
+const handleRefresh = () => {
+  proTable.value?.getTableList();
+};
 // 页面按钮权限（按钮权限既可以使用 hooks，也可以直接使用 v-auth 指令，指令适合直接绑定在按钮上，hooks 适合根据按钮权限显示不同的内容）
 const { BUTTONS } = useAuthButtons();
 
@@ -280,7 +299,7 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
 
 // 导出表
 const exportTab = async params => {
-  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam));
+  window.open(params.attachmentUrl);
 };
 
 // 导出用户列表
