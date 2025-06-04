@@ -71,8 +71,7 @@
             <el-button type="danger" link icon="CircleCloseFilled" @click="reuseProhibited(scope.row)">禁止复用</el-button>
           </div>
         </div>
-        <el-button v-if="modeSwitching == '2'" type="primary" link :icon="EditPen" @click="handleAdd(scope.row)"></el-button>
-
+        <el-button v-if="modeSwitching == '2' || modeSwitching == '3'" type="primary" link :icon="EditPen" @click="handleAdd(scope.row)"></el-button>
         <!-- <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
       </template>
     </ProTable>
