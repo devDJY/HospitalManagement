@@ -61,7 +61,7 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link icon="Delete" v-if="modeSwitching == '0'" @click="deleteAccount(scope.row)">撤回</el-button>
+        <el-button type="primary" link icon="Refresh" v-if="modeSwitching == '0'" @click="deleteAccount(scope.row)">撤回</el-button>
         <div v-if="modeSwitching == '1'">
           <div v-if="scope.row.reuseApplyStatus">
             {{ scope.row.reuseApplyStatus == 1 ? "禁止复用申请中" : "恢复复用申请中" }}
@@ -350,7 +350,7 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
 
 // 删除用户信息
 const deleteAccount = async params => {
-  await useHandleData(fileInfoRevoke, { fileId: params.fileId }, `撤回${params.projectName}】用户`);
+  await useHandleData(fileInfoRevoke, { fileId: params.fileId }, `确定撤回此次申请吗？`);
   proTable.value?.getTableList();
 };
 const applicationForReuse = params => {

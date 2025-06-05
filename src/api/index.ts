@@ -105,6 +105,16 @@ class RequestHttp {
   post<T>(url: string, params?: object | string, _object = {}): Promise<ResultData<T>> {
     return this.service.post(url, params, _object);
   }
+  // 通用文件POST方法
+  postFile<T>(url: string, data: FormData, config: AxiosRequestConfig = {}): Promise<ResultData<T>> {
+    return this.service.post(url, data, {
+      ...config,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        ...config.headers
+      }
+    });
+  }
   put<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {
     return this.service.put(url, params, _object);
   }

@@ -5,8 +5,8 @@
       <!-- 第一行 -->
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="项目名称" prop="projectName" required>
-            <el-select v-model="form.projectName" placeholder="请选择..." filterable style="width: 100%">
+          <el-form-item label="项目名称" prop="projectId" required>
+            <el-select clearable v-model="form.projectId" placeholder="请选择..." @change="selectTheProject" filterable style="width: 100%">
               <el-option v-for="item in projectOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -25,8 +25,9 @@
 
       <!-- 文件上传 -->
       <el-form-item label="文件" prop="file" required>
-        <el-upload action="#" :limit="1" accept=".pdf" :file-list="fileList" :before-upload="beforeUpload" :on-remove="handleRemove">
-          <el-button type="primary">选择文件</el-button>
+        <el-upload multiple action="#" :limit="1" accept=".pdf" :http-request="handleHttpUpload" :file-list="fileList" :before-upload="beforeUpload" :on-remove="handleRemove">
+          <el-button v-if="!form.attachmentUrl" type="primary">选择文件</el-button>
+          <el-button v-else type="success" @click="documentDetails">文件详情</el-button>
           <template #tip>
             <div class="upload-tip">
               <p>注意：类似于《如何同意书》这种"一式两份"的文件若整合在同一个PDF进行申请受控，需确保《如何同意书》为偶数项。</p>
@@ -72,17 +73,17 @@
       <!-- 审查人和申请说明 -->
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="审查人" prop="reviewer" required>
-            <el-select v-model="form.reviewer" placeholder="请选择..." filterable style="width: 100%">
+          <el-form-item label="审查人" prop="reviewerId" required>
+            <el-select v-model="form.reviewerId" placeholder="请选择..." filterable style="width: 100%">
               <el-option v-for="item in reviewerOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
 
-      <el-form-item label="申请说明" prop="reason" required>
+      <el-form-item label="申请说明" prop="applyReason" required>
         <el-input
-          v-model="form.reason"
+          v-model="form.applyReason"
           type="textarea"
           :rows="4"
           placeholder="请描述份数申请说明。例：每位受试者每次访视需要用的受控文件，预计三个月内将进行5次访视，待申请10份受控文件。"
@@ -100,56 +101,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import { ElMessage, type FormInstance, type FormRules, type UploadProps, type UploadUserFile } from "element-plus";
-import { fileInfoAdd, fileInfoupload } from "@/api/modules/fileInfo";
-interface FormData {
-  projectName: string;
-  fileCode: string;
-  file: File | null;
-  fileVersion: string;
-  fileCount: number;
-  versionTime: string;
-  checkType: "online" | "offline";
-  reviewer: string;
-  reason: string;
-  fileName: string;
-}
+import { ref, reactive, nextTick } from "vue";
+import { ElMessage, UploadUserFile, type FormInstance, type FormRules, type UploadProps } from "element-plus";
+import { fileInfoAdd, fileInfoAddGetProjectList, fileInfoAddGetReviewerList, fileInfoReEdit, fileInfoupload } from "@/api/modules/fileInfo";
 
 const dialogVisible = ref(false);
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
-const fileList = ref<UploadUserFile[]>([]);
+const fileList: any = ref([]);
 
-const form = reactive<FormData>({
-  projectName: "",
+const form: any = reactive({
+  projectId: "",
   fileCode: "",
   file: null,
   fileVersion: "",
   fileCount: 1,
+  attachmentId: "",
+  attachmentUrl: "",
   fileName: "",
   versionTime: "",
-  checkType: "online",
-  reviewer: "",
-  reason: ""
+  checkType: "0",
+  reviewerId: "",
+  applyReason: ""
 });
 
-const projectOptions = [
-  { value: "project1", label: "项目A" },
-  { value: "project2", label: "项目B" }
-];
-
-const reviewerOptions = [
-  { value: "reviewer1", label: "审查人1" },
-  { value: "reviewer2", label: "审查人2" }
-];
+const projectOptions = ref();
+const reviewerOptions: any = ref([]);
 
 const rules = reactive<FormRules>({
-  projectName: [{ required: true, message: "请选择项目名称", trigger: "change" }],
-  fileCode: [
-    { required: true, message: "请输入文件编码", trigger: "blur" },
-    { pattern: /^[a-zA-Z0-9-]+$/, message: "只能包含字母、数字和连接符(-)", trigger: "blur" }
-  ],
+  projectId: [{ required: true, message: "请选择项目名称", trigger: "change" }],
+  fileCode: [{ required: true, message: "请输入文件编码", trigger: "blur" }],
   file: [{ required: true, message: "请上传文件", trigger: "change" }],
   fileName: [{ required: true, message: "请输入文件名", trigger: "blur" }],
   fileCount: [
@@ -157,8 +138,8 @@ const rules = reactive<FormRules>({
     { type: "number", min: 1, message: "份数必须大于0", trigger: "blur" }
   ],
   checkType: [{ required: true, message: "请选择受控方式", trigger: "change" }],
-  reviewer: [{ required: true, message: "请选择审查人", trigger: "change" }],
-  reason: [
+  reviewerId: [{ required: true, message: "请选择审查人", trigger: "change" }],
+  applyReason: [
     { required: true, message: "请输入申请说明", trigger: "blur" },
     { min: 10, message: "申请说明不能少于10个字符", trigger: "blur" }
   ]
@@ -166,36 +147,103 @@ const rules = reactive<FormRules>({
 
 // 生成文件编码
 const generateFileCode = () => {
-  if (!form.projectName) {
+  if (!form.projectId) {
     ElMessage.warning("请先选择项目名称");
     return;
   }
-  const projectCode = projectOptions.find(p => p.value === form.projectName)?.label || "PROJ";
+  const projectCode = projectOptions.value?.find((p: any) => p.value === form.projectId)?.label || "PROJ";
   form.fileCode = `${projectCode}-${Date.now().toString().slice(-4)}`;
 };
-
+const restForm = () => {
+  form.projectId = "";
+  form.fileCode = "";
+  form.file = null;
+  form.fileVersion = "";
+  form.fileCount = 1;
+  form.attachmentId = "";
+  form.attachmentUrl = "";
+  form.fileName = "";
+  form.versionTime = "";
+  form.checkType = "0";
+  form.reviewerId = "";
+  form.applyReason = "";
+};
+const handleHttpUpload = async options => {
+  let formData = new FormData();
+  form.fileName = options.file.name; // 设置文件名
+  formData.append("file", options.file);
+  try {
+    fileInfoupload(formData)
+      .then((response: any) => {
+        form.attachmentId = response.attachmentId;
+        form.attachmentUrl = response.attachmentUrl;
+      })
+      .catch(error => {
+        options.onError(error);
+      });
+  } catch (error) {
+    options.onError(error as any);
+  }
+};
+const selectTheProject = (value: string) => {
+  if (!value) {
+    reviewerOptions.value = []; // 清空现有选项
+    form.reviewer = ""; // 清空选择
+    return;
+  }
+  fileInfoAddGetReviewerList({ projectId: value }).then((response: any) => {
+    reviewerOptions.value = response.data.map((item: any) => ({
+      value: item.userId,
+      label: item.nickName
+    }));
+  });
+};
 // 文件上传处理
 const beforeUpload: UploadProps["beforeUpload"] = file => {
   if (file.type !== "application/pdf") {
     ElMessage.error("只能上传PDF文件");
     return false;
   }
-  fileInfoupload(file).then(res => {});
-  //form.file = file;
-  return false; // 手动上传
+  form.file = file;
 };
 
 const handleRemove = () => {
   form.file = null;
+  form.attachmentUrl = "";
 };
-
+const documentDetails = () => {
+  window.open(form.attachmentUrl, "_blank");
+};
+const initData = async () => {
+  fileInfoAddGetProjectList({}).then((response: any) => {
+    projectOptions.value = response.data.map(item => ({
+      value: item.projectId,
+      label: item.projectName
+    }));
+  });
+};
+const edit = ref(false); // 是否编辑状态
 // 打开弹窗方法
-const openDialog = (initialData?: Partial<FormData>) => {
+const openDialog = async (initialData: any) => {
+  await restForm();
+  initData();
+  edit.value = false;
+  fileList.value = [];
   if (initialData) {
+    edit.value = true;
+    fileList.value = [
+      {
+        name: initialData.attachmentName,
+        url: initialData.attachmentUrl,
+        status: "success", // 必需！标记为已上传成功
+        uid: Date.now() // 唯一标识（可选但推荐）
+      }
+    ];
+    form.file = "112121";
     Object.assign(form, initialData);
   }
+
   dialogVisible.value = true;
-  fileList.value = [];
 };
 
 // 提交表单
@@ -203,21 +251,25 @@ const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
     submitting.value = true;
-
-    // 这里可以调用API提交表单
-    const formData = new FormData();
-    Object.keys(form).forEach(key => {
-      if (key === "file" && form.file) {
-        formData.append(key, form.file);
-      } else {
-        formData.append(key, form[key as keyof FormData] as string);
-      }
-    });
-
-    // console.log("提交数据:", Object.fromEntries(formData.entries()));
-    await fileInfoAdd(formData);
+    let obj = {
+      applyReason: form.applyReason,
+      attachmentId: form.attachmentId,
+      checkType: form.checkType,
+      fileName: form.fileName,
+      fileCode: form.fileCode,
+      fileCount: form.fileCount,
+      fileVersion: form.fileVersion,
+      projectId: form.projectId,
+      reviewerId: form.reviewerId,
+      versionTime: form.versionTime
+    };
+    if (edit) {
+      await fileInfoReEdit(obj);
+    } else {
+      await fileInfoAdd(obj);
+    }
     dialogVisible.value = false;
-    ElMessage.success("文件申请提交成功");
+    ElMessage.success("文件提交成功");
   } catch (error) {
     console.error("表单验证失败:", error);
   } finally {

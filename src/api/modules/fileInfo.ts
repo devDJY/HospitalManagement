@@ -85,8 +85,7 @@ export const fileInfoReviewEditReuse = params => {
 };
 //附件上传
 export const fileInfoupload = params => {
-  let pa = { userId: userStore.userInfo.id, ...params };
-  return http.post("/fileInfo/upload", pa, { loading: false });
+  return http.postFile("/fileInfo/upload", params);
 };
 //文件 - 文件申请;
 export const fileInfoAdd = params => {
@@ -118,4 +117,20 @@ export const fileInfoReview = params => {
 export const fileInfoApplyEditReuse = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/fileInfo/apply/edit/reuse", pa, { loading: false });
+};
+//文件 - 形式审查 - 通过 - 获取项目列表;
+export const fileInfoAddGetProjectList = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileInfo/add/getProjectList", pa, { loading: false });
+};
+
+//文件 - 文件申请 - 获取可选审核者;
+export const fileInfoAddGetReviewerList = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileInfo/add/getReviewerList", pa, { loading: false });
+};
+//文件 - 文件申请 - 重新编辑;
+export const fileInfoReEdit = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileInfo/reEdit", pa, { loading: false });
 };
