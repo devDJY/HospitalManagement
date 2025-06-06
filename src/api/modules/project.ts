@@ -43,3 +43,24 @@ export const projectUpdate = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/project/update", pa, { loading: false });
 };
+
+//项目 - 项目授权详情 - 分页查询;
+export const projectAuthorizeUser = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/project/authorize/user", pa, { loading: false });
+};
+//项目-项目授权详情-添加用户授权
+export const projectAuthorizeUserAdd = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/project/authorize/user/add", pa, { loading: false });
+};
+//项目-项目授权详情-移除用户授权
+export const projectAuthorizeUserDelete = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/project/authorize/user/delete", pa, { loading: false });
+};
+//项目 - 转移权限 - 转移;
+export const projectMoveAuthMove = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/project/moveAuth/move", pa, { loading: false });
+};

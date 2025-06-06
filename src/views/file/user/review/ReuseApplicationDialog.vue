@@ -45,7 +45,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="申请说明" prop="reason" required>
+      <el-form-item label="申请说明" prop="applyReason" required>
         <el-input
           v-model="form.applyReason"
           type="textarea"
@@ -99,10 +99,7 @@ const rules = reactive<FormRules>({
     { type: "number", min: 1, message: "份数必须大于0", trigger: "blur" }
   ],
   reviewer: [{ required: true, message: "请选择审核人", trigger: "change" }],
-  reason: [
-    { required: true, message: "请输入申请说明", trigger: "blur" },
-    { min: 10, message: "申请说明不能少于10个字符", trigger: "blur" }
-  ]
+  applyReason: [{ required: true, message: "请输入申请说明", trigger: "blur" }]
 });
 
 // 打开弹窗方法

@@ -1,20 +1,25 @@
 <template>
-  <el-dialog title="作废" v-model="dialogVisible" width="500px" :close-on-click-modal="false">
-    <el-form label-width="100px">
-      <el-form-item label="作废文件">
-        <el-input v-model="auditStatus" type="textarea" :rows="4" placeholder="请输入..." clearable />
-      </el-form-item>
+  <el-dialog v-model="dialogVisible" title="打印份数设置" width="500px" :close-on-click-modal="false">
+    <div class="print-copies-dialog">
+      <div class="tips">
+        <p>温馨提示：为减少打印机压力，份数纸张太多时，请分开多次打印。</p>
+        <p>首次或在新环境下使用请使用【逐份打印】。</p>
+        <p>使用【不间断打印】请在网络、打印机通畅，打印纸张充足的情况下使用，如遇到问题，请改用【逐份打印】。</p>
+      </div>
 
-      <el-form-item label="作废说明" required>
-        <el-input v-model="auditOpinion" type="textarea" :rows="4" placeholder="请输入..." clearable />
-      </el-form-item>
-    </el-form>
+      <el-divider />
+
+      <div class="copies-input">
+        <span class="label">份数</span>
+        <el-input-number v-model="copies" :min="1" :max="remainingCopies" controls-position="right" />
+        <span class="remaining">剩余打印份数：{{ remainingCopies }}</span>
+      </div>
+    </div>
 
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleConfirm">确定</el-button>
-      </span>
+      <el-button @click="handleCancel">取消</el-button>
+      <el-button type="primary" @click="handleContinuousPrint"> 不间断打印 </el-button>
+      <el-button type="success" @click="handleSequentialPrint"> 逐份打印 </el-button>
     </template>
   </el-dialog>
 </template>
@@ -23,7 +28,8 @@
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 const dialogVisible = ref(false);
-const auditStatus = ref("");
+const copies = ref(1);
+const remainingCopies = ref(3);
 const auditOpinion = ref("");
 
 // 打开对话框方法
@@ -32,13 +38,18 @@ const openDialog = () => {
   auditOpinion.value = "";
 };
 
-// 确认提交
-const handleConfirm = () => {
-  if (!auditOpinion.value.trim()) {
-    ElMessage.warning("请输入作废说明");
-    return;
-  }
+// 不间断打印
+const handleContinuousPrint = () => {
   // 这里可以调用API提交审核意见
+  console.log("作废说明:", auditOpinion.value);
+  dialogVisible.value = false;
+  ElMessage.success("作废提交成功");
+};
+const handleCancel = () => {
+  dialogVisible.value = false;
+};
+// 逐份打印
+const handleSequentialPrint = () => {
   console.log("作废说明:", auditOpinion.value);
   dialogVisible.value = false;
   ElMessage.success("作废提交成功");
@@ -51,14 +62,32 @@ defineExpose({
 </script>
 
 <style scoped>
-.dialog-footer {
+.print-copies-dialog {
+  padding: 0 10px;
+}
+
+.tips {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.copies-input {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
 }
-.el-tag {
-  margin-left: 10px;
+
+.label {
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 60px;
 }
-.el-textarea {
-  width: 100%;
+
+.remaining {
+  color: #888;
+  font-size: 14px;
+  margin-left: auto;
 }
 </style>

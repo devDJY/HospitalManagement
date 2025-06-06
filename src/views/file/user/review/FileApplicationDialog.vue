@@ -167,6 +167,7 @@ const restForm = () => {
   form.checkType = "0";
   form.reviewerId = "";
   form.applyReason = "";
+  fileList.value = [];
 };
 const handleHttpUpload = async options => {
   let formData = new FormData();
@@ -175,8 +176,8 @@ const handleHttpUpload = async options => {
   try {
     fileInfoupload(formData)
       .then((response: any) => {
-        form.attachmentId = response.attachmentId;
-        form.attachmentUrl = response.attachmentUrl;
+        form.attachmentId = response.data.id;
+        form.attachmentUrl = response.data.attachmentUrl;
       })
       .catch(error => {
         options.onError(error);
@@ -228,7 +229,6 @@ const openDialog = async (initialData: any) => {
   await restForm();
   initData();
   edit.value = false;
-  fileList.value = [];
   if (initialData) {
     edit.value = true;
     fileList.value = [
@@ -251,7 +251,7 @@ const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
     submitting.value = true;
-    let obj = {
+    let obj: any = {
       applyReason: form.applyReason,
       attachmentId: form.attachmentId,
       checkType: form.checkType,
@@ -263,7 +263,8 @@ const handleSubmit = async () => {
       reviewerId: form.reviewerId,
       versionTime: form.versionTime
     };
-    if (edit) {
+    if (edit.value) {
+      obj.fileId = form.fileId;
       await fileInfoReEdit(obj);
     } else {
       await fileInfoAdd(obj);

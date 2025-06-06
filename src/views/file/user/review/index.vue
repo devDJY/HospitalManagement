@@ -78,7 +78,7 @@
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
     <ReuseApplicationDialog ref="reuseDialog" />
-    <BanReuseDialog ref="banReuseDialog" />
+    <BanReuseDialog ref="banReuseDialog" @success="handleSuccess" />
     <FileApplicationDialog ref="fileApplicationDialog" />
   </div>
 </template>
@@ -356,7 +356,9 @@ const deleteAccount = async params => {
 const applicationForReuse = params => {
   reuseDialog.value.openDialog(params);
 };
-
+const handleSuccess = () => {
+  proTable.value?.getTableList();
+};
 // 切换用户状态
 const reuseProhibited = async (row: User.ResUserList) => {
   banReuseDialog.value.openDialog(row);
@@ -386,7 +388,7 @@ const handleAdd = (params?: any) => {
   if (params) {
     fileApplicationDialog.value.openDialog(params);
   } else {
-    fileApplicationDialog.value.openDialog({});
+    fileApplicationDialog.value.openDialog();
   }
 };
 </script>

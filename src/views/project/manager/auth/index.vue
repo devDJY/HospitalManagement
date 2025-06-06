@@ -26,7 +26,7 @@
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">授权[{{ scope.row.userCount }}]人</el-button>
+        <el-button type="primary" link :icon="View" @click="openDrawer(scope.row)">授权[{{ scope.row.userCount }}]人</el-button>
         <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->
@@ -34,7 +34,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
-    <AuthDialog ref="authDialogRef" />
+    <AuthDialog ref="authDialogRef" @success="success" />
   </div>
 </template>
 
@@ -80,12 +80,8 @@ const getTableList = (params: any) => {
 const { BUTTONS } = useAuthButtons();
 
 // 自定义渲染表头（使用tsx语法）
-const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
-  return (
-    <el-button type="primary" onClick={() => ElMessage.success("我是通过 tsx 语法渲染的表头")}>
-      {scope.column.label}
-    </el-button>
-  );
+const success = () => {
+  proTable.value?.getTableList();
 };
 
 // 表格配置项
@@ -144,7 +140,7 @@ const batchAdd = () => {
 
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref<InstanceType<typeof UserDrawer> | any>(null);
-const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
-  authDialogRef.value.openDialog(title, row);
+const openDrawer = (row: Partial<User.ResUserList> = {}) => {
+  authDialogRef.value.openDialog(row);
 };
 </script>

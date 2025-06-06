@@ -79,9 +79,8 @@ const handleConfirm = async () => {
   let obj = {
     fileId: fileId.value,
     isManager: true,
-    remark: "string",
-    reuseStatus: isMultiplexed.value === 1 ? 0 : 1,
-    userId: 0
+    remark: banData.remark,
+    reuseStatus: isMultiplexed.value === 1 ? 0 : 1
   };
   try {
     // 这里调用API禁止复用

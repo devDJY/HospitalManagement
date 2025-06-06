@@ -107,7 +107,7 @@ import { fileControllerCancelCertList, fileControllerCertList, fileControllerPri
 import dayjs from "dayjs";
 import { c } from "vite/dist/node/types.d-aGj9QkWt";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
-import { fileControllerFileCert } from "@/api/modules/filecontroller";
+import { fileControllerFileCert, fileControllerFileCertRevert } from "@/api/modules/filecontroller";
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
   auditDialog.value.openDialog(params);
@@ -366,7 +366,7 @@ const lockOK = () => {
     ElMessage.error("请输入取消原因");
     return;
   } else {
-    fileControllerFileCert({ fileId: fileId.value, remark: remark.value }).then((res: any) => {
+    fileControllerFileCertRevert({ fileId: fileId.value, remark: remark.value }).then((res: any) => {
       ElMessage.success("取消受控成功");
       lockDialog.value = false;
       remark.value = "";

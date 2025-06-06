@@ -32,3 +32,8 @@ export const fileControllerLoseReview = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/fileController/lose/review", pa, { loading: false });
 };
+//文件 - 受控 - 待受控列表 - 撤销受控;
+export const fileControllerFileCertRevert = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileController/file/cert/revert", pa, { loading: false });
+};

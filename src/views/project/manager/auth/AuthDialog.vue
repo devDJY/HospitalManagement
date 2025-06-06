@@ -10,7 +10,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="单位名称">
-            <el-input v-model="queryForm.organization" placeholder="请输入..." clearable />
+            <el-input v-model="queryForm.companyName" placeholder="请输入..." clearable />
           </el-form-item>
         </el-col>
         <el-col :span="8" class="form-actions">
@@ -22,22 +22,27 @@
 
     <!-- 授权状态筛选 -->
     <div class="auth-filter">
-      <el-radio-group v-model="authStatus">
-        <el-radio-button label="authorized">已授权</el-radio-button>
-        <el-radio-button label="unauthorized">未授权</el-radio-button>
+      <el-radio-group v-model="authStatus" @change="initList()">
+        <el-radio-button label="authorized" :value="0">已授权</el-radio-button>
+        <el-radio-button label="unauthorized" :value="1">未授权</el-radio-button>
       </el-radio-group>
+      <div>
+        <el-button v-if="authStatus == 0" type="success" @click="handleAuth">批量移除</el-button>
+        <el-button v-if="authStatus == 1" type="success" @click="handleAuth">批量授权</el-button>
+      </div>
     </div>
 
     <!-- 授权表格 -->
-    <el-table :data="filteredUserList" border style="width: 100%" class="auth-table" @selection-change="handleSelectionChange">
+    <el-table :data="filteredUserList" border style="width: 100%" class="auth-table" @selection-change="handleSelectionChange"
+      >>
       <el-table-column type="selection" width="50" />
-      <el-table-column prop="name" label="姓名" width="120" />
-      <el-table-column prop="organization" label="单位名称" />
-      <el-table-column prop="role" label="权限组" />
+      <el-table-column prop="nickName" label="姓名" width="120" />
+      <el-table-column prop="companyName" label="单位名称" />
+      <el-table-column prop="groupName" label="权限组" />
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button link type="primary" @click="handleAuth(scope.row)">
-            {{ scope.row.authorized ? "取消授权" : "授权" }}
+          <el-button link type="primary" @click="handleAuthStatusChange(scope.row)">
+            {{ authStatus == 0 ? "取消授权" : "授权" }}
           </el-button>
         </template>
       </el-table-column>
@@ -55,77 +60,82 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive } from "vue";
-import type { ElTable } from "element-plus";
-
-interface User {
-  id: string;
-  name: string;
-  organization: string;
-  role: string;
-  authorized: boolean;
-}
+import { ElMessage, type ElTable } from "element-plus";
+import { projectAuthorizeUser, projectAuthorizeUserAdd, projectAuthorizeUserDelete } from "@/api/modules/project";
 
 const visible = ref(false);
-const authStatus = ref<"all" | "authorized" | "unauthorized">("all");
-const multipleSelection = ref<User[]>([]);
+const authStatus = ref(0);
+const multipleSelection = ref([]);
 
 // 查询表单数据
 const queryForm = reactive({
   name: "",
-  organization: ""
+  companyName: ""
 });
 
 // 模拟用户数据
-const userList = ref<User[]>([
-  { id: "1", name: "黎志立", organization: "CRA", role: "CRA", authorized: false },
-  { id: "2", name: "胡永喆", organization: "CRA", role: "CRA", authorized: false },
-  { id: "3", name: "张丽", organization: "德阳市人民医院", role: "机构办质控员", authorized: true },
-  { id: "4", name: "甘春燕", organization: "德阳市人民医院", role: "机构办质控员", authorized: true },
-  { id: "5", name: "杨洛涌", organization: "德阳市人民医院", role: "机构超级管理员", authorized: true }
-]);
-
+const userList = ref();
+const userIds = ref<number[]>([]);
 // 过滤后的用户列表
 const filteredUserList = computed(() => {
-  return userList.value.filter(user => {
-    // 根据授权状态过滤
-    const statusMatch =
-      authStatus.value === "all" ||
-      (authStatus.value === "authorized" && user.authorized) ||
-      (authStatus.value === "unauthorized" && !user.authorized);
-
-    // 根据查询条件过滤
-    const queryMatch =
-      (queryForm.name === "" || user.name.includes(queryForm.name)) &&
-      (queryForm.organization === "" || user.organization.includes(queryForm.organization));
-
-    return statusMatch && queryMatch;
-  });
+  return userList.value;
 });
-
+const initList = () => {
+  projectAuthorizeUser({ auditFlag: authStatus.value, projectId: projectId.value, ...queryForm }).then((res: any) => {
+    userList.value = res.records;
+  });
+};
+const projectId = ref();
 // 打开弹窗
-const openDialog = () => {
+const openDialog = pa => {
+  projectId.value = pa.projectId;
+  initList();
   visible.value = true;
 };
 
 // 查询
 const handleQuery = () => {
-  console.log("查询条件:", queryForm);
+  initList();
 };
 
 // 重置查询
 const handleReset = () => {
   queryForm.name = "";
-  queryForm.organization = "";
+  queryForm.companyName = "";
+  initList();
+};
+const handleAuthStatusChange = (data: any) => {
+  userIds.value = [data.userId];
+  handleAuth(data);
 };
 
-// 表格选择变化
-const handleSelectionChange = (val: User[]) => {
-  multipleSelection.value = val;
-};
-
+const emit = defineEmits(["success"]);
 // 单个用户授权/取消授权
-const handleAuth = (user: User) => {
-  user.authorized = !user.authorized;
+const handleAuth = user => {
+  if (authStatus.value === 0) {
+    console.log(projectId.value, userIds.value);
+    projectAuthorizeUserDelete({
+      projectId: projectId.value,
+      userIds: userIds.value
+    }).then(() => {
+      ElMessage.success("取消授权成功");
+      initList();
+      emit("success");
+    });
+  } else {
+    projectAuthorizeUserAdd({
+      projectId: projectId.value,
+      userIds: userIds.value
+    }).then(() => {
+      ElMessage.success("授权成功");
+      initList();
+      emit("success");
+    });
+  }
+};
+// 单个用户授权/取消授权
+const handleSelectionChange = val => {
+  userIds.value = val.map(item => item.userId);
 };
 
 // 提交授权
@@ -152,6 +162,9 @@ defineExpose({
 }
 .auth-filter {
   margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .auth-table {
   margin-bottom: 20px;

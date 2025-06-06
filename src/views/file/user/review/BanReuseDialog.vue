@@ -42,7 +42,7 @@
 import { ref, reactive } from "vue";
 import { WarningFilled } from "@element-plus/icons-vue";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
-import { fileInfoReuseGetHistory, fileInfoReviewEditReuse } from "@/api/modules/fileInfo";
+import { fileInfoReuseGetHistory, fileInfoApplyEditReuse } from "@/api/modules/fileInfo";
 
 interface HistoryRecord {
   date: string;
@@ -88,7 +88,7 @@ const openDialog = initialData => {
     dialogVisible.value = true;
   });
 };
-
+const emit = defineEmits(["success"]);
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -96,11 +96,13 @@ const handleSubmit = async () => {
     submitting.value = true;
     // 这里可以调用API提交表单
     let data = {
-      remark: form.remark,
       fileId: form.fileId,
-      applyReuseStatus: 1
+      isManager: false,
+      remark: form.remark,
+      reuseStatus: 0
     };
-    await fileInfoReviewEditReuse(data);
+    await fileInfoApplyEditReuse(data);
+    emit("success", data); // 抛出成功事件
     dialogVisible.value = false;
     ElMessage.success("操作成功");
   } catch (error) {

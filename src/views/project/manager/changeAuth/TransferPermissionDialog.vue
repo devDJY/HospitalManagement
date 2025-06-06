@@ -1,15 +1,15 @@
 <template>
   <el-dialog v-model="visible" title="转移权限" width="800px" :close-on-click-modal="false">
-    <el-form :model="queryForm" label-width="80px" class="query-form">
+    <el-form :model="queryForm" class="query-form">
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="姓名">
-            <el-input v-model="queryForm.name" placeholder="请输入..." clearable />
+            <el-input v-model="queryForm.nickName" placeholder="请输入..." clearable />
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="单位名称">
-            <el-input v-model="queryForm.organization" placeholder="请输入..." clearable />
+            <el-input v-model="queryForm.companyName" placeholder="请输入..." clearable />
           </el-form-item>
         </el-col>
         <el-col :span="8" class="form-actions">
@@ -18,35 +18,22 @@
         </el-col>
       </el-row>
     </el-form>
-    <div class="action-buttons">
-      <el-button type="primary" @click="handleQuery">查询</el-button>
-      <el-button @click="handleReset">重置</el-button>
-    </div>
-
     <!-- 人员表格 -->
-    <el-table :data="pagedData" border style="width: 100%" class="user-table" @selection-change="handleSelectionChange">
+    <el-table :data="allUsers" border style="width: 100%" height="405px" ref="tableRef" class="user-table" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" />
-      <el-table-column prop="name" label="姓名" width="120" />
-      <el-table-column prop="role" label="权限组" width="120" />
-      <el-table-column prop="organization" label="单位名称" />
+      <el-table-column prop="nickName" label="姓名" width="120" />
+      <el-table-column prop="groupName" label="权限组" width="120" />
+      <el-table-column prop="companyName" label="单位名称" />
     </el-table>
 
     <!-- 分页 -->
     <div class="pagination-container">
-      <el-pagination
-        v-model:current-page="currentPage"
-        :page-size="pageSize"
-        :total="total"
-        background
-        layout="prev, pager, next,jumper"
-        @current-change="handlePageChange"
-      />
+      <el-pagination v-model:current-page="currentPage" :page-size="pageSize" :total="total" background layout="prev, pager, next,jumper" @current-change="handlePageChange" />
     </div>
 
     <!-- 转移原因 -->
     <div class="section-title">转移原因</div>
     <el-input v-model="transferReason" type="textarea" placeholder="请输入..." :rows="3" class="reason-input" />
-
     <!-- 底部操作按钮 -->
     <template #footer>
       <div class="dialog-footer">
@@ -60,6 +47,7 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from "vue";
 import { ElMessage } from "element-plus";
+import { projectMoveAuthMove, projectMoveAuthUserQuery } from "@/api/modules/project";
 interface User {
   id: string;
   name: string;
@@ -70,14 +58,14 @@ interface User {
 const visible = ref(false);
 const transferReason = ref("");
 const currentPage = ref(1);
-const pageSize = ref(10);
+const pageSize = ref(8);
 const jumpPage = ref(1);
-const selectedUsers = ref<User[]>([]);
-
+const tableRef = ref();
+const selectedRow = ref(); // 存储当前选中行
 // 查询表单数据
 const queryForm = reactive({
-  name: "",
-  organization: ""
+  nickName: "",
+  companyName: ""
 });
 
 // 模拟用户数据
@@ -93,71 +81,78 @@ const allUsers = ref<User[]>([
   { id: "9", name: "杨文娟", role: "CRA", organization: "齐鲁制药有限公司" }
   // 可以继续添加更多模拟数据...
 ]);
-
-// 计算属性
-const filteredUsers = computed(() => {
-  return allUsers.value.filter(user => {
-    return (
-      (queryForm.name === "" || user.name.includes(queryForm.name)) &&
-      (queryForm.organization === "" || user.organization.includes(queryForm.organization))
-    );
+const total = ref(0);
+const initList = () => {
+  let pa = {
+    groupId: groupId.value,
+    userId: userId.value,
+    pageNo: currentPage.value,
+    pageSize: pageSize.value,
+    ...queryForm
+  };
+  projectMoveAuthUserQuery(pa).then((res: any) => {
+    allUsers.value = res.records || [];
+    total.value = res.total || 0;
   });
-});
-
-const total = computed(() => filteredUsers.value.length);
-const pageCount = computed(() => Math.ceil(total.value / pageSize.value));
-const pagedData = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return filteredUsers.value.slice(start, end);
-});
-
+};
 // 打开弹窗
-const openDialog = () => {
+const groupId = ref("");
+const userId = ref("");
+const openDialog = data => {
+  groupId.value = data.groupId;
+  userId.value = data.userId;
+  initList();
   visible.value = true;
   resetForm();
 };
 
 // 重置表单
 const resetForm = () => {
-  queryForm.name = "";
-  queryForm.organization = "";
+  queryForm.nickName = "";
+  queryForm.companyName = "";
   transferReason.value = "";
   currentPage.value = 1;
   jumpPage.value = 1;
-  selectedUsers.value = [];
+  selectedRow.value = [];
 };
 
 // 查询
 const handleQuery = () => {
   currentPage.value = 1;
   jumpPage.value = 1;
+  initList();
 };
 
 // 重置查询
 const handleReset = () => {
   resetForm();
+  initList();
 };
 
 // 表格选择变化
-const handleSelectionChange = (val: User[]) => {
-  selectedUsers.value = val;
+const handleSelectionChange = val => {
+  if (val.length > 1) {
+    // 如果用户尝试多选，自动取消前一次选择
+    const newRow = val[val.length - 1]; // 只保留最后一次选择
+    tableRef.value.clearSelection(); // 清空所有选择
+    tableRef.value.toggleRowSelection(newRow, true); // 重新选中当前行
+    selectedRow.value = newRow;
+  } else {
+    selectedRow.value = val[0] || null;
+  }
+  console.log("当前选中行:", selectedRow.value);
 };
 
 // 分页变化
 const handlePageChange = (page: number) => {
   currentPage.value = page;
   jumpPage.value = page;
-};
-
-// 跳转页面
-const handleJumpPage = (page: number) => {
-  currentPage.value = page;
+  initList();
 };
 
 // 提交转移
-const handleSubmit = () => {
-  if (selectedUsers.value.length === 0) {
+const handleSubmit = async () => {
+  if (selectedRow.value.length === 0) {
     ElMessage.warning("请至少选择一位用户");
     return;
   }
@@ -166,11 +161,12 @@ const handleSubmit = () => {
     ElMessage.warning("请输入转移原因");
     return;
   }
-
-  console.log("选择的用户:", selectedUsers.value);
-  console.log("转移原因:", transferReason.value);
-  // 这里可以添加实际转移权限的API调用
-
+  let obj = {
+    newUserId: 0,
+    oldUserId: 0,
+    remark: transferReason.value
+  };
+  await projectMoveAuthMove(obj);
   ElMessage.success("权限转移成功");
   visible.value = false;
 };
