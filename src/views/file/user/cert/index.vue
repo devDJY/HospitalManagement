@@ -69,7 +69,7 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <el-button type="primary" v-else link :icon="Printer" @click="openAuditDialog(scope.row)">打印</el-button>
+        <el-button type="primary" v-if="modeSwitching != '3' && scope.row.checkType == 0" link :icon="Printer" @click="openAuditDialog(scope.row)">打印</el-button>
         <!-- <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button> -->

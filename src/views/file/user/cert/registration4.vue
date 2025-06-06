@@ -1,183 +1,186 @@
 <template>
-  <el-dialog title="重新打印申请" v-model="dialogVisible" width="700px" :close-on-click-modal="false" class="reprint-dialog">
-    <!-- 顶部文件信息 -->
-    <div class="file-header">
-      <span class="file-name">3肝损左奥-给药记录表</span>
-      <div class="file-actions">
-        <el-button link type="primary" size="small">查看</el-button>
-        <el-button link type="primary" size="small">查看</el-button>
-        <span class="file-code">2024-YW-031-GY.IL</span>
-      </div>
-    </div>
-
-    <el-divider />
-
+  <el-dialog title="重新打印申请" v-model="dialogVisible" width="800px" :close-on-click-modal="false" class="registration-dialog">
     <!-- 表单内容 -->
-    <el-form label-width="100px">
+    <el-form label-width="100px" label-position="top">
       <!-- 项目名称 -->
       <el-form-item label="项目名称">
-        <el-input v-model="form.projectName" :value="projectName" disabled />
+        <el-input :value="formData.projectName" disabled class="disabled-input" />
       </el-form-item>
 
       <!-- 文件编码 -->
       <el-form-item label="文件编码">
-        <el-input v-model="form.fileCode" :value="'2024-YW-031-GY.ILB'" disabled />
+        <el-input :value="formData.fileCode" disabled class="disabled-input" />
       </el-form-item>
 
       <!-- 文件名 -->
       <el-form-item label="文件名">
-        <el-input v-model="form.fileName" :value="'3肝损左奥-给药记录表'" disabled />
+        <el-input :value="formData.fileName" disabled class="disabled-input" />
       </el-form-item>
 
-      <!-- 文件选择 -->
-      <el-form-item label="* 文件" required>
-        <div class="file-selection">
-          <el-checkbox-group v-model="form.selectedFiles">
-            <el-checkbox label="文件受控编码" class="file-label" />
-            <el-checkbox :label="'2024-YW-031-GY.ILB-0001'" class="file-code" />
-          </el-checkbox-group>
-        </div>
+      <!-- 文件列表（多选） -->
+      <el-form-item label="文件" required>
+        <el-table :data="fileList" border @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" />
+          <el-table-column prop="fileControllerCode" label="文件受控编码" align="center" />
+        </el-table>
+        <el-checkbox-group v-model="formData.selectedFiles">
+          <!-- <el-checkbox v-for="file in fileList" :key="file.id" :label="file.code" class="file-checkbox">
+            <div class="file-item">
+              <span class="file-label">文件受控编码</span>
+              <span class="file-code">{{ file.code }}</span>
+            </div>
+          </el-checkbox> -->
+        </el-checkbox-group>
       </el-form-item>
-
-      <!-- 审核人 -->
-      <el-form-item label="* 审核人" required>
-        <el-select v-model="form.reviewer" placeholder="请选择..." style="width: 100%">
-          <el-option v-for="item in reviewers" :key="item.value" :label="item.label" :value="item.value" />
+      <el-form-item label="审核人" required>
+        <el-select v-model="formData.reviewerId" placeholder="请选择..." filterable style="width: 100%">
+          <el-option v-for="item in reviewerOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
-
-      <!-- 申请说明 -->
-      <el-form-item label="* 申请说明" required>
-        <el-input v-model="form.applicationNote" type="textarea" :rows="3" placeholder="请输入..." resize="none" />
+      <!-- 使用说明 -->
+      <el-form-item label="申请说明" required>
+        <el-input v-model="formData.instructions" type="textarea" :rows="4" placeholder="请输入申请说明..." resize="none" class="instructions-input" />
       </el-form-item>
     </el-form>
 
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmit">确定</el-button>
+        <el-button size="large" @click="handleCancel">取消</el-button>
+        <el-button type="primary" size="large" @click="handleSubmit">提交</el-button>
       </span>
     </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { fileControllerPrintCertGetWaitFile } from "@/api/modules/filecontroller";
+import { fileControllerPrintCertUpdateUsed, fileInfoAddGetReviewerList } from "@/api/modules/fileInfo";
 import { ElMessage } from "element-plus";
+import { ref, reactive } from "vue";
 
 const dialogVisible = ref(false);
 
-// 项目信息
-const projectName = "一项评价注射用磷酸左奥硝唑酯二钠在肝功能不全受试者中的药代动力学与安全性的开放、平行、单次给药的临床试验";
+// 文件列表数据
+const fileList = ref();
+const reviewerOptions: any = ref([]);
 
-// 审核人选项
-const reviewers = [
-  { value: "1", label: "张三" },
-  { value: "2", label: "李四" },
-  { value: "3", label: "王五" }
-];
+// 长项目名称常量
 
 // 表单数据
-const form = reactive({
-  projectName: projectName,
-  fileCode: "2024-YW-031-GY.ILB",
-  fileName: "3肝损左奥-给药记录表",
-  selectedFiles: [], // 选中的文件
-  reviewer: "", // 审核人
-  applicationNote: "" // 申请说明
+const formData = reactive({
+  projectName: "",
+  fileCode: "",
+  fileName: "",
+  reviewerId: "", // 审核人ID
+  selectedFiles: [], // 存储选中的文件编码
+  instructions: ""
 });
-
+// 用户ID列表
+const handleSelectionChange = val => {
+  formData.selectedFiles = val.map(item => item.fileControllerId);
+};
 // 打开弹窗
-const openDialog = () => {
+const openDialog = data => {
+  Object.assign(formData, {
+    projectName: data.projectName || "",
+    fileCode: data.fileCode || "",
+    fileName: data.attachmentName || "" // 注意字段名对应
+  });
+  fileControllerPrintCertGetWaitFile({ filePrintId: data.filePrintId }).then(res => {
+    fileList.value = res.data;
+  });
+  fileInfoAddGetReviewerList({ projectId: data.projectId }).then((response: any) => {
+    reviewerOptions.value = response.data.map((item: any) => ({
+      value: item.userId,
+      label: item.nickName
+    }));
+  });
   dialogVisible.value = true;
   resetForm();
 };
 
-// 重置表单
-const resetForm = () => {
-  form.selectedFiles = [];
-  form.reviewer = "";
-  form.applicationNote = "";
+// 关闭弹窗
+const closeDialog = () => {
+  dialogVisible.value = false;
 };
 
-// 提交表单
-const handleSubmit = () => {
-  if (form.selectedFiles.length === 0) {
-    ElMessage.warning("请选择文件");
-    return;
-  }
-  if (!form.reviewer) {
-    ElMessage.warning("请选择审核人");
-    return;
-  }
-  if (!form.applicationNote.trim()) {
-    ElMessage.warning("请输入申请说明");
-    return;
-  }
+// 取消操作
+const handleCancel = () => {
+  closeDialog();
+};
 
-  console.log("提交重新打印申请:", form);
-  dialogVisible.value = false;
-  ElMessage.success("申请已提交");
+// 重置表单
+const resetForm = () => {
+  formData.selectedFiles = [];
+  formData.instructions = "";
+};
+
+// 提交处理
+const handleSubmit = async () => {
+  console.log("提交数据:", formData);
+  if (formData.selectedFiles.length === 0) {
+    ElMessage.warning("请至少选择一个文件受控码");
+    return;
+  }
+  let data = {
+    fileControllerIds: formData.selectedFiles,
+    remark: formData.instructions
+  };
+  await fileControllerPrintCertUpdateUsed(data);
+  ElMessage.success("操作成功");
+  closeDialog();
 };
 
 defineExpose({
-  openDialog
+  openDialog,
+  closeDialog
 });
 </script>
 
 <style scoped lang="scss">
-.reprint-dialog {
+.registration-dialog {
   .el-dialog__body {
-    padding: 15px 25px;
-  }
-  .file-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    .file-name {
-      font-size: 16px;
-      font-weight: bold;
-    }
-    .file-actions {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      .file-code {
-        font-family: monospace;
-        color: #666666;
-      }
-    }
+    padding: 20px;
   }
   .el-form-item {
     margin-bottom: 18px;
     :deep(.el-form-item__label) {
+      padding-bottom: 8px;
       font-weight: bold;
       color: #333333;
-      &::before {
-        margin-right: 4px;
-        color: #f56c6c;
-        content: "*";
+    }
+  }
+  .disabled-input {
+    :deep(.el-input__inner) {
+      color: #606266;
+      background-color: #f5f7fa;
+    }
+  }
+  .file-checkbox {
+    display: block;
+    margin-bottom: 8px;
+    .file-item {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      .file-label {
+        color: #666666;
+      }
+      .file-code {
+        font-weight: bold;
       }
     }
   }
-  .file-selection {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    .file-label {
-      margin-right: 15px;
-    }
-    .file-code {
-      :deep(.el-checkbox__label) {
-        font-family: monospace;
-      }
+  .instructions-input {
+    :deep(.el-textarea__inner) {
+      min-height: 120px;
     }
   }
   .dialog-footer {
     display: flex;
     gap: 15px;
     justify-content: flex-end;
+    padding-top: 10px;
     .el-button {
       width: 100px;
     }

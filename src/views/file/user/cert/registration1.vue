@@ -4,28 +4,32 @@
     <el-form label-width="100px" label-position="top">
       <!-- 项目名称 -->
       <el-form-item label="项目名称">
-        <el-input v-model="formData.projectName" :value="longProjectName" disabled class="disabled-input" />
+        <el-input :value="formData.projectName" disabled class="disabled-input" />
       </el-form-item>
 
       <!-- 文件编码 -->
       <el-form-item label="文件编码">
-        <el-input v-model="formData.fileCode" :value="'2024-YW-031-GYJLB'" disabled class="disabled-input" />
+        <el-input :value="formData.fileCode" disabled class="disabled-input" />
       </el-form-item>
 
       <!-- 文件名 -->
       <el-form-item label="文件名">
-        <el-input v-model="formData.fileName" :value="'3肝损左奥-给药记录表'" disabled class="disabled-input" />
+        <el-input :value="formData.fileName" disabled class="disabled-input" />
       </el-form-item>
 
       <!-- 文件列表（多选） -->
-      <el-form-item label="文件受控编码" required>
+      <el-form-item label="文件" required>
+        <el-table :data="fileList" border @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" />
+          <el-table-column prop="fileControllerCode" label="文件受控编码" align="center" />
+        </el-table>
         <el-checkbox-group v-model="formData.selectedFiles">
-          <el-checkbox v-for="file in fileList" :key="file.id" :label="file.code" class="file-checkbox">
+          <!-- <el-checkbox v-for="file in fileList" :key="file.id" :label="file.code" class="file-checkbox">
             <div class="file-item">
               <span class="file-label">文件受控编码</span>
               <span class="file-code">{{ file.code }}</span>
             </div>
-          </el-checkbox>
+          </el-checkbox> -->
         </el-checkbox-group>
       </el-form-item>
 
@@ -45,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import { fileControllerPrintCertGetWaitFile } from "@/api/modules/filecontroller";
 import { fileControllerPrintCertUpdateUsed } from "@/api/modules/fileInfo";
 import { ElMessage } from "element-plus";
 import { ref, reactive } from "vue";
@@ -52,26 +57,32 @@ import { ref, reactive } from "vue";
 const dialogVisible = ref(false);
 
 // 文件列表数据
-const fileList = ref([
-  { id: 1, code: "2024-YW-031-GYJLB-0001" },
-  { id: 2, code: "2024-YW-031-GYJLB-0002" }
-  // 可以添加更多文件...
-]);
+const fileList = ref();
 
 // 长项目名称常量
-const longProjectName = "一项评价注射用磷酸左奥硝唑酯二钠在肝功能不全受试者中的药代动力学与安全性的开放、平行、单次给药的临床试验";
 
 // 表单数据
 const formData = reactive({
-  projectName: longProjectName,
-  fileCode: "2024-YW-031-GYJLB",
-  fileName: "3肝损左奥-给药记录表",
+  projectName: "",
+  fileCode: "",
+  fileName: "",
   selectedFiles: [], // 存储选中的文件编码
   instructions: ""
 });
-
+// 用户ID列表
+const handleSelectionChange = val => {
+  formData.selectedFiles = val.map(item => item.fileControllerId);
+};
 // 打开弹窗
-const openDialog = () => {
+const openDialog = data => {
+  Object.assign(formData, {
+    projectName: data.projectName || "",
+    fileCode: data.fileCode || "",
+    fileName: data.attachmentName || "" // 注意字段名对应
+  });
+  fileControllerPrintCertGetWaitFile({ filePrintId: data.filePrintId }).then(res => {
+    fileList.value = res.data;
+  });
   dialogVisible.value = true;
   resetForm();
 };
@@ -95,6 +106,10 @@ const resetForm = () => {
 // 提交处理
 const handleSubmit = async () => {
   console.log("提交数据:", formData);
+  if (formData.selectedFiles.length === 0) {
+    ElMessage.warning("请至少选择一个文件受控码");
+    return;
+  }
   let data = {
     fileControllerIds: formData.selectedFiles,
     remark: formData.instructions

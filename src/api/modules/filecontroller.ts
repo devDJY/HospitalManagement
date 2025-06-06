@@ -37,3 +37,14 @@ export const fileControllerFileCertRevert = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/fileController/file/cert/revert", pa, { loading: false });
 };
+
+//文件-已打印-已打印列表-更新状态获取可操作文件
+export const fileControllerPrintCertGetWaitFile = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/print/cert/getWaitFile", pa, { loading: false });
+};
+//文件-受控-已打印-使用登记
+export const fileControllerPrintCertUpdateUsed = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileController/print/cert/update/used", pa, { loading: false });
+};
