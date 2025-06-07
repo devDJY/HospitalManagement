@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { fileControllerPrintCertGetWaitFile } from "@/api/modules/filecontroller";
+import { fileControllerPrintCertGetWaitFile, fileControllerPrintCertUpdateRePrint } from "@/api/modules/filecontroller";
 import { fileControllerPrintCertUpdateUsed, fileInfoAddGetReviewerList } from "@/api/modules/fileInfo";
 import { ElMessage } from "element-plus";
 import { ref, reactive } from "vue";
@@ -75,10 +75,12 @@ const formData = reactive({
   selectedFiles: [], // 存储选中的文件编码
   instructions: ""
 });
+const handleRemove = () => {};
 // 用户ID列表
 const handleSelectionChange = val => {
   formData.selectedFiles = val.map(item => item.fileControllerId);
 };
+const fileId = ref(); // 假设需要存储文件ID
 // 打开弹窗
 const openDialog = data => {
   Object.assign(formData, {
@@ -86,6 +88,7 @@ const openDialog = data => {
     fileCode: data.fileCode || "",
     fileName: data.attachmentName || "" // 注意字段名对应
   });
+  fileId.value = data.fileId; // 假设data中有fileId字段
   fileControllerPrintCertGetWaitFile({ filePrintId: data.filePrintId }).then(res => {
     fileList.value = res.data;
   });
@@ -124,9 +127,11 @@ const handleSubmit = async () => {
   }
   let data = {
     fileControllerIds: formData.selectedFiles,
+    reviewerId: formData.reviewerId,
+    fileId: fileId.value, // 假设formData中有fileId
     remark: formData.instructions
   };
-  await fileControllerPrintCertUpdateUsed(data);
+  await fileControllerPrintCertUpdateRePrint(data);
   ElMessage.success("操作成功");
   closeDialog();
 };

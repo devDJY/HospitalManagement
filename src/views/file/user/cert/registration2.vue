@@ -43,7 +43,7 @@
       </el-form-item>
       <!-- 附件上传 -->
       <el-form-item label="附件">
-        <el-upload action="#" :limit="1" :auto-upload="false">
+        <el-upload multiple action="#" :limit="1" accept=".pdf" :http-request="handleHttpUpload" :file-list="imgList" :before-upload="beforeUpload" :on-remove="handleRemove">
           <el-button type="primary" plain icon="Plus">选择文件</el-button>
           <template #tip>
             <div class="el-upload__tip">支持上传PDF、Word、Excel、图片等格式文件</div>
@@ -62,8 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import { fileControllerPrintCertGetWaitFile } from "@/api/modules/filecontroller";
-import { fileControllerPrintCertUpdateUsed, fileInfoAddGetReviewerList } from "@/api/modules/fileInfo";
+import { fileControllerPrintCertGetWaitFile, fileControllerPrintCertUpdateLose } from "@/api/modules/filecontroller";
+import { fileInfoAddGetReviewerList, fileInfoupload } from "@/api/modules/fileInfo";
 import { ElMessage } from "element-plus";
 import { ref, reactive } from "vue";
 
@@ -71,6 +71,7 @@ const dialogVisible = ref(false);
 
 // 文件列表数据
 const fileList = ref();
+const imgList = ref();
 const reviewerOptions: any = ref([]);
 
 // 长项目名称常量
@@ -82,11 +83,34 @@ const formData = reactive({
   fileName: "",
   reviewerId: "", // 审核人ID
   selectedFiles: [], // 存储选中的文件编码
-  instructions: ""
+  instructions: "",
+  attachmentId: "" // 附件ID
 });
 // 用户ID列表
 const handleSelectionChange = val => {
   formData.selectedFiles = val.map(item => item.fileControllerId);
+};
+// 文件上传处理
+const beforeUpload = file => {
+  if (file.type !== "application/pdf") {
+    ElMessage.error("只能上传PDF文件");
+    return false;
+  }
+};
+const handleHttpUpload = async options => {
+  let data = new FormData();
+  data.append("file", options.file);
+  try {
+    fileInfoupload(data)
+      .then((response: any) => {
+        formData.attachmentId = response.data.id;
+      })
+      .catch(error => {
+        options.onError(error);
+      });
+  } catch (error) {
+    options.onError(error as any);
+  }
 };
 // 打开弹窗
 const openDialog = data => {
@@ -117,7 +141,7 @@ const closeDialog = () => {
 const handleCancel = () => {
   closeDialog();
 };
-
+const handleRemove = () => {};
 // 重置表单
 const resetForm = () => {
   formData.selectedFiles = [];
@@ -133,9 +157,11 @@ const handleSubmit = async () => {
   }
   let data = {
     fileControllerIds: formData.selectedFiles,
-    remark: formData.instructions
+    remark: formData.instructions,
+    attachmentId: formData.attachmentId,
+    reviewerId: formData.reviewerId
   };
-  await fileControllerPrintCertUpdateUsed(data);
+  await fileControllerPrintCertUpdateLose(data);
   ElMessage.success("操作成功");
   closeDialog();
 };

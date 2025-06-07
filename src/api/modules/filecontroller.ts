@@ -48,3 +48,18 @@ export const fileControllerPrintCertUpdateUsed = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/fileController/print/cert/update/used", pa, { loading: false });
 };
+//文件-受控-已打印-遗失申报
+export const fileControllerPrintCertUpdateLose = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileController/print/cert/update/lose", pa, { loading: false });
+};
+//文件 - 受控 - 已打印 - 回收申报;
+export const fileControllerPrintCertUpdateRecycle = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileController/print/cert/update/recycle", pa, { loading: false });
+};
+//文件 - 受控 - 已打印 - 重新打印申报;
+export const fileControllerPrintCertUpdateRePrint = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileController/print/cert/update/rePrint", pa, { loading: false });
+};
