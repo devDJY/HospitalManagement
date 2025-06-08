@@ -262,7 +262,7 @@ const getTableList = (params: any) => {
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{anyRow.createTime ? dayjs(anyRow.createTime).format("YYYY-MM-DD") : ""}</div>;
+          return <div>{anyRow.createTime ? dayjs(anyRow.createTime).format("YYYY-MM-DD") : "--"}</div>;
         }
       },
       { prop: "operation", label: "操作", fixed: "right", width: 120 }

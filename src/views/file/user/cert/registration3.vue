@@ -54,7 +54,7 @@
         </el-select>
       </el-form-item>
       <!-- 使用说明 -->
-      <el-form-item label="遗失说明" required>
+      <el-form-item label="回收说明" required>
         <el-input v-model="formData.instructions" type="textarea" :rows="4" placeholder="请输入遗失说明..." resize="none" class="instructions-input" />
       </el-form-item>
       <!-- 附件上传 -->
