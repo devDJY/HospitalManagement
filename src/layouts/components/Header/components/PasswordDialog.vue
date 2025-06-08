@@ -2,7 +2,7 @@
   <el-dialog v-model="dialogVisible" title="修改密码" width="500px" draggable>
     <el-form :model="form" label-width="100px" :rules="rules" ref="formRef">
       <el-form-item label="手机号码" prop="mobile">
-        <el-input v-model="form.mobile" placeholder="请输入手机号码" />
+        <el-input v-model="form.mobile" placeholder="请输入手机号码" :disabled="true" />
       </el-form-item>
       <el-form-item label="原密码" prop="oldPwd">
         <el-input v-model="form.oldPwd" placeholder="请输入原密码" type="password" show-password />
@@ -28,10 +28,11 @@ import { ref, reactive } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { ElMessage } from "element-plus";
 import { changePasswordApi } from "@/api/modules/login";
+import { useUserStore } from "@/stores/modules/user";
 
 const dialogVisible = ref(false);
 const formRef = ref<FormInstance>();
-
+const userStore = useUserStore();
 const form = reactive({
   mobile: "",
   oldPwd: "",
@@ -72,6 +73,7 @@ const openDialog = () => {
   if (formRef.value) {
     formRef.value.resetFields();
   }
+  form.mobile = userStore.userInfo.mobile || "";
 };
 
 const submitForm = () => {

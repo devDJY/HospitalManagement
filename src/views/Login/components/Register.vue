@@ -1,11 +1,5 @@
 <template>
-  <el-dialog
-    title="新用户注册"
-    width="80%"
-    class="forget-password-dialog"
-    :model-value="modelValue"
-    @update:model-value="val => emit('update:modelValue', val)"
-  >
+  <el-dialog title="新用户注册" width="80%" class="forget-password-dialog" :model-value="modelValue" @update:model-value="val => emit('update:modelValue', val)">
     <div class="dec">请填写基本信息 提交注册请求后需等待机构管理员审批，审批时长为1个工作日</div>
     <el-form :model="form" :rules="rules" ref="formRef" label-width="80px">
       <el-row :gutter="20">
@@ -31,22 +25,14 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item
-            label="确认密码"
-            prop="confirmPassword"
-            :rules="[{ required: true, message: '请输入确认密码', trigger: 'blur' }]"
-          >
+          <el-form-item label="确认密码" prop="confirmPassword" :rules="[{ required: true, message: '请输入确认密码', trigger: 'blur' }]">
             <el-input type="password" v-model="form.confirmPassword" placeholder="请再次输入密码" />
           </el-form-item>
         </el-col>
 
         <!-- 第三行 -->
         <el-col :span="12">
-          <el-form-item
-            label="单位类型"
-            prop="companyType"
-            :rules="[{ required: true, message: '请选择单位类型', trigger: 'change' }]"
-          >
+          <el-form-item label="单位类型" prop="companyType" :rules="[{ required: true, message: '请选择单位类型', trigger: 'change' }]">
             <el-select v-model="form.companyType" placeholder="请选择单位类型">
               <el-option label="临床实验机构" value="1" />
               <el-option label="合同研究组织" value="2" />
@@ -57,20 +43,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item
-            label="单位名称"
-            prop="companyNo"
-            :rules="[{ required: true, message: '请选择单位名称', trigger: 'change' }]"
-          >
-            <el-select
-              v-model="form.companyNo"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入开始查询单位名称"
-              :remote-method="remoteMethod"
-              :loading="loading"
-            >
+          <el-form-item label="单位名称" prop="companyNo" :rules="[{ required: true, message: '请选择单位名称', trigger: 'change' }]">
+            <el-select v-model="form.companyNo" filterable remote reserve-keyword placeholder="请输入开始查询单位名称" :remote-method="remoteMethod" :loading="loading">
               <el-option v-for="item in options" :key="item.value" :label="item.companyName" :value="item.id" />
               <template #loading>
                 <svg class="circular" viewBox="0 0 50 50">
@@ -105,12 +79,7 @@
 
         <!-- 第五行 -->
         <el-col :span="12">
-          <el-form-item
-            label="验证码"
-            prop="verifyCode"
-            :rules="[{ required: true, message: '请输入验证码', trigger: 'blur' }]"
-            style="display: flex; align-items: center"
-          >
+          <el-form-item label="验证码" prop="verifyCode" :rules="[{ required: true, message: '请输入验证码', trigger: 'blur' }]" style="display: flex; align-items: center">
             <el-input v-model="form.verifyCode" placeholder="请输入手机验证码" style="width: 50%; margin-right: 10px" />
             <el-button @click="getVerificationCode" :disabled="countdown > 0 || formHasError">
               {{ countdown > 0 ? countdown + "秒后重发" : "获取验证码" }}
@@ -129,11 +98,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, onUnmounted,watch } from "vue";
+import { ref, onMounted, reactive, onUnmounted, watch } from "vue";
 import { ElMessage } from "element-plus";
 import AddUnitDialog from "./AddUnitDialog.vue";
 import { getRegisterGroups, companyInfoList, getVerifyCode, register } from "@/api/modules/register";
-
 
 defineProps({ modelValue: Boolean });
 const emit = defineEmits(["update:modelValue"]);
@@ -176,15 +144,19 @@ const validateForm = async () => {
     formHasError.value = false;
   } catch (error) {
     // 检查是否有除 verifyCode 之外的其他字段错误
-    const hasOtherErrors = Object.keys(error).some(key => key !== 'verifyCode');
+    const hasOtherErrors = Object.keys(error).some(key => key !== "verifyCode");
     formHasError.value = hasOtherErrors;
   }
 };
 
 // 添加表单监听
-watch(() => form, () => {
-  validateForm();
-}, { deep: true });
+watch(
+  () => form,
+  () => {
+    validateForm();
+  },
+  { deep: true }
+);
 
 const rules = {
   permissionGroupId: [{ required: true, message: "请选择申请角色", trigger: "change" }],
@@ -305,7 +277,7 @@ const remoteMethod = query => {
       });
     });
   } else {
-    options.value = companyInfos.value
+    options.value = companyInfos.value;
   }
 };
 
@@ -316,7 +288,7 @@ const handleSubmit = async () => {
     const submitForm = {
       ...form,
       companyName: companyInfos.value.find(e => e.id === form.companyNo).companyName
-    }
+    };
     // 验证通过，提交表单
     register(submitForm).then(res => {
       if (res.data.code === 200) {

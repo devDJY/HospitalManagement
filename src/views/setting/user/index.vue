@@ -33,6 +33,7 @@
           <el-radio-button label="已失效" value="4" />
         </template>
       </el-radio-group>
+      <el-button type="primary" @click="showAddDialog()" style="width: 200px" :icon="Plus">新增用户</el-button>
     </div>
     <ProTable
       ref="proTable"
@@ -55,14 +56,14 @@
       </template> -->
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="success" v-if="modeSwitching == '1'" link :icon="Edit" @click="resetPass(scope.row)">编辑</el-button>
-        <el-button type="warning" v-if="modeSwitching == '1'" link :icon="Plus" @click="joinAnOrganization(scope.row)">加入组织</el-button>
-        <el-button type="info" v-if="modeSwitching == '1'" link :icon="Refresh" @click="reset(scope.row)">重置</el-button>
+        <el-button type="success" v-if="modeSwitching == '1'" link :icon="Edit" @click="showAddDialog(scope.row)">编辑</el-button>
+        <!-- <el-button type="warning" v-if="modeSwitching == '1'" link :icon="Plus" @click="joinAnOrganization(scope.row)">加入组织</el-button> -->
+        <el-button type="info" v-if="modeSwitching == '1'" link :icon="Refresh" @click="resetPass(scope.row)">重置</el-button>
         <el-button type="danger" v-if="modeSwitching == '1'" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
       </template>
-      <!-- <template #append>
+      <template #roleId>
         <span style="color: var(--el-color-primary)">我是插入在表格最后的内容。若表格有合计行，该内容会位于合计行之上。</span>
-      </template> -->
+      </template>
     </ProTable>
     <el-dialog v-model="lockDialog" title="锁库" width="500px" :before-close="handleClose">
       <div class="flex">
@@ -76,6 +77,7 @@
         </div>
       </template>
     </el-dialog>
+    <UserEditDialog ref="UserEdit" />
   </div>
 </template>
 
@@ -87,15 +89,13 @@ import { useHandleData } from "@/hooks/useHandleData";
 import ProTable from "@/components/ProTable/index.vue";
 import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
-import { deleteUser, resetUserPassWord } from "@/api/modules/user";
-import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery } from "@/api/modules/project";
+import { deleteUser, deleteUserInfo, getUserInfoList, resetUserPassword } from "@/api/modules/user";
 import { Search, Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
+import UserEditDialog from "./UserEditDialog.vue";
 const lockDialog = ref(false);
 const remark = ref("");
+const UserEdit = ref();
 const handleClose = () => {
-  lockDialog.value = false;
-};
-const handleCancel = () => {
   lockDialog.value = false;
 };
 // ProTable 实例
@@ -106,7 +106,14 @@ const modeSwitching = ref("1");
 const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
   return <div>{scope.column.label}</div>;
 };
-
+const roleTypes = ref([
+  { value: 0, label: "无" },
+  { value: 1, label: "专业秘书" },
+  { value: 2, label: "专业负责人" },
+  { value: 3, label: "机构主任" },
+  { value: 4, label: "机构办主任" },
+  { value: 5, label: "机构办副主任" }
+]);
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "projectCode", label: "项目立项号", search: { el: "input", tooltip: "" } },
@@ -177,16 +184,28 @@ const getTableList = (params?: any) => {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectCode", label: "账号", search: { el: "input", tooltip: "" } },
+      { prop: "id", label: "账号", search: { el: "input", tooltip: "" } },
       { prop: "nickName", label: "真实姓名", width: 100, search: { el: "input", tooltip: "" } },
       {
         prop: "gender",
-        label: "性别"
+        label: "性别",
+        render(scope) {
+          const anyRow = scope.row as any;
+          let arr = ["保密", "男", "女"];
+          return <div>{arr[anyRow.gender]}</div>;
+        }
       },
       { prop: "mobile", label: "手机号" },
       { prop: "email", label: "电子邮箱" },
       { prop: "companyName", label: "单位名称" },
-      { prop: "roleId", label: "角色" },
+      {
+        prop: "roleId",
+        label: "角色",
+        render(scope) {
+          const anyRow = scope.row as any;
+          return <div>{roleTypes.value[anyRow.roleId].label}</div>;
+        }
+      },
       { prop: "permissionGroupName", label: "权限组" },
       { prop: "registerTime", label: "注册日期" },
       { prop: "operation", label: "操作", fixed: "right", width: 200 }
@@ -195,34 +214,67 @@ const getTableList = (params?: any) => {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectCode", label: "账号", search: { el: "input", tooltip: "" } },
-      { prop: "projectName", label: "真实姓名", width: 100, search: { el: "input", tooltip: "" } },
-      { prop: "enrollCount", label: "性别" },
-      { prop: "enrollCount", label: "手机号" },
-      { prop: "enrollCount", label: "电子邮箱" },
-      { prop: "enrollCount", label: "单位名称" },
-      { prop: "enrollCount", label: "角色" },
-      { prop: "enrollCount", label: "权限组" },
-      { prop: "enrollCount", label: "注册日期" },
+      { prop: "id", label: "账号", search: { el: "input", tooltip: "" } },
+      { prop: "nickName", label: "真实姓名", width: 100, search: { el: "input", tooltip: "" } },
+      {
+        prop: "gender",
+        label: "性别",
+        render(scope) {
+          const anyRow = scope.row as any;
+          let arr = ["保密", "男", "女"];
+          return <div>{arr[anyRow.gender]}</div>;
+        }
+      },
+      { prop: "mobile", label: "手机号" },
+      { prop: "email", label: "电子邮箱" },
+      { prop: "companyName", label: "单位名称" },
+      {
+        prop: "roleId",
+        label: "角色",
+        render(scope) {
+          const anyRow = scope.row as any;
+          return <div>{roleTypes.value[anyRow.roleId].label}</div>;
+        }
+      },
+      { prop: "permissionGroupName", label: "权限组" },
+      { prop: "registerTime", label: "注册日期" },
       { prop: "operation", label: "操作", fixed: "right", width: 200 }
     );
   }
-  params.status = modeSwitching.value;
-  return projectList(params);
+  params.status = Number(modeSwitching.value) - 1;
+  return getUserInfoList(params);
 };
 
 // 删除项目
 const deletePro = async (params: any) => {
-  await useHandleData(projectDelete, { id: [params.id] }, `删除【${params.projectName}】项目（删除后无法恢复)?`);
+  await useHandleData(deleteUserInfo, { iuserIdd: params.id }, `删除【${params.nickName}】用户（删除后无法恢复)?`);
   proTable.value?.getTableList();
 };
 const projectId = ref("");
 // 重置用户密码
-const resetPass = async (params: User.ResUserList) => {
-  await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
+const resetPass = async params => {
+  await useHandleData(resetUserPassword, { userId: params.id, password: "000000" }, `重置【${params.nickName}】用户密码,重置密码：000000`);
   proTable.value?.getTableList();
 };
-const joinAnOrganization = async params => {};
+const dialogVisible = ref(true);
+const currentEditData = ref(null);
+
+// 新增用户
+const showAddDialog = (row?) => {
+  UserEdit.value.open(row);
+};
+
+// 编辑用户
+const showEditDialog = user => {
+  currentEditData.value = user;
+  dialogVisible.value = true;
+};
+
+// 提交处理
+const handleSubmit = formData => {
+  console.log("提交数据:", formData);
+  // 调用API提交数据
+};
 const reset = async params => {};
 // 页面渲染请求
 const init = async () => {

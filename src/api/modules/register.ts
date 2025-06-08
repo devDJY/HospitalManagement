@@ -43,7 +43,7 @@ export const getRegisterGroups = params => {
 };
 
 export const companyInfoList = params => {
-  return http.get<Array<CompanyInfo>>("/companyInfo/list ", params, { loading: false });
+  return http.get("/companyInfo/list ", params, { loading: false });
 };
 
 export const getVerifyCode = params => {

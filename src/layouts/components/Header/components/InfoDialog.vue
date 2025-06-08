@@ -2,16 +2,16 @@
   <el-dialog v-model="dialogVisible" title="个人信息" width="600px" draggable>
     <el-form :model="form" label-width="100px">
       <el-form-item label="账号">
-        <el-input v-model="form.account" disabled />
+        <el-input v-model="form.userName" disabled />
       </el-form-item>
       <el-form-item label="真实姓名">
-        <el-input v-model="form.realName" />
+        <el-input v-model="form.nickName" />
       </el-form-item>
       <el-form-item label="性别">
         <el-radio-group v-model="form.gender">
-          <el-radio label="男" />
-          <el-radio label="女" />
-          <el-radio label="保密" />
+          <el-radio label="男" value="1" />
+          <el-radio label="女" value="2" />
+          <el-radio label="保密" value="0" />
         </el-radio-group>
       </el-form-item>
       <el-form-item label="手机号">
@@ -21,7 +21,13 @@
         <el-input v-model="form.email" />
       </el-form-item>
       <el-form-item label="单位类型">
-        <el-input v-model="form.organization" />
+        <el-select v-model="form.companyType" placeholder="请选择单位类型">
+          <el-option label="临床实验机构" :value="1" />
+          <el-option label="合同研究组织" :value="2" />
+          <el-option label="申办方" :value="3" />
+          <el-option label="SMO" :value="4" />
+          <el-option label="其他" :value="5" />
+        </el-select>
       </el-form-item>
       <el-form-item label="权限组">
         <el-switch v-model="form.hasPermissionGroup" active-text="是" inactive-text="否" />
@@ -30,7 +36,7 @@
         <el-switch v-model="form.isPermanent" active-text="是" inactive-text="否" />
       </el-form-item>
       <el-form-item label="注册日期">
-        <el-input v-model="form.registerDate" disabled />
+        <el-input v-model="form.registerTime" disabled />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -45,42 +51,34 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
-
-interface UserInfo {
-  account: string;
-  realName: string;
-  gender: string;
-  mobile: string;
-  email: string;
-  organization: string;
-  hasPermissionGroup: boolean;
-  isPermanent: boolean;
-  registerDate: string;
-}
+import { useUserStore } from "@/stores/modules/user";
+import { updateSelfInfo } from "@/api/modules/user";
+const userStore = useUserStore();
 
 const dialogVisible = ref(false);
-const form = reactive<UserInfo>({
-  account: "",
-  realName: "",
+const form = reactive({
+  userName: "",
+  nickName: "",
   gender: "保密",
   mobile: "",
   email: "",
   organization: "",
   hasPermissionGroup: false,
   isPermanent: false,
-  registerDate: ""
+  registerTime: "",
+  companyType: ""
 });
 
-const openDialog = (userData?: Partial<UserInfo>) => {
-  if (userData) {
-    Object.assign(form, userData);
-  }
+const openDialog = () => {
+  console.log("Opening dialog with user data:", userStore.userInfo);
+  Object.assign(form, userStore.userInfo);
   dialogVisible.value = true;
 };
 
-const submitForm = () => {
+const submitForm = async () => {
   // Here you would typically call an API to save the user info
   console.log("Form submitted:", form);
+  await updateSelfInfo(form);
   ElMessage.success("个人信息保存成功");
   dialogVisible.value = false;
 };

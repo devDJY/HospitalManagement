@@ -1,66 +1,76 @@
 <template>
-  <el-dialog title="编辑用户" v-model="visible" width="600px" :close-on-click-modal="false">
-    <el-form :model="formData" label-width="100px" label-position="right">
-      <el-form-item label="账号">
-        <el-text>{{ formData.account }}</el-text>
+  <el-dialog :title="title" v-model="visible" width="600px" :close-on-click-modal="false">
+    <el-form :model="formData" ref="formRef" :rules="rules" label-width="100px" label-position="right">
+      <el-form-item label="账号" prop="userName">
+        <el-input v-model="formData.userName" placeholder="请输入..." />
       </el-form-item>
 
-      <el-form-item label="真实姓名">
-        <el-text>{{ formData.realName }}</el-text>
+      <!-- 真实姓名 -->
+      <el-form-item label="真实姓名" prop="nickName">
+        <el-input v-model="formData.nickName" placeholder="请输入..." />
       </el-form-item>
 
       <el-form-item label="性别">
         <el-radio-group v-model="formData.gender">
-          <el-radio label="男" />
-          <el-radio label="女" />
-          <el-radio label="保密" />
+          <el-radio label="男" :value="1" />
+          <el-radio label="女" :value="2" />
+          <el-radio label="保密" :value="0" />
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item label="手机号" prop="phone">
-        <el-input v-model="formData.phone" />
+      <el-form-item label="手机号" prop="mobile">
+        <el-input v-model="formData.mobile" />
       </el-form-item>
 
       <el-form-item label="电子邮箱" prop="email">
         <el-input v-model="formData.email" />
       </el-form-item>
 
-      <el-form-item label="单位类型">
-        <el-select v-model="formData.companyType" placeholder="请选择">
-          <el-option label="申办方" value="申办方" />
-          <el-option label="CRO" value="CRO" />
-          <el-option label="SMO" value="SMO" />
-          <el-option label="机构" value="机构" />
+      <el-form-item label="单位类型" prop="companyType" :rules="[{ required: true, message: '请选择单位类型', trigger: 'change' }]">
+        <el-select v-model="formData.companyType" placeholder="请选择单位类型">
+          <el-option label="临床实验机构" value="1" />
+          <el-option label="合同研究组织" value="2" />
+          <el-option label="申办方" value="3" />
+          <el-option label="SMO" value="4" />
+          <el-option label="其他" value="5" />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="单位名称">
-        <el-input v-model="formData.companyName">
-          <template #append>
-            <el-button type="primary" @click="handleAddCompany" v-if="!formData.companyName"> 添加公司 </el-button>
+      <el-form-item label="单位名称" prop="companyNo">
+        <el-select v-model="formData.companyNo" filterable remote reserve-keyword placeholder="请输入开始查询单位名称" :remote-method="remoteMethod" :loading="loading">
+          <el-option v-for="item in options" :key="item.value" :label="item.companyName" :value="item.id" />
+          <template #loading>
+            <svg class="circular" viewBox="0 0 50 50">
+              <circle class="path" cx="25" cy="25" r="20" fill="none" />
+            </svg>
           </template>
-        </el-input>
+        </el-select>
+
+        <span style="display: flex">（未搜索到公司名称，点击 </span>
+        <el-text class="mx-1" @click="dialogVisible = true" type="danger">此处</el-text>
+        <span style="display: flex"> 添加）</span>
       </el-form-item>
 
-      <el-form-item label="权限组">
-        <el-select v-model="formData.role" placeholder="请选择">
-          <el-option label="CRA" value="CRA" />
-          <el-option label="PM" value="PM" />
-          <el-option label="管理员" value="管理员" />
+      <el-form-item label="权限组" prop="permissionGroupId">
+        <el-select v-model="formData.permissionGroupId" placeholder="请选择">
+          <el-option label="CRC" value="0" />
+          <el-option label="CRA" value="1" />
+          <el-option label="机构办秘书" value="2" />
+          <el-option label="机构办质控员" value="3" />
         </el-select>
       </el-form-item>
 
       <el-form-item>
         <el-checkbox v-model="formData.isPermanent">永久用户</el-checkbox>
-        <el-checkbox v-model="formData.receiveSurvey">接收调研短信</el-checkbox>
+        <el-checkbox v-model="formData.isSurveySms">接收调研短信</el-checkbox>
       </el-form-item>
 
-      <el-form-item label="开始有效期">
-        <el-date-picker v-model="formData.startDate" type="datetime" placeholder="选择日期时间" value-format="YYYY-MM-DD HH:mm:ss" />
+      <el-form-item label="开始有效期" prop="startTime">
+        <el-date-picker v-model="formData.startTime" type="datetime" placeholder="选择日期时间" value-format="YYYY-MM-DD HH:mm:ss" />
       </el-form-item>
 
-      <el-form-item label="结束有效期">
-        <el-date-picker v-model="formData.endDate" type="datetime" placeholder="选择日期时间" value-format="YYYY-MM-DD HH:mm:ss" />
+      <el-form-item label="结束有效期" prop="expireTime">
+        <el-date-picker v-model="formData.expireTime" type="datetime" placeholder="选择日期时间" value-format="YYYY-MM-DD HH:mm:ss" />
       </el-form-item>
     </el-form>
 
@@ -68,59 +78,109 @@
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="handleSubmit">确定</el-button>
     </template>
+    <AddUnitDialog :visible="dialogVisible" @update:visible="val => (dialogVisible = val)" @confirm="handleUnitConfirm" />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { ElMessage } from "element-plus";
-
-interface UserForm {
-  account: string;
-  realName: string;
-  gender: "男" | "女" | "保密";
-  phone: string;
-  email: string;
-  companyType: string;
-  companyName: string;
-  role: string;
-  isPermanent: boolean;
-  receiveSurvey: boolean;
-  startDate: string;
-  endDate: string;
-}
-
+import { getRegisterGroups, companyInfoList, getVerifyCode, register } from "@/api/modules/register";
+import AddUnitDialog from "./AddUnitDialog.vue";
+import { registerByManager, updateUserInfo } from "@/api/modules/user";
+import { authGroupMenuList } from "@/api/modules/authGroup";
+const rules = {
+  permissionGroupId: [{ required: true, message: "请选择申请角色", trigger: "change" }],
+  userName: [{ required: true, message: "请输入账号", trigger: "blur" }],
+  nickName: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
+  mobile: [
+    { required: true, message: "请输入手机号", trigger: "blur" },
+    { pattern: /^1(3[0-9]|4[5-9]|5[0-35-9]|6[6]|7[0-8]|8[0-9]|9[8-9])\d{8}$/, message: "请输入正确的手机号", trigger: "blur" }
+  ],
+  email: [{ required: true, message: "请输入电子邮箱", trigger: "blur" }],
+  companyNo: [{ required: true, message: "请选择单位名称", trigger: "change" }],
+  startTime: [{ required: true, message: "请选择开始有效期", trigger: "change" }],
+  expireTime: [{ required: true, message: "请选择结束有效期", trigger: "change" }],
+  companyType: [{ required: true, message: "请选择单位类型", trigger: "change" }]
+};
 const visible = ref(false);
-
-const formData = reactive<UserForm>({
-  account: "pangwa",
-  realName: "黎志立",
-  gender: "男",
-  phone: "18884337804",
-  email: "zhili1.li@qilu-pharma.com",
-  companyType: "申办方",
-  companyName: "齐鲁制药有限公司",
-  role: "CRA",
+const options = ref();
+const formRef = ref();
+const formData = reactive({
+  companyNo: "",
+  companyType: "",
+  mobile: "",
+  email: "",
+  expireTime: "",
+  gender: 1,
   isPermanent: true,
-  receiveSurvey: true,
-  startDate: "2025-05-15 00:00:00",
-  endDate: "2028-05-15 23:59:59"
+  isSurveySms: true,
+  nickName: "",
+  password: "",
+  permissionGroupId: "",
+  startTime: "",
+  userName: "",
+  verifyCode: ""
 });
-
-const open = (userData?: Partial<UserForm>) => {
+const dialogVisible = ref(false);
+const companyInfos = ref();
+onMounted(() => {
+  // getRegisterGroups().then(res => {
+  //   registerGroups.value = res.data;
+  // });
+  companyInfoList({}).then(res => {
+    companyInfos.value = res.data;
+  });
+  // authGroupMenuList({}).then(res => {});
+  // list.value = states.map(item => {
+  //   return { value: `value:${item}`, label: `label:${item}` };
+  // });
+});
+const loading = ref(false);
+const remoteMethod = query => {
+  if (query) {
+    loading.value = true;
+    companyInfoList({}).then((res: any) => {
+      loading.value = false;
+      options.value = res.data.filter(item => {
+        return item.companyName.toLowerCase().includes(query.toLowerCase());
+      });
+    });
+  } else {
+    options.value = companyInfos.value;
+  }
+};
+const title = ref("新增用户");
+const yesEditing = ref(false);
+const open = userData => {
+  yesEditing.value = false;
+  title.value = "新增用户";
   if (userData) {
+    title.value = "编辑用户";
+    yesEditing.value = true;
     Object.assign(formData, userData);
   }
   visible.value = true;
 };
 
-const handleAddCompany = () => {
-  ElMessage.info("跳转到添加公司页面");
-  // 实际项目中这里可以跳转到公司添加页面或打开另一个弹窗
+const handleUnitConfirm = unitData => {
+  console.log("新增的单位信息:", unitData);
+  // 这里可以处理提交逻辑
 };
 
-const handleSubmit = () => {
-  ElMessage.success("用户信息更新成功");
+const handleSubmit = async () => {
+  await formRef.value.validate();
+  try {
+    if (yesEditing.value) {
+      await updateUserInfo(formData);
+    } else {
+      await registerByManager(formData);
+    }
+  } catch (error) {
+    ElMessage.error("操作失败");
+    return;
+  }
+  ElMessage.success("操作成功");
   visible.value = false;
   // 这里可以添加表单提交逻辑
 };

@@ -23,7 +23,7 @@
       </template> -->
       <!-- Expand -->
       <template #authorizedMembers="scope">
-        <el-button link @click="showDialog">
+        <el-button link @click="showDialog(scope.row)">
           <el-icon>
             <Avatar />
           </el-icon>
@@ -31,10 +31,10 @@
         </el-button>
       </template>
       <template #isRegisterDisplay="scope">
-        <el-switch v-model="scope.row.isRegisterDisplay" />
+        <el-switch v-model="scope.row.isRegisterDisplay" @click.stop="tabState(1, scope.row)" />
       </template>
       <template #isAudit="scope">
-        <el-switch v-model="scope.row.isAudit" />
+        <el-switch v-model="scope.row.isAudit" @click.stop="tabState(2, scope.row)" />
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -60,14 +60,14 @@ import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/P
 import { deleteUser, resetUserPassWord } from "@/api/modules/user";
 import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery } from "@/api/modules/project";
 import { Search, Delete, Edit, Plus, RemoveFilled, Avatar } from "@element-plus/icons-vue";
-import { authGroupList } from "@/api/modules/authGroup";
+import { authGroupDeleteGroup, authGroupList, authGroupUpdateAuditFlag, authGroupUpdateDisplayFlag } from "@/api/modules/authGroup";
 import PermissionGroupDialog from "./PermissionGroupDialog.vue";
 import MemberAuthorizationDialog from "./MemberAuthorizationDialog.vue";
 
 const memberDialog = ref();
 const permissionDialog = ref();
-const showDialog = () => {
-  memberDialog.value.open();
+const showDialog = data => {
+  memberDialog.value.open(data);
 };
 const editData = ref({
   id: 1,
@@ -83,7 +83,7 @@ const openCreateDialog = parms => {
 };
 
 const openEditDialog = data => {
-  permissionDialog.value.openEditDialog();
+  permissionDialog.value.openEditDialog(data);
 };
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
@@ -147,16 +147,27 @@ const getTableList = (params?: any) => {
 
 // 删除项目
 const deletePro = async (params: any) => {
-  await useHandleData(projectDelete, { id: [params.id] }, `删除【${params.projectName}】项目（删除后无法恢复)?`);
+  await useHandleData(authGroupDeleteGroup, { id: [params.id] }, `删除【${params.groupName}】权限组（删除后无法恢复)?`);
   proTable.value?.getTableList();
 };
-const projectId = ref("");
-// 重置用户密码
-const resetPass = async (params: User.ResUserList) => {
-  await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
-  proTable.value?.getTableList();
+//
+const tabState = async (state, params: any) => {
+  if (state == 1) {
+    authGroupUpdateDisplayFlag({
+      groupId: params.id,
+      displayFlag: params.isRegisterDisplay ? 1 : 0
+    }).then(() => {
+      ElMessage.success("操作成功");
+    });
+  } else {
+    authGroupUpdateAuditFlag({
+      groupId: params.id,
+      auditFlag: params.isAudit ? 1 : 0
+    }).then(() => {
+      ElMessage.success("操作成功");
+    });
+  }
 };
-
 // 页面渲染请求
 const init = async () => {
   // 获取用户列表

@@ -1,30 +1,30 @@
 <template>
   <el-dialog :title="dialogTitle" v-model="dialogVisible" width="700px" :close-on-click-modal="false">
     <el-form :model="form" label-width="100px" :rules="rules" ref="formRef">
-      <el-form-item label="权限组名称" prop="name" required>
-        <el-input v-model="form.name" placeholder="请输入..." />
+      <el-form-item label="权限组名称" prop="groupName" required>
+        <el-input v-model="form.groupName" placeholder="请输入..." />
       </el-form-item>
 
       <el-form-item label="描述" prop="description">
-        <el-input v-model="form.description" type="textarea" :rows="3" placeholder="请输入..." />
+        <el-input v-model="form.groupDesc" type="textarea" :rows="3" placeholder="请输入..." />
       </el-form-item>
 
-      <el-form-item label="权限组菜单" prop="menus" required>
+      <el-form-item label="权限组菜单" prop="menuId" required>
         <el-tree
           ref="menuTree"
           :data="menuTreeData"
           show-checkbox
           node-key="id"
           :props="treeProps"
-          :default-expand-all="true"
+          :default-expand-all="false"
           :check-strictly="false"
           @check-change="handleCheckChange"
         />
       </el-form-item>
 
       <el-form-item label="其他设置">
-        <el-checkbox v-model="form.showOnRegister">用户注册时显示</el-checkbox>
-        <el-checkbox v-model="form.isReviewGroup">是否是审核组</el-checkbox>
+        <el-checkbox v-model="form.displayFlag">用户注册时显示</el-checkbox>
+        <el-checkbox v-model="form.auditFlag">是否是审核组</el-checkbox>
       </el-form-item>
     </el-form>
 
@@ -36,23 +36,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, nextTick } from "vue";
+import { ref, reactive, computed, nextTick, onMounted } from "vue";
 import { type FormInstance, type ElTree, ElMessage } from "element-plus";
-
-interface MenuItem {
-  id: string | number;
-  name: string;
-  children?: MenuItem[];
-}
-
-interface FormData {
-  id?: string | number;
-  name: string;
-  description: string;
-  menus: (string | number)[];
-  showOnRegister: boolean;
-  isReviewGroup: boolean;
-}
+import { authGroupAddGroup, authGroupMenuList, authGroupUpdateGroupInfo } from "@/api/modules/authGroup";
 
 const dialogVisible = ref(false);
 const formRef = ref<FormInstance>();
@@ -60,46 +46,16 @@ const menuTree = ref<InstanceType<typeof ElTree>>();
 const mode = ref<"create" | "edit">("create");
 
 // 表单数据
-const form = reactive<FormData>({
-  name: "",
-  description: "",
-  menus: [],
-  showOnRegister: false,
-  isReviewGroup: false
+const form = reactive({
+  groupName: "",
+  groupDesc: "",
+  auditFlag: false,
+  displayFlag: false,
+  menuId: []
 });
 
 // 菜单树数据（示例，实际应从API获取）
-const menuTreeData = ref<MenuItem[]>([
-  {
-    id: "1",
-    name: "项目文件受控",
-    children: [
-      { id: "11", name: "首页-管理员" },
-      { id: "12", name: "首页" }
-    ]
-  },
-  {
-    id: "2",
-    name: "项目",
-    children: [
-      { id: "21", name: "项目-管理员" },
-      { id: "22", name: "项目列表" }
-    ]
-  },
-  {
-    id: "3",
-    name: "文件",
-    children: [
-      { id: "31", name: "文件-管理员" },
-      { id: "32", name: "形式审查" },
-      { id: "33", name: "受控" }
-    ]
-  },
-  {
-    id: "4",
-    name: "档案库",
-    children: [{ id: "41", name: "项目" }]
-  },
+const menuTreeData = ref([
   {
     id: "5",
     name: "设置",
@@ -120,10 +76,10 @@ const rules = {
     { required: true, message: "请输入权限组名称", trigger: "blur" },
     { min: 2, max: 20, message: "长度在2到20个字符", trigger: "blur" }
   ],
-  menus: [
+  menuId: [
     {
       validator: (rule: any, value: any, callback: any) => {
-        if (form.menus.length === 0) {
+        if (form.menuId.length === 0) {
           callback(new Error("请至少选择一个菜单权限"));
         } else {
           callback();
@@ -144,13 +100,28 @@ const openCreateDialog = () => {
   resetForm();
   dialogVisible.value = true;
 };
+// 页面加载刷新
+onMounted(() => {
+  initauthGroupMenuList();
+});
 
+const initauthGroupMenuList = () => {
+  authGroupMenuList({}).then((res: any) => {
+    menuTreeData.value = res.data.map((item: any) => ({
+      id: item.id,
+      name: item.menuName,
+      children: item.children.map((child: any) => ({
+        id: child.id,
+        name: child.menuName
+      }))
+    }));
+  });
+};
 // 打开弹窗（编辑）
-const openEditDialog = (data: FormData) => {
+const openEditDialog = data => {
   mode.value = "edit";
   resetForm();
   Object.assign(form, data);
-
   // 设置选中的菜单
   nextTick(() => {
     if (menuTree.value) {
@@ -164,7 +135,7 @@ const openEditDialog = (data: FormData) => {
 // 重置表单
 const resetForm = () => {
   formRef.value?.resetFields();
-  form.menus = [];
+  form.menuId = [];
   if (menuTree.value) {
     menuTree.value.setCheckedKeys([]);
   }
@@ -173,7 +144,8 @@ const resetForm = () => {
 // 菜单选择变化
 const handleCheckChange = () => {
   if (menuTree.value) {
-    form.menus = menuTree.value.getCheckedKeys();
+    form.menuId = menuTree.value.getCheckedKeys() as [];
+    console.log("选中的菜单:", form.menuId);
   }
 };
 
@@ -181,17 +153,13 @@ const handleCheckChange = () => {
 const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
-
-    // 获取半选中状态的父菜单
-    const halfCheckedKeys = menuTree.value?.getHalfCheckedKeys() || [];
-    form.menus = [...form.menus, ...halfCheckedKeys];
-
-    // 这里可以调用API提交表单
-    console.log("提交数据:", form);
-
+    if (mode.value == "create") {
+      await authGroupAddGroup(form);
+    } else {
+      await authGroupUpdateGroupInfo(form);
+    }
     dialogVisible.value = false;
     ElMessage.success(`${dialogTitle.value}成功`);
-
     // 可以emit事件通知父组件
     // emit('success', form)
   } catch (error) {

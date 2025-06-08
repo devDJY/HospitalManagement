@@ -69,7 +69,31 @@ export const getUserDepartment = () => {
 export const getUserRole = () => {
   return http.get<User.ResRole[]>(PORT1 + `/user/role`);
 };
-// //用户管理 - 分页查询;
-// export const getUserInfoList = (params: any) => {
-//   return http.get("/project/authorize/list", params);
-// };
+//用户管理 - 分页查询;
+export const getUserInfoList = params => {
+  return http.get("/userInfo/list", params);
+};
+//用户列表 - 重置密码;
+export const resetUserPassword = params => {
+  return http.post("/userInfo/resetPwd", params);
+};
+//用户列表 - 删除用户;
+export const deleteUserInfo = params => {
+  return http.post("/userInfo/delete", params);
+};
+//管理员注册用户
+export const registerByManager = params => {
+  return http.post("/userInfo/register/byManager", params);
+};
+//用户列表-编辑用户
+export const updateUserInfo = params => {
+  return http.post("/userInfo/update/userInfo", params);
+};
+//个人主页-用户修改个人信息
+export const updateSelfInfo = params => {
+  return http.post("/userInfo/update/selfInfo", params);
+};
+//个人主页-用户修改密码
+export const updateSelfPwd = params => {
+  return http.post("/userInfo/update/pwd", params);
+};
