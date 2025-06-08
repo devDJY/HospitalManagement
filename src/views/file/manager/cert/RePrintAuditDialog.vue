@@ -23,16 +23,26 @@
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { fileControllerCertCancel } from "@/api/modules/filecontroller";
+import { fileControllerCancelGetAvailable } from "@/api/modules/fileInfo";
 const dialogVisible = ref(false);
 const auditStatus = ref("");
 const auditOpinion = ref("");
+const fileControllerIds = ref([]);
 const fileId = ref(""); // 假设你有一个文件ID需要传递给API
 // 打开对话框方法
 const openDialog = data => {
+  getAvailable(data.fileId);
+  fileControllerIds.value = data.fileControllerIds;
   fileId.value = data.fileId;
   auditStatus.value = data.attachmentName;
   dialogVisible.value = true;
   auditOpinion.value = "";
+};
+
+// 获取可作废文件
+const getAvailable = async (fileId: number) => {
+  const res = await fileControllerCancelGetAvailable({fileId}) as any;
+  fileControllerIds.value = res.data.map((item: any) => item.fileControllerId);
 };
 
 // 确认提交
@@ -44,7 +54,8 @@ const handleConfirm = () => {
   // 这里可以调用API提交审核意见
   fileControllerCertCancel({
     fileId: fileId.value,
-    remark: auditOpinion.value
+    remark: auditOpinion.value,
+    fileCertIds: fileControllerIds.value
   });
   console.log("作废说明:", auditOpinion.value);
   dialogVisible.value = false;

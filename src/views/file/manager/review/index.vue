@@ -148,7 +148,7 @@ const getTableList = (params: any) => {
       { prop: "creatorName", label: "申请人", width: 115 },
       { prop: "reviewTime", label: "申请日期", width: 85 },
       { prop: "fileStatus", label: "受控方式", render(scope) {
-        const _fileStatus = (scope.row as any).fileStatus;
+        const _fileStatus = (scope.row as any).checkType;
         return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
       } },
       { prop: "operation", label: "操作", fixed: "right", width: 180 }
@@ -219,7 +219,7 @@ const getTableList = (params: any) => {
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
       { prop: "fileStatus", label: "受控方式",render(scope) {
-        const _fileStatus = (scope.row as any).fileStatus;
+        const _fileStatus = (scope.row as any).checkType;
         return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
       } },
       { prop: "reviewTime", label: "审查意见", width: 85 },
@@ -249,7 +249,7 @@ const getTableList = (params: any) => {
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
       { prop: "fileStatus", label: "受控方式",render(scope) {
-        const _fileStatus = (scope.row as any).fileStatus;
+        const _fileStatus = (scope.row as any).checkType;
         return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
       } },
       { prop: "reviewTime", label: "审查意见", width: 85 },
@@ -296,7 +296,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "creatorName", label: "申请人", width: 115 },
   { prop: "reviewTime", label: "申请日期", width: 85 },
   { prop: "fileStatus", label: "受控方式",render(scope) {
-        const _fileStatus = (scope.row as any).fileStatus;
+        const _fileStatus = (scope.row as any).checkType;
         return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
       } },
   { prop: "operation", label: "操作", fixed: "right", width: 180 }

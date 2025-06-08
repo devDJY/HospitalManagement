@@ -66,7 +66,7 @@
         <span style="color: var(--el-color-primary)">我是插入在表格最后的内容。若表格有合计行，该内容会位于合计行之上。</span>
       </template>
     </ProTable>
-    <el-dialog v-model="lockDialog" title="锁库" width="500px" :before-close="handleClose">
+    <el-dialog v-model="lockDialog" title="审核用户" width="500px" :before-close="handleClose">
       <div class="flex" style="margin-bottom: 10px">
         <div style="width: 90px">审核状态</div>
         <el-select v-model="formData.permissionGroupId" placeholder="请选择">
@@ -254,7 +254,7 @@ const getTableList = (params?: any) => {
       { prop: "operation", label: "操作", fixed: "right", width: 220 }
     );
   }
-  params.status = modeSwitching.value ? Number(modeSwitching.value) - 1 : "";
+  params.auditStatus = modeSwitching.value ? Number(modeSwitching.value) - 1 : "";
   return getUserInfoList(params);
 };
 

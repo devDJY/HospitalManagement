@@ -109,7 +109,8 @@ import { c } from "vite/dist/node/types.d-aGj9QkWt";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
 import { fileControllerFileCert, fileControllerFileCertRevert } from "@/api/modules/filecontroller";
 const auditDialog = ref();
-const openAuditDialog = (params: any) => {
+const fileControllerIds = ref([]);
+const openAuditDialog = (params: any) => {  
   auditDialog.value.openDialog(params);
 };
 const router = useRouter();

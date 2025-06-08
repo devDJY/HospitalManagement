@@ -26,6 +26,11 @@ export const fileControllerPrintCertList = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/fileController/print/cert/list", pa, { loading: false });
 };
+// 获取可作废文件
+export const fileControllerCancelGetAvailable = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/cancel/cert/getAvailable", pa, { loading: false });
+};
 //已作废
 export const fileControllerCancelCertList = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
