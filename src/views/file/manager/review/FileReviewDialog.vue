@@ -24,8 +24,8 @@
       <div class="section">
         <h3 class="required">受控方式</h3>
         <el-radio-group v-model="reviewData.checkType">
-          <el-radio label="线上受控" :value="'线上受控'" />
-          <el-radio label="线下受控" :value="'线下受控'" />
+          <el-radio label="线上受控" :value="0" />
+          <el-radio label="线下受控" :value="1" />
         </el-radio-group>
         <p class="hint">（文件中请者选择的[受控方式]为"{{ reviewData.checkType }}"）</p>
       </div>
@@ -37,8 +37,8 @@
         <h3 class="required">审查状态</h3>
         <el-radio-group v-model="reviewData.fileStatus">
           <el-radio label="通过" :value="1" />
-          <el-radio label="拒绝" :value="2" />
-          <el-radio label="退回修改" :value="4" />
+          <el-radio label="驳回" :value="2" />
+          <el-radio label="拒绝" :value="4" />
         </el-radio-group>
       </div>
 
@@ -76,7 +76,7 @@ interface HistoryRecord {
 const reviewData = reactive({
   historyRecords: [] as HistoryRecord[],
   fileStatus: 1,
-  checkType: "线上受控",
+  checkType: 0,
   reviewRemark: ""
 });
 const fileId = ref("");
@@ -85,7 +85,7 @@ const open = (data?: any) => {
   fileId.value = data.fileId;
   reviewData.historyRecords = [] as HistoryRecord[];
   reviewData.fileStatus = 1;
-  reviewData.checkType = "线上受控";
+  reviewData.checkType = data.checkType;
   reviewData.reviewRemark = "";
   let obj: HistoryRecord = {
     applyReason: data.applyReason,
@@ -150,7 +150,7 @@ const handleSubmit = async () => {
   let data = {
     fileId: fileId.value,
     fileStatus: reviewData.fileStatus,
-    checkType: reviewData.checkType == "线上受控" ? 1 : 2,
+    checkType: reviewData.checkType,
     reviewRemark: reviewData.reviewRemark
   };
   await fileInfoReview(data);

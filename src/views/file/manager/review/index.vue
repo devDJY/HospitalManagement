@@ -147,7 +147,10 @@ const getTableList = (params: any) => {
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
       { prop: "reviewTime", label: "申请日期", width: 85 },
-      { prop: "fileStatus", label: "受控方式" },
+      { prop: "fileStatus", label: "受控方式", render(scope) {
+        const _fileStatus = (scope.row as any).fileStatus;
+        return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
+      } },
       { prop: "operation", label: "操作", fixed: "right", width: 180 }
     );
   } else if (modeSwitching.value == "1") {
@@ -215,7 +218,10 @@ const getTableList = (params: any) => {
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
-      { prop: "fileStatus", label: "受控方式" },
+      { prop: "fileStatus", label: "受控方式",render(scope) {
+        const _fileStatus = (scope.row as any).fileStatus;
+        return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
+      } },
       { prop: "reviewTime", label: "审查意见", width: 85 },
       { prop: "reviewTime", label: "附件", width: 85 },
       { prop: "reviewTime", label: "审查日期", width: 85 },
@@ -242,7 +248,10 @@ const getTableList = (params: any) => {
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
-      { prop: "fileStatus", label: "受控方式" },
+      { prop: "fileStatus", label: "受控方式",render(scope) {
+        const _fileStatus = (scope.row as any).fileStatus;
+        return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
+      } },
       { prop: "reviewTime", label: "审查意见", width: 85 },
       { prop: "reviewTime", label: "审查日期", width: 85 }
     );
@@ -286,7 +295,10 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "fileCount", label: "份数", width: 85 },
   { prop: "creatorName", label: "申请人", width: 115 },
   { prop: "reviewTime", label: "申请日期", width: 85 },
-  { prop: "fileStatus", label: "受控方式" },
+  { prop: "fileStatus", label: "受控方式",render(scope) {
+        const _fileStatus = (scope.row as any).fileStatus;
+        return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
+      } },
   { prop: "operation", label: "操作", fixed: "right", width: 180 }
 ]);
 
@@ -299,7 +311,12 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
 
 // 导出表
 const exportTab = async params => {
-  window.open(params.attachmentUrl);
+  const link = document.createElement('a');
+  link.href = params.attachmentUrl;
+  link.download = params.attachmentName || '文件下载'; // 使用文件名作为下载文件名
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 
 // 导出用户列表
