@@ -30,9 +30,11 @@ const dialogVisible = ref(false);
 const auditStatus = ref("");
 const auditOpinion = ref("");
 const rePrintId = ref(""); // 假设你有一个文件ID需要传递给API
+const fileRePrintId = ref('');
 // 打开对话框方法
 const openDialog = data => {
   rePrintId.value = data.rePrintId;
+  fileRePrintId.value = data.fileRePrintId;
   dialogVisible.value = true;
   auditOpinion.value = "";
 };
@@ -46,7 +48,8 @@ const handleConfirm = async () => {
   let obj = {
     rePrintId: rePrintId.value,
     remark: auditOpinion.value,
-    reviewStatus: auditStatus.value
+    reviewStatus: auditStatus.value,
+    fileRePrintId: fileRePrintId.value
   };
   await fileControllerRePrintReview(obj);
   dialogVisible.value = false;

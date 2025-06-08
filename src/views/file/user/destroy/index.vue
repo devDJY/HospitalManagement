@@ -172,7 +172,11 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      { prop: "address", label: "受控文件", width: 115, render(scope) {
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
+          查看
+        </a>;
+      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
       { prop: "applyUserName", label: "回收原因", width: 85 },

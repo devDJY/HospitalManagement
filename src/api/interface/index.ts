@@ -88,7 +88,9 @@ export namespace User {
     rejectAttachmentUrl: string;
     reviewTime: string;
     reviewerTime: string;
-    fileControllerCode: string[];
+    fileControllerCode: unknown;
+    destroyTime?: string;
+    applyTime?: string;
   }
   export interface ResStatus {
     userLabel: string;

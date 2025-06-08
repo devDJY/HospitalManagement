@@ -7,11 +7,11 @@
       <template v-else>
         <el-radio-button label="待销毁" value="0" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
-        <el-radio-button label="已销毁" value="1" />
+      <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
+        <el-radio-button label="已销毁" value="2" />
       </el-badge>
       <template v-else>
-        <el-radio-button label="已销毁" value="1" />
+        <el-radio-button label="已销毁" value="2" />
       </template>
     </el-radio-group>
     <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" @drag-sort="sortTable">
@@ -66,8 +66,10 @@ import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, BatchAddUser } from "@/api/modules/user";
-import { fileControllerRecycleList } from "@/api/modules/fileInfo";
+import { fileControllerDestroyList } from "@/api/modules/fileInfo";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
+import dayjs from "dayjs";
+
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
   auditDialog.value.openDialog(params);
@@ -115,75 +117,57 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      { prop: "address", label: "受控文件", width: 115, render(scope) {
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
+          查看
+        </a>;
+      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115 },
       { prop: "pageTotal", label: "文件页数", width: 115 },
-      { prop: "applyUserName", label: "回收原因", width: 85 },
+      { prop: "applyReason", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "address", label: "附件", width: 85 },
-      { prop: "address", label: "交件人", width: 85 },
-      { prop: "address", label: "回收人", width: 85 },
-      { prop: "address", label: "回收日期", width: 85 },
+      { prop: "address", label: "附件", width: 85, render(scope) {
+        return (scope.row as any).applyAttachmentName ? (
+          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+            {(scope.row as any).applyAttachmentName}
+          </a>
+        ) : "--";
+      } },
+      { prop: "applyUserName", label: "交件人", width: 85 },
+      { prop: "reviewerName", label: "回收人", width: 85 },
+      { prop: "reviewerTime", label: "回收日期", width: 125, render(scope) {
+        return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
-  } else if (modeSwitching.value == "1") {
+  } else if (modeSwitching.value == "2") {
     columns.splice(
       0,
       columns.length,
       { prop: "projectName", label: "项目名称", width: 105, search: { el: "input" } },
       { prop: "fileCode", label: "文件编码", width: 105, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
-      {
-        prop: "idCard",
-        label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
-      },
-      { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
-      { prop: "pageTotal", label: "文件页数", width: 115 },
-      { prop: "applyUserName", label: "回收原因", width: 85 },
-      { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "审核意见", width: 105 },
-      { prop: "applyTime", label: "审核日期", fixed: "right", width: 105 }
-    );
-  } else if (modeSwitching.value == "2") {
-    columns.splice(
-      0,
-      columns.length,
-      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
-      { prop: "fileCode", label: "文件编码", search: { el: "input" } },
-      { prop: "attachmentName", label: "文件名" },
-      {
-        prop: "idCard",
-        label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
-      },
-      { prop: "address", label: "受控文件", width: 115 },
-      { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
-      { prop: "pageTotal", label: "文件页数", width: 115 },
-      { prop: "applyUserName", label: "回收原因", width: 85 },
-      { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "attachmentName", label: "附件", width: 85 },
-      { prop: "applyTime", label: "申请人", width: 85 },
-      { prop: "applyTime", label: "审核意见" },
-      { prop: "applyTime", label: "审核日期" }
+      { prop: "pageTotal", label: "文件页数", width: 85 },
+      { prop: "applyUserName", label: "回收原因", width: 125 },
+      { prop: "applyRemark", label: "回收说明", width: 125 },
+      { prop: "applyTime", label: "附件", width: 85, render(scope) {
+        return (scope.row as any).applyAttachmentName ? (
+          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+            {(scope.row as any).applyAttachmentName}
+          </a>
+        ) : "--";
+      } },
+      { prop: "applyUserName", label: "交件人", width: 85 },
+      { prop: "reviewerName", label: "回收人", width: 105 },
+      { prop: "reviewDestroy", label: "销毁方式", width: 105},
+      { prop: "destroyTime", label: "销毁日期",width: 105, render(scope) {
+        return <div>{scope.row.destroyTime ? dayjs(scope.row.destroyTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
+      { prop: "destroyRemark", label: "备注", fixed: "right", width: 85 }
     );
   }
-  return fileControllerRecycleList(params);
+  return fileControllerDestroyList(params);
 };
 
 // 表格配置项

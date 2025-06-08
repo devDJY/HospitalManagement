@@ -186,7 +186,9 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "reviewRemark", label: "审查意见", width: 85 },
-      { prop: "reviewTime", label: "审查日期", width: 125 },
+      { prop: "reviewTime", label: "审查日期", width: 125, render(scope) {
+        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
       {
         prop: "reuseStatus",
         label: "复用状态",

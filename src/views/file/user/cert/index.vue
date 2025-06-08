@@ -186,11 +186,9 @@ const getTableList = (params: any) => {
         label: "受控文件",
         width: 90,
         render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
+          return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
+            查看
+          </a>;
         }
       },
       { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" } },
@@ -203,14 +201,14 @@ const getTableList = (params: any) => {
           return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
         }
       },
-      { prop: "creatorName", label: "受控发放人" },
+      { prop: "reviewerName", label: "受控发放人" },
       {
-        prop: "applyTime",
+        prop: "reviewTime",
         label: "受控发放日期",
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{anyRow.applyTime ? dayjs(anyRow.applyTime).format("YYYY-MM-DD") : ""}</div>;
+          return <div>{anyRow.reviewerTime ? dayjs(anyRow.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
         }
       },
       { prop: "operation", label: "操作", fixed: "right", width: 120 }
@@ -239,11 +237,9 @@ const getTableList = (params: any) => {
         label: "受控文件",
         width: 90,
         render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
+          return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
+            查看
+          </a>;
         }
       },
       { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" } },
@@ -291,24 +287,22 @@ const getTableList = (params: any) => {
         label: "受控文件",
         width: 90,
         render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
+          return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
+            查看
+          </a>;
         }
       },
       { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" }, width: 105 },
       { prop: "fileCount", label: "作废份数", width: 90 },
       { prop: "reviewerName", label: "作废人", width: 90 },
-      { prop: "creatorName", label: "作废说明", width: 85 },
+      { prop: "remark", label: "作废说明", width: 85 },
       {
-        prop: "createTime",
+        prop: "reviewerTime",
         label: "作废日期",
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{anyRow.createTime ? dayjs(anyRow.createTime).format("YYYY-MM-DD") : ""}</div>;
+          return <div>{anyRow.reviewerTime ? dayjs(anyRow.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
         }
       }
     );
@@ -336,11 +330,9 @@ const getTableList = (params: any) => {
         label: "受控文件",
         width: 90,
         render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
+          return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
+            查看
+          </a>;
         }
       },
       { prop: "fileControllerCode", label: "文件受控码", width: 105, search: { el: "input" } },
@@ -354,12 +346,12 @@ const getTableList = (params: any) => {
         }
       },
       {
-        prop: "createTime",
-        label: "使用登记日期",
+        prop: "reviewTime",
+        label: "登记日期",
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{anyRow.createTime ? dayjs(anyRow.createTime).format("YYYY-MM-DD") : ""}</div>;
+          return <div>{anyRow.reviewTime ? dayjs(anyRow.reviewTime).format("YYYY-MM-DD") : ""}</div>;
         }
       }
     );

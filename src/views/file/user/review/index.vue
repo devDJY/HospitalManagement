@@ -102,6 +102,8 @@ import { el, pa } from "element-plus/es/locale";
 import ReuseApplicationDialog from "./ReuseApplicationDialog.vue";
 import BanReuseDialog from "./BanReuseDialog.vue";
 import FileApplicationDialog from "./FileApplicationDialog.vue";
+import dayjs from "dayjs";
+
 const fileApplicationDialog = ref();
 const banReuseDialog = ref();
 const reuseDialog = ref();
@@ -160,8 +162,12 @@ const getTableList = (params: any) => {
       },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
-      { prop: "reviewTime", label: "申请日期", width: 85 },
-      { prop: "reuseApplyStatus", label: "受控状态", width: 105 },
+      { prop: "reviewTime", label: "申请日期", width: 115, render(scope) {
+        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
+      { prop: "fileControllerStatus", label: "受控状态", width: 105, render(scope) {
+        return <div>{(scope.row as any).fileControllerStatus === 0 ? "未受控" : "已受控"}</div>;
+      } },
       {
         prop: "reuseStatus",
         label: "复用状态",
@@ -202,8 +208,16 @@ const getTableList = (params: any) => {
       },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
-      { prop: "reviewTime", label: "审查日期", width: 85 },
-      { prop: "reviewTime", label: "附件", width: 105 },
+      { prop: "reviewTime", label: "审查日期", width: 115, render(scope) {
+        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
+      { prop: "reviewAttachmentName", label: "附件", width: 85, render(scope) {
+        return (scope.row as any).reviewAttachmentName ? (
+          <a style="color: #3878df" href={(scope.row as any).reviewAttachmentUrl} target="_blank">
+            {(scope.row as any).reviewAttachmentName}
+          </a>
+        ) : "--";
+      } },
       { prop: "remark", label: "备注", width: 105 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
@@ -261,7 +275,9 @@ const getTableList = (params: any) => {
       { prop: "fileStatus", label: "受控方式", width: 105 },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
-      { prop: "reviewTimev", label: "审查日期", width: 85 },
+      { prop: "reviewTime", label: "审查日期", width: 115, render(scope) {
+        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else {
@@ -284,7 +300,9 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "fileCount", label: "份数", width: 85 },
-      { prop: "reviewTime", label: "申请日期", width: 85 },
+      { prop: "reviewTime", label: "申请日期", width: 115, render(scope) {
+        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
       {
         prop: "fileStatus",
         label: "受控方式",

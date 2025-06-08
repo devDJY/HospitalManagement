@@ -122,12 +122,12 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "address", label: "受控文件", width: 115, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning(scope.row.fileControllerCode.join(",")); }} target="_blank">
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode.join(",")); }} target="_blank">
           查看
         </a>;
       } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, render(scope) {
-        return scope.row.fileControllerCode.join(",");
+        return (scope.row as any).fileControllerCode.join(",");
       } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "applyUserName", label: "申请人", width: 85 },
@@ -154,12 +154,12 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "address", label: "受控文件", width: 115, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning(scope.row.fileControllerCode.join(",")); }} target="_blank">
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode.join(",")); }} target="_blank">
           查看
         </a>;
       } },
       { prop: "address", label: "文件受控编码", width: 115, render(scope) {
-        return scope.row.fileControllerCode.join(",");
+        return (scope.row as any).fileControllerCode.join(",");
       } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "applyUserName", label: "申请人", width: 85 },
@@ -185,12 +185,12 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "address", label: "受控文件", width: 115, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning(scope.row.fileControllerCode.join(",")); }} target="_blank">
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode.join(",")); }} target="_blank">
           查看
         </a>;
       } },
       { prop: "address", label: "文件受控编码", width: 115, render(scope) {
-        return scope.row.fileControllerCode.join(",");
+        return (scope.row as any).fileControllerCode.join(",");
       } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "applyUserName", label: "申请人", width: 85 },

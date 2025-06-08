@@ -74,6 +74,8 @@ import { CirclePlus, Delete, EditPen, Download, Upload, Paperclip, Refresh } fro
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, BatchAddUser } from "@/api/modules/user";
 import { fileControllerCertList, fileControllerRePrintList } from "@/api/modules/fileInfo";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
+import dayjs from "dayjs";
+
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
   auditDialog.value.openDialog(params);
@@ -121,11 +123,17 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      { prop: "address", label: "受控文件", width: 115, render(scope) {
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode.join(",")); }} target="_blank">
+          查看
+        </a>;
+      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "applyRemark", label: "申请说明", width: 115 },
-      { prop: "applyTime", label: "申请日期", width: 85 },
+      { prop: "applyTime", label: "申请日期", width: 115, render(scope) {
+        return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
       { prop: "reviewerName", label: "审核人", width: 85 }
     );
   } else if (modeSwitching.value == "2") {
@@ -146,13 +154,21 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115 },
-      { prop: "address", label: "文件受控编码", width: 115, search: { el: "input" } },
+      { prop: "address", label: "受控文件", width: 115, render(scope) {
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode.join(",")); }} target="_blank">
+          查看
+        </a>;
+      } },
+      { prop: "address", label: "文件受控编码", width: 115, search: { el: "input" }, render(scope) {
+        return <div>{(scope.row as any).fileControllerCode.join(",")}</div>;
+      } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "applyRemark", label: "申请说明", width: 115 },
       { prop: "reviewerName", label: "审核人", width: 115 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
-      { prop: "reviewerTime", label: "审核日期", width: 115 },
+      { prop: "reviewerTime", label: "审核日期", width: 115, render(scope) {
+        return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else if (modeSwitching.value == "1") {
@@ -173,12 +189,20 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115 },
-      { prop: "address", label: "文件受控编码", width: 115, search: { el: "input" } },
+      { prop: "address", label: "受控文件", width: 115, render(scope) {
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode.join(",")); }} target="_blank">
+          查看
+        </a>;
+      } },
+      { prop: "address", label: "文件受控编码", width: 115, search: { el: "input" }, render(scope) {
+        return <div>{(scope.row as any).fileControllerCode.join(",")}</div>;
+      } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "reviewerName", label: "", width: 115 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
-      { prop: "reviewerTime", label: "审核日期", width: 115 }
+      { prop: "reviewerTime", label: "审核日期", width: 115, render(scope) {
+        return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
+      } }
     );
   }
   return fileControllerRePrintList(params);

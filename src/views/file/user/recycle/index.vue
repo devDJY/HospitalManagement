@@ -74,6 +74,8 @@ import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@e
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, BatchAddUser } from "@/api/modules/user";
 import { fileControllerRecycleList } from "@/api/modules/fileInfo";
 import RePrintAuditDialog from "./RePrintAuditDialog.vue";
+import dayjs from "dayjs";
+
 const auditDialog = ref();
 const openAuditDialog = (params: any) => {
   auditDialog.value.openDialog();
@@ -143,19 +145,29 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      { prop: "address", label: "受控文件", width: 115, render(scope) {
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
+          查看
+        </a>;
+      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
       {
         prop: "applyReason",
         label: "回收原因",
         width: 85,
-        enum: applyReasonArr,
-        search: { el: "select", props: { filterable: true } }
       },
       { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "applyTime", label: "附件", width: 85 },
-      { prop: "applyTime", label: "申请日期", width: 85 },
+      { prop: "applyTime", label: "附件", width: 85, render(scope) {
+        return (scope.row as any).applyAttachmentName ? (
+          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+            {(scope.row as any).applyAttachmentName}
+          </a>
+        ) : "--";
+      } },
+      { prop: "applyTime", label: "申请日期", width: 115, render(scope) {
+        return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
+      } },
       { prop: "reviewerName", label: "审核人", width: 85 }
     );
   } else if (modeSwitching.value == "2") {
@@ -176,21 +188,31 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      { prop: "address", label: "受控文件", width: 115, render(scope) {
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
+          查看
+        </a>;
+      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
       {
         prop: "applyReason",
         label: "回收原因",
         width: 85,
-        enum: applyReasonArr,
-        search: { el: "select", props: { filterable: true } }
       },
       { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "applyTime", label: "附件", width: 85 },
+      { prop: "applyTime", label: "附件", width: 85, render(scope) {
+        return (scope.row as any).applyAttachmentName ? (
+          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+            {(scope.row as any).applyAttachmentName}
+          </a>
+        ) : "--";
+      } },
       { prop: "reviewerName", label: "审核人", width: 115 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
-      { prop: "reviewerTime", label: "审核日期", width: 115 }
+      { prop: "reviewerTime", label: "审核日期", width: 115, render(scope) {
+        return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
+      } }
     );
   } else if (modeSwitching.value == "1") {
     columns.splice(
@@ -210,21 +232,31 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      { prop: "address", label: "受控文件", width: 115, render(scope) {
+        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
+          查看
+        </a>;
+      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
       {
         prop: "applyReason",
         label: "回收原因",
         width: 85,
-        enum: applyReasonArr,
-        search: { el: "select", props: { filterable: true } }
       },
       { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "attachmentName", label: "附件", width: 85 },
+      { prop: "attachmentName", label: "附件", width: 85, render(scope) {
+        return (scope.row as any).applyAttachmentName ? (
+          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+            {(scope.row as any).applyAttachmentName}
+          </a>
+        ) : "--";
+      } },
       { prop: "reviewerName", label: "审核人", width: 115 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
-      { prop: "reviewerTime", label: "审核日期", width: 115 }
+      { prop: "reviewerTime", label: "审核日期", width: 115, render(scope) {
+        return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
+      } }
     );
   }
   return fileControllerRecycleList(params);

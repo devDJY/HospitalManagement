@@ -3,8 +3,8 @@
     <el-form label-width="100px">
       <el-form-item label="审核状态" required>
         <el-select v-model="auditStatus" placeholder="请选择审核状态">
-          <el-option label="通过" value="1" />
-          <el-option label="不通过" value="2" />
+          <el-option label="驳回" value="1" />
+          <el-option label="通过" value="2" />
         </el-select>
       </el-form-item>
 
