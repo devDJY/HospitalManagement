@@ -45,7 +45,7 @@ const handleConfirm = async () => {
     return;
   }
   let obj = {
-    fileControllerIds: [0],
+    fileControllerIds: fileControllerIds.value,
     remark: auditOpinion.value,
     reviewStatus: auditStatus.value
   };

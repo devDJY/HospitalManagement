@@ -32,7 +32,7 @@ const auditOpinion = ref("");
 const fileControllerIds = ref(); // 假设你有一个文件ID需要传递给API
 // 打开对话框方法
 const openDialog = data => {
-  fileControllerIds.value = [data.fileControllerIds];
+  fileControllerIds.value = [data.fileControllerId];
   dialogVisible.value = true;
   auditOpinion.value = "";
 };
@@ -44,7 +44,7 @@ const handleConfirm = async () => {
     return;
   }
   let obj = {
-    fileControllerIds: [0],
+    fileControllerIds: fileControllerIds.value,
     remark: auditOpinion.value,
     reviewStatus: auditStatus.value
   };
