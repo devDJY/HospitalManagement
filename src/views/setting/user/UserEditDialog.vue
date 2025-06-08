@@ -121,7 +121,7 @@ const formData = reactive({
   startTime: "",
   userName: "",
   verifyCode: "",
-  id: 0,
+  id: 0
 });
 const dialogVisible = ref(false);
 const companyInfos = ref();
@@ -198,4 +198,3 @@ defineExpose({
   margin-bottom: 18px;
 }
 </style>
-
