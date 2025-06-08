@@ -2,7 +2,7 @@
   <div class="table-box">
     <div class="flex tops">
       <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
-        <el-badge :value="0" class="item" v-if="modeSwitching === ''" color="green">
+        <el-badge :value="getTableList.length" class="item" v-if="modeSwitching === ''" color="green">
           <el-radio-button label="全部" value="" />
         </el-badge>
         <template v-else>
@@ -56,24 +56,32 @@
       </template> -->
       <!-- 表格操作 -->
       <template #operation="scope">
-        <el-button type="success" v-if="modeSwitching == '1'" link :icon="Edit" @click="showAddDialog(scope.row)">编辑</el-button>
+        <el-button type="success" link :icon="Edit" @click="showAddDialog(scope.row)">编辑</el-button>
         <!-- <el-button type="warning" v-if="modeSwitching == '1'" link :icon="Plus" @click="joinAnOrganization(scope.row)">加入组织</el-button> -->
-        <el-button type="info" v-if="modeSwitching == '1'" link :icon="Refresh" @click="resetPass(scope.row)">重置</el-button>
-        <el-button type="danger" v-if="modeSwitching == '1'" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
+        <el-button type="info" v-if="modeSwitching !== '1' && modeSwitching !== '4'" link :icon="Refresh" @click="resetPass(scope.row)">重置</el-button>
+        <el-button type="info" v-if="modeSwitching == '1'" link :icon="Refresh" @click="openDialog(scope.row)">审核</el-button>
+        <el-button type="danger" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
       </template>
       <template #roleId>
         <span style="color: var(--el-color-primary)">我是插入在表格最后的内容。若表格有合计行，该内容会位于合计行之上。</span>
       </template>
     </ProTable>
     <el-dialog v-model="lockDialog" title="锁库" width="500px" :before-close="handleClose">
+      <div class="flex" style="margin-bottom: 10px">
+        <div style="width: 90px">审核状态</div>
+        <el-select v-model="formData.permissionGroupId" placeholder="请选择">
+          <el-option label="通过" :value="1" />
+          <el-option label="驳回" :value="2" />
+        </el-select>
+      </div>
       <div class="flex">
-        <div style="width: 90px">锁库说明：</div>
-        <el-input v-model="remark" type="textarea" :rows="4" placeholder="请输入..." resize="none" />
+        <div style="width: 90px">备注</div>
+        <el-input v-model="formData.remark" type="textarea" :rows="4" placeholder="请输入..." resize="none" />
       </div>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="lockDialog = false">取消</el-button>
-          <!-- <el-button type="primary" @click="lockOK()"> 确定 </el-button> -->
+          <el-button type="primary" @click="lockOK()"> 确定 </el-button>
         </div>
       </template>
     </el-dialog>
@@ -89,7 +97,7 @@ import { useHandleData } from "@/hooks/useHandleData";
 import ProTable from "@/components/ProTable/index.vue";
 import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
-import { deleteUser, deleteUserInfo, getUserInfoList, resetUserPassword } from "@/api/modules/user";
+import { deleteUser, deleteUserInfo, getUserInfoList, resetUserPassword, updateUserAudit } from "@/api/modules/user";
 import { Search, Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import UserEditDialog from "./UserEditDialog.vue";
 const lockDialog = ref(false);
@@ -98,6 +106,11 @@ const UserEdit = ref();
 const handleClose = () => {
   lockDialog.value = false;
 };
+const formData = reactive({
+  permissionGroupId: "",
+  remark: "",
+  userId: ""
+});
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
 // 模式切换
@@ -145,7 +158,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
     ]
   },
   { prop: "enrollCount", label: "管理员", width: 100 },
-  { prop: "operation", label: "操作", fixed: "right", width: 150 }
+  { prop: "operation", label: "操作", fixed: "right", width: 220 }
 ]);
 
 interface SpanMethodProps {
@@ -203,14 +216,14 @@ const getTableList = (params?: any) => {
         label: "角色",
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{roleTypes.value[anyRow.roleId].label}</div>;
+          return <div>{roleTypes.value[anyRow.roleId].label || "未知"}</div>;
         }
       },
       { prop: "permissionGroupName", label: "权限组" },
       { prop: "registerTime", label: "注册日期" },
       { prop: "operation", label: "操作", fixed: "right", width: 200 }
     );
-  } else if (modeSwitching.value == "2") {
+  } else {
     columns.splice(
       0,
       columns.length,
@@ -238,7 +251,7 @@ const getTableList = (params?: any) => {
       },
       { prop: "permissionGroupName", label: "权限组" },
       { prop: "registerTime", label: "注册日期" },
-      { prop: "operation", label: "操作", fixed: "right", width: 200 }
+      { prop: "operation", label: "操作", fixed: "right", width: 220 }
     );
   }
   params.status = Number(modeSwitching.value) - 1;
@@ -247,7 +260,7 @@ const getTableList = (params?: any) => {
 
 // 删除项目
 const deletePro = async (params: any) => {
-  await useHandleData(deleteUserInfo, { iuserIdd: params.id }, `删除【${params.nickName}】用户（删除后无法恢复)?`);
+  await useHandleData(deleteUserInfo, { userId: params.id }, `删除【${params.nickName}】用户（删除后无法恢复)?`);
   proTable.value?.getTableList();
 };
 const projectId = ref("");
@@ -270,12 +283,26 @@ const showEditDialog = user => {
   dialogVisible.value = true;
 };
 
-// 提交处理
-const handleSubmit = formData => {
-  console.log("提交数据:", formData);
-  // 调用API提交数据
+// 审核处理
+const openDialog = data => {
+  formData.userId = data.id;
+  lockDialog.value = true;
 };
-const reset = async params => {};
+const lockOK = async () => {
+  if (!formData.permissionGroupId) {
+    ElMessage.error("请选择审核状态");
+    return;
+  }
+  updateUserAudit({
+    userId: formData.userId,
+    auditFlag: formData.permissionGroupId,
+    remark: formData.remark
+  }).then(() => {
+    ElMessage.success("操作成功");
+    lockDialog.value = false;
+    proTable.value?.getTableList();
+  });
+};
 // 页面渲染请求
 const init = async () => {
   // 获取用户列表

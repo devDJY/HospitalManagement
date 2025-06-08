@@ -97,3 +97,7 @@ export const updateSelfInfo = params => {
 export const updateSelfPwd = params => {
   return http.post("/userInfo/update/pwd", params);
 };
+//用户列表-审核用户
+export const updateUserAudit = params => {
+  return http.post("/userInfo/update/audit", params);
+};

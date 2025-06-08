@@ -28,11 +28,11 @@
 
       <el-form-item label="单位类型" prop="companyType" :rules="[{ required: true, message: '请选择单位类型', trigger: 'change' }]">
         <el-select v-model="formData.companyType" placeholder="请选择单位类型">
-          <el-option label="临床实验机构" value="1" />
-          <el-option label="合同研究组织" value="2" />
-          <el-option label="申办方" value="3" />
-          <el-option label="SMO" value="4" />
-          <el-option label="其他" value="5" />
+          <el-option label="临床实验机构" :value="1" />
+          <el-option label="合同研究组织" :value="2" />
+          <el-option label="申办方" :value="3" />
+          <el-option label="SMO" :value="4" />
+          <el-option label="其他" :value="5" />
         </el-select>
       </el-form-item>
 
@@ -53,10 +53,10 @@
 
       <el-form-item label="权限组" prop="permissionGroupId">
         <el-select v-model="formData.permissionGroupId" placeholder="请选择">
-          <el-option label="CRC" value="0" />
-          <el-option label="CRA" value="1" />
-          <el-option label="机构办秘书" value="2" />
-          <el-option label="机构办质控员" value="3" />
+          <el-option label="CRC" :value="1" />
+          <el-option label="CRA" :value="2" />
+          <el-option label="机构办秘书" :value="3" />
+          <el-option label="机构办质控员" :value="4" />
         </el-select>
       </el-form-item>
 

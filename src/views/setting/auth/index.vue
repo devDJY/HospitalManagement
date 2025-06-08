@@ -147,7 +147,7 @@ const getTableList = (params?: any) => {
 
 // 删除项目
 const deletePro = async (params: any) => {
-  await useHandleData(authGroupDeleteGroup, { id: [params.id] }, `删除【${params.groupName}】权限组（删除后无法恢复)?`);
+  await useHandleData(authGroupDeleteGroup, { groupId: params.id }, `删除【${params.groupName}】权限组（删除后无法恢复)?`);
   proTable.value?.getTableList();
 };
 //
