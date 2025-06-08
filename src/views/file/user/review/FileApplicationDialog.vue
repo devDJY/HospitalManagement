@@ -65,8 +65,8 @@
       <!-- 受控方式 -->
       <el-form-item label="受控方式" prop="checkType" required>
         <el-radio-group v-model="form.checkType">
-          <el-radio label="0">线上受控</el-radio>
-          <el-radio label="1">线下受控</el-radio>
+          <el-radio :value="1">线上受控</el-radio>
+          <el-radio :value="2">线下受控</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -164,7 +164,7 @@ const restForm = () => {
   form.attachmentUrl = "";
   form.fileName = "";
   form.versionTime = "";
-  form.checkType = "0";
+  form.checkType = "";
   form.reviewerId = "";
   form.applyReason = "";
   fileList.value = [];
@@ -240,6 +240,7 @@ const openDialog = async (initialData: any) => {
       }
     ];
     form.file = "112121";
+    initialData.fileName = initialData.attachmentName;
     Object.assign(form, initialData);
   }
 
