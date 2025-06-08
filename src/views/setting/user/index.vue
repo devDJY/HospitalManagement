@@ -197,7 +197,7 @@ const getTableList = (params?: any) => {
     columns.splice(
       0,
       columns.length,
-      { prop: "id", label: "账号", search: { el: "input", tooltip: "" } },
+      { prop: "userName", label: "账号", search: { el: "input", tooltip: "" } },
       { prop: "nickName", label: "真实姓名", width: 100, search: { el: "input", tooltip: "" } },
       {
         prop: "gender",

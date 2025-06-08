@@ -65,11 +65,11 @@
         <el-checkbox v-model="formData.isSurveySms">接收调研短信</el-checkbox>
       </el-form-item>
 
-      <el-form-item label="开始有效期" prop="startTime">
+      <el-form-item v-show="!formData.isPermanent" label="开始有效期" prop="startTime">
         <el-date-picker v-model="formData.startTime" type="datetime" placeholder="选择日期时间" value-format="YYYY-MM-DD HH:mm:ss" />
       </el-form-item>
 
-      <el-form-item label="结束有效期" prop="expireTime">
+      <el-form-item v-show="!formData.isPermanent" label="结束有效期" prop="expireTime">
         <el-date-picker v-model="formData.expireTime" type="datetime" placeholder="选择日期时间" value-format="YYYY-MM-DD HH:mm:ss" />
       </el-form-item>
     </el-form>
@@ -113,14 +113,15 @@ const formData = reactive({
   email: "",
   expireTime: "",
   gender: 1,
-  isPermanent: true,
-  isSurveySms: true,
+  isPermanent: false,
+  isSurveySms: false,
   nickName: "",
   password: "",
   permissionGroupId: "",
   startTime: "",
   userName: "",
-  verifyCode: ""
+  verifyCode: "",
+  id: 0,
 });
 const dialogVisible = ref(false);
 const companyInfos = ref();
@@ -172,8 +173,10 @@ const handleSubmit = async () => {
   await formRef.value.validate();
   try {
     if (yesEditing.value) {
-      await updateUserInfo(formData);
+      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id };
+      await updateUserInfo(_formData);
     } else {
+      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id };
       await registerByManager(formData);
     }
   } catch (error) {
@@ -195,3 +198,4 @@ defineExpose({
   margin-bottom: 18px;
 }
 </style>
+
