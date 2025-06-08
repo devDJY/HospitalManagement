@@ -254,7 +254,7 @@ const getTableList = (params?: any) => {
       { prop: "operation", label: "操作", fixed: "right", width: 220 }
     );
   }
-  params.status = Number(modeSwitching.value) - 1;
+  params.status = modeSwitching.value ? Number(modeSwitching.value) - 1 : "";
   return getUserInfoList(params);
 };
 
