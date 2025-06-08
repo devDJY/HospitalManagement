@@ -84,6 +84,11 @@ export namespace User {
     avatar: string;
     photo: any[];
     children?: ResUserList[];
+    rejectAttachmentName: string;
+    rejectAttachmentUrl: string;
+    reviewTime: string;
+    reviewerTime: string;
+    fileControllerCode: string[];
   }
   export interface ResStatus {
     userLabel: string;

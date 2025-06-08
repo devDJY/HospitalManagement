@@ -87,6 +87,7 @@ import FileReviewDialog from "./FileReviewDialog.vue";
 import BanReuseDialog from "./BanReuseDialog.vue";
 import { fileInfoList } from "@/api/modules/fileInfo";
 import { pa } from "element-plus/es/locale";
+import dayjs from "dayjs";
 const router = useRouter();
 
 // 模式切换
@@ -127,7 +128,7 @@ const getTableList = (params: any) => {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "projectName", label: "项目名称", width: 135, search: { el: "input" } },
       { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
@@ -143,11 +144,11 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "fileVersion", label: "版本号" },
-      { prop: "versionTime", label: "版本日期", width: 85 },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
-      { prop: "reviewTime", label: "申请日期", width: 85 },
-      { prop: "fileStatus", label: "受控方式", render(scope) {
+      { prop: "reviewTime", label: "申请日期", width: 125 },
+      { prop: "fileStatus", label: "受控方式", width: 85, render(scope) {
         const _fileStatus = (scope.row as any).checkType;
         return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
       } },
@@ -157,7 +158,7 @@ const getTableList = (params: any) => {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "projectName", label: "项目名称", width: 135, search: { el: "input" } },
       { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
@@ -177,6 +178,7 @@ const getTableList = (params: any) => {
       {
         prop: "checkType",
         label: "受控方式",
+        width: 85,
         render(scope) {
           const status = (scope.row as any).reuseStatus;
           const tagType = status === 1 ? "success" : "danger";
@@ -184,7 +186,7 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "reviewRemark", label: "审查意见", width: 85 },
-      { prop: "reviewTime", label: "审查日期", width: 85 },
+      { prop: "reviewTime", label: "审查日期", width: 125 },
       {
         prop: "reuseStatus",
         label: "复用状态",
@@ -201,7 +203,7 @@ const getTableList = (params: any) => {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "projectName", label: "项目名称", width: 135, search: { el: "input" } },
       { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
@@ -218,20 +220,27 @@ const getTableList = (params: any) => {
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
-      { prop: "fileStatus", label: "受控方式",render(scope) {
+      { prop: "fileStatus", label: "受控方式", width: 85, render(scope) {
         const _fileStatus = (scope.row as any).checkType;
         return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
       } },
-      { prop: "reviewTime", label: "审查意见", width: 85 },
-      { prop: "reviewTime", label: "附件", width: 85 },
-      { prop: "reviewTime", label: "审查日期", width: 85 },
-      { prop: "reviewTime", label: "备注", width: 85 }
+      { prop: "reviewRemark", label: "审查意见", width: 85 },
+      { prop: "rejectAttachmentName", label: "附件", width: 85, render(scope) {
+        return scope.row.rejectAttachmentName ? <a style="color: #3878df" href={(scope.row as any).rejectAttachmentUrl} target="_blank">
+          {scope.row.rejectAttachmentName}
+        </a> : "--";
+      } },
+      { prop: "reviewTime", label: "审查日期", width: 125, render(scope) {
+        return scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--";
+      } },
+      // 备注留空
+      { prop: "", label: "备注", width: 85 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
       0,
       columns.length,
-      { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+      { prop: "projectName", label: "项目名称", width: 135, search: { el: "input" } },
       { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
@@ -248,12 +257,12 @@ const getTableList = (params: any) => {
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
-      { prop: "fileStatus", label: "受控方式",render(scope) {
+      { prop: "fileStatus", label: "受控方式", width: 85, render(scope) {
         const _fileStatus = (scope.row as any).checkType;
         return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
       } },
       { prop: "reviewTime", label: "审查意见", width: 85 },
-      { prop: "reviewTime", label: "审查日期", width: 85 }
+      { prop: "reviewTime", label: "审查日期", width: 125 }
     );
   }
   return fileInfoList(params);
@@ -275,7 +284,7 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
-  { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
+  { prop: "projectName", label: "项目名称", width: 135, search: { el: "input" } },
   { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
   { prop: "attachmentName", label: "文件名" },
   {
@@ -291,11 +300,11 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
     }
   },
   { prop: "fileVersion", label: "版本号" },
-  { prop: "versionTime", label: "版本日期", width: 85 },
+  { prop: "versionTime", label: "版本日期", width: 125 },
   { prop: "fileCount", label: "份数", width: 85 },
   { prop: "creatorName", label: "申请人", width: 115 },
-  { prop: "reviewTime", label: "申请日期", width: 85 },
-  { prop: "fileStatus", label: "受控方式",render(scope) {
+  { prop: "reviewTime", label: "申请日期", width: 125 },
+  { prop: "fileStatus", label: "受控方式", width: 85, render(scope) {
         const _fileStatus = (scope.row as any).checkType;
         return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
       } },

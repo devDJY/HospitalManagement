@@ -210,7 +210,7 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "fileControllerCode", label: "文件受控码", width: 90 },
+      { prop: "fileControllerCode", label: "文件受控码", width: 105 },
       { prop: "fileCount", label: "申请份数", width: 90 },
       {
         prop: "checkType",
@@ -220,16 +220,19 @@ const getTableList = (params: any) => {
           return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
         }
       },
-      { prop: "creatorName", label: "申请人", width: 85 },
-      {
-        prop: "applyTime",
-        label: "申请日期",
-        width: 120,
-        render(scope) {
-          const anyRow = scope.row as any;
-          return <div>{anyRow.applyTime ? dayjs(anyRow.applyTime).format("YYYY-MM-DD") : ""}</div>;
-        }
-      },
+      { prop: "reviewerTime", label: "受控日期", width: 120, render(scope) {
+        return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : ""}</div>;
+      } },
+      // { prop: "creatorName", label: "申请人", width: 85 },
+      // {
+      //   prop: "applyTime",
+      //   label: "申请日期",
+      //   width: 120,
+      //   render(scope) {
+      //     const anyRow = scope.row as any;
+      //     return <div>{anyRow.applyTime ? dayjs(anyRow.applyTime).format("YYYY-MM-DD") : ""}</div>;
+      //   }
+      // },
       { prop: "operation", label: "操作", fixed: "right", width: 120 }
     );
   } else if (modeSwitching.value == "3") {
