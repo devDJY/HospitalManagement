@@ -49,10 +49,14 @@ const openDialog = (data) => {
 
 // 不间断打印
 const handleContinuousPrint = () => {
-  // 这里可以调用API提交审核意见
-  console.log("作废说明:", auditOpinion.value);
-  dialogVisible.value = false;
-  ElMessage.success("作废提交成功");
+  fileControllerCertPrint({ 
+    "fileCount": copies.value,
+    "fileId": pa.value.fileId
+  }).then((res: any) => {
+    console.log(res);
+    dialogVisible.value = false;
+    ElMessage.success("提交成功");
+  });
 };
 const handleCancel = () => {
   dialogVisible.value = false;
