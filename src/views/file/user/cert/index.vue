@@ -51,10 +51,11 @@
         </el-button>
       </template>
       <!-- createTime -->
-      <template #createTime="scope">
-        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
-        </el-button>
+      <template #attachmentUrl="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
+      </template>
+      <template #attachmentUrl2="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 2)"> 查看 </el-button>
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -99,7 +100,7 @@ import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh, Printer } from "@element-plus/icons-vue";
 import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
-import { de, pa } from "element-plus/es/locale";
+import { da, de, pa } from "element-plus/es/locale";
 import { fileControllerCancelCertList, fileControllerCertList, fileControllerPrintCertList, fileControllerUsedCertList, fileControllerWaitList } from "@/api/modules/fileInfo";
 import dayjs from "dayjs";
 import { c } from "vite/dist/node/types.d-aGj9QkWt";
@@ -132,14 +133,15 @@ const initParam = reactive({ type: 1 });
 
 // dataCallback 是对于返回的表格数据做处理，如果你后台返回的数据不是 list && total 这些字段，可以在这里进行处理成这些字段
 
-const goToDetails = data => {
-  console.log(data);
-  debugger
+const goToDetails = (scope, type: number) => {
+  console.log(scope);
   router.push({
     name: "fileDetails", // 路由名称
-    params: {} // params 传参
-    // 或者用 query:
-    // query: { id: props.attachmentUrl.id }
+    query: {
+      fileId: scope.row.fileId,
+      isManager: 0,
+      type: type
+    }
   });
 };
 
@@ -163,14 +165,7 @@ const getTableList = (params: any) => {
       { prop: "attachmentName", label: "文件名" },
       {
         prop: "attachmentUrl",
-        label: "源文件",
-        render(scope) {
-          return (
-            <RouterLink to={{ name: "/file/fileDetails", params: scope }} style="color: #3878df">
-              查看
-            </RouterLink>
-          );
-        }
+        label: "源文件"
       },
       { prop: "fileCount", label: "申请份数" }
     );
@@ -184,42 +179,19 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <div
-              style="color: #3878df; cursor: pointer"
-              onClick={event => {
-                event.stopPropagation(); // 阻止事件冒泡
-                goToDetails(scope);
-              }}
-            >
-              查看
-            </div>
-          );
-        }
+        width: 90
       },
       {
         prop: "attachmentUrl",
         label: "受控文件",
-        width: 90,
-        render(scope) {
-          return (
-            <div style="color: #3878df; cursor: pointer" onClick={() => goToDetails(scope)}>
-              查看
-            </div>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" } },
       { prop: "fileCount", label: "申请份数", width: 90 },
       {
         prop: "checkType",
         label: "受控方式",
-        width: 90,
-        render(scope) {
-          return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
-        }
+        width: 90
       },
       { prop: "creatorName", label: "受控发放人" },
       {
@@ -243,26 +215,12 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       {
         prop: "attachmentUrl",
         label: "受控文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" } },
       { prop: "fileCount", label: "打印份数", width: 90 },
@@ -295,26 +253,12 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       {
         prop: "attachmentUrl",
         label: "受控文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" }, width: 105 },
       { prop: "fileCount", label: "作废份数", width: 90 },
@@ -340,26 +284,12 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       {
-        prop: "attachmentUrl",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控码", width: 105, search: { el: "input" } },
       { prop: "fileCount", label: "使用份数", width: 90 },
@@ -412,14 +342,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   {
     prop: "attachmentUrl",
     label: "源文件",
-    width: 90,
-    render(scope) {
-      return (
-        <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-          查看
-        </a>
-      );
-    }
+    width: 90
   },
   { prop: "fileCount", label: "申请份数", width: 90 },
   {

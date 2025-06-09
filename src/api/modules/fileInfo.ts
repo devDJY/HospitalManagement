@@ -139,3 +139,18 @@ export const fileInfoReEdit = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/fileInfo/reEdit", pa, { loading: false });
 };
+// 查看附件-受控文件-非管理人员查看
+export const fileInfoReviewControlAttachment = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileInfo/review/control/attachment", pa, { loading: false });
+};
+// 查看附件-受控文件-管理人员查看
+export const fileInfoReviewControlAttachmentManager = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileInfo/review/control/attachment/manager", pa, { loading: false });
+};
+// 查看附件-原文件
+export const fileInfoReviewOriginalAttachment = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileInfo/review/original/attachment", pa, { loading: false });
+};

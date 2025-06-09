@@ -39,10 +39,8 @@
         </el-button>
       </template>
       <!-- createTime -->
-      <template #createTime="scope">
-        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
-        </el-button>
+      <template #attachmentUrl="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -100,6 +98,18 @@ watch(
     proTable.value?.getTableList();
   }
 );
+const goToDetails = (scope, type: number) => {
+  console.log(scope);
+  router.push({
+    name: "fileDetails", // 路由名称
+    query: {
+      fileId: scope.row.fileId,
+      isManager: 0,
+      type: type
+    }
+  });
+};
+
 // 如果你想在请求之前对当前请求参数做一些操作，可以自定义如下函数：params 为当前所有的请求参数（包括分页），最后返回请求列表接口
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
@@ -113,15 +123,9 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
@@ -134,12 +138,19 @@ const getTableList = (params: any) => {
             <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
               {(scope.row as any).applyAttachmentName}
             </a>
-          ) : "--";
+          ) : (
+            "--"
+          );
         }
       },
-      { prop: "applyTime", label: "申报日期", width: 85, render(scope) {
-        return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
-      } },
+      {
+        prop: "applyTime",
+        label: "申报日期",
+        width: 85,
+        render(scope) {
+          return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
+        }
+      },
       { prop: "reviewerName", label: "审核人", width: 115 }
     );
   } else if (modeSwitching.value == "2") {
@@ -150,30 +161,44 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
+        width: 90
+      },
+      {
+        prop: "address",
+        label: "受控文件",
+        width: 115,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <a
+              style="color: #3878df;cursor: pointer;"
+              onClick={() => {
+                ElMessage.warning((scope.row as any).fileControllerCode);
+              }}
+              target="_blank"
+            >
               查看
             </a>
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-          查看
-        </a>;
-      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "applyRemark", label: "遗失说明", width: 85 },
-      { prop: "applyAttachmentName", label: "附件", width: 85, render(scope) {
-        return (scope.row as any).applyAttachmentName ? (
-          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
-            {(scope.row as any).applyAttachmentName}
-          </a>
-        ) : "--";
-      } },
+      {
+        prop: "applyAttachmentName",
+        label: "附件",
+        width: 85,
+        render(scope) {
+          return (scope.row as any).applyAttachmentName ? (
+            <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+              {(scope.row as any).applyAttachmentName}
+            </a>
+          ) : (
+            "--"
+          );
+        }
+      },
       { prop: "reviewerName", label: "审核人", width: 115 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
       { prop: "reviewerTime", label: "审核日期", width: 115 }
@@ -186,26 +211,27 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "applyRemark", label: "遗失说明", width: 85 },
-      { prop: "applyAttachmentName", label: "附件", width: 85, render(scope) {
-        return (scope.row as any).applyAttachmentName ? (
-          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
-            {(scope.row as any).applyAttachmentName}
-          </a>
-        ) : "--";
-      } },
+      {
+        prop: "applyAttachmentName",
+        label: "附件",
+        width: 85,
+        render(scope) {
+          return (scope.row as any).applyAttachmentName ? (
+            <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+              {(scope.row as any).applyAttachmentName}
+            </a>
+          ) : (
+            "--"
+          );
+        }
+      },
       { prop: "reviewerName", label: "审核人", width: 115 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
       { prop: "reviewerTime", label: "审核日期", width: 115 }

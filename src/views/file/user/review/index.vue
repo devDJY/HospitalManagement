@@ -54,10 +54,8 @@
         </el-button>
       </template>
       <!-- createTime -->
-      <template #createTime="scope">
-        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
-        </el-button>
+      <template #attachmentUrl="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -120,6 +118,17 @@ const proTable = ref<ProTableInstance>();
 
 // 如果表格需要初始化请求参数，直接定义传给 ProTable (之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
 const initParam = reactive({ type: 1 });
+const goToDetails = (scope, type: number) => {
+  console.log(scope);
+  router.push({
+    name: "fileDetails", // 路由名称
+    query: {
+      fileId: scope.row.fileId,
+      isManager: 0,
+      type: type
+    }
+  });
+};
 
 watch(
   () => modeSwitching.value,
@@ -142,14 +151,7 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileCount", label: "份数", width: 85 },
       {
@@ -162,12 +164,22 @@ const getTableList = (params: any) => {
       },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
-      { prop: "reviewTime", label: "申请日期", width: 115, render(scope) {
-        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
-      } },
-      { prop: "fileControllerStatus", label: "受控状态", width: 105, render(scope) {
-        return <div>{(scope.row as any).fileControllerStatus === 0 ? "未受控" : "已受控"}</div>;
-      } },
+      {
+        prop: "reviewTime",
+        label: "申请日期",
+        width: 115,
+        render(scope) {
+          return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+        }
+      },
+      {
+        prop: "fileControllerStatus",
+        label: "受控状态",
+        width: 105,
+        render(scope) {
+          return <div>{(scope.row as any).fileControllerStatus === 0 ? "未受控" : "已受控"}</div>;
+        }
+      },
       {
         prop: "reuseStatus",
         label: "复用状态",
@@ -186,16 +198,9 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "rejectAttachmentUrl",
+        prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).rejectAttachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileCount", label: "份数", width: 85 },
       {
@@ -208,16 +213,28 @@ const getTableList = (params: any) => {
       },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
-      { prop: "reviewTime", label: "审查日期", width: 115, render(scope) {
-        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
-      } },
-      { prop: "reviewAttachmentName", label: "附件", width: 85, render(scope) {
-        return (scope.row as any).reviewAttachmentName ? (
-          <a style="color: #3878df" href={(scope.row as any).reviewAttachmentUrl} target="_blank">
-            {(scope.row as any).reviewAttachmentName}
-          </a>
-        ) : "--";
-      } },
+      {
+        prop: "reviewTime",
+        label: "审查日期",
+        width: 115,
+        render(scope) {
+          return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+        }
+      },
+      {
+        prop: "reviewAttachmentName",
+        label: "附件",
+        width: 85,
+        render(scope) {
+          return (scope.row as any).reviewAttachmentName ? (
+            <a style="color: #3878df" href={(scope.row as any).reviewAttachmentUrl} target="_blank">
+              {(scope.row as any).reviewAttachmentName}
+            </a>
+          ) : (
+            "--"
+          );
+        }
+      },
       { prop: "remark", label: "备注", width: 105 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
@@ -231,14 +248,7 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileCount", label: "份数", width: 85 },
       {
@@ -262,22 +272,20 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "fileStatus", label: "受控方式", width: 105 },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
-      { prop: "reviewTime", label: "审查日期", width: 115, render(scope) {
-        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
-      } },
+      {
+        prop: "reviewTime",
+        label: "审查日期",
+        width: 115,
+        render(scope) {
+          return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+        }
+      },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else {
@@ -290,19 +298,17 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileCount", label: "份数", width: 85 },
-      { prop: "reviewTime", label: "申请日期", width: 115, render(scope) {
-        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
-      } },
+      {
+        prop: "reviewTime",
+        label: "申请日期",
+        width: 115,
+        render(scope) {
+          return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+        }
+      },
       {
         prop: "fileStatus",
         label: "受控方式",
@@ -337,14 +343,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   {
     prop: "attachmentUrl",
     label: "源文件",
-    width: 90,
-    render(scope) {
-      return (
-        <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-          查看
-        </a>
-      );
-    }
+    width: 90
   },
   { prop: "fileCount", label: "份数", width: 85 },
   { prop: "reviewTime", label: "申请日期", width: 85 },

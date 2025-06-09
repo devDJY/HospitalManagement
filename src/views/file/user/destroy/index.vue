@@ -33,10 +33,8 @@
         </el-button>
       </template>
       <!-- createTime -->
-      <template #createTime="scope">
-        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
-        </el-button>
+      <template #attachmentUrl="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -85,6 +83,17 @@ const proTable = ref<ProTableInstance>();
 
 // 如果表格需要初始化请求参数，直接定义传给 ProTable (之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
 const initParam = reactive({ type: 1 });
+const goToDetails = (scope, type: number) => {
+  console.log(scope);
+  router.push({
+    name: "fileDetails", // 路由名称
+    query: {
+      fileId: scope.row.fileId,
+      isManager: 0,
+      type: type
+    }
+  });
+};
 
 watch(
   () => modeSwitching.value,
@@ -105,17 +114,11 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", width: 85, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      { prop: "attachmentUrl2", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115 },
       { prop: "pageTotal", label: "文件页数", width: 115 },
       { prop: "applyUserName", label: "回收原因", width: 85 },
@@ -134,15 +137,9 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", width: 105, search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
@@ -162,21 +159,28 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
+        width: 90
+      },
+      {
+        prop: "address",
+        label: "受控文件",
+        width: 115,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <a
+              style="color: #3878df;cursor: pointer;"
+              onClick={() => {
+                ElMessage.warning((scope.row as any).fileControllerCode);
+              }}
+              target="_blank"
+            >
               查看
             </a>
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-          查看
-        </a>;
-      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
       { prop: "applyUserName", label: "回收原因", width: 85 },
