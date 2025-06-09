@@ -59,6 +59,20 @@ export const initDynamicRouter = async () => {
           isAffix: false,
           isKeepAlive: false
         }
+      },
+      {
+        path: "/file/fileDetails",
+        name: "fileDetails",
+        component: "/file/fileDetails/index",
+        meta: {
+          icon: "Finished",
+          title: "文件详情",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
       }
     ];
     authStore.flatMenuListGet.push(...data);
