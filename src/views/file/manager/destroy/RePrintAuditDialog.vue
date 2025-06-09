@@ -5,7 +5,7 @@
         <el-select v-model="auditStatus" placeholder="请选择销毁方式">
           <el-option label="粉碎机粉碎" value="1" />
           <el-option label="剪烂" value="2" />
-          <el-option label="其他" value="2" />
+          <el-option label="其他" value="3" />
         </el-select>
       </el-form-item>
 
@@ -30,10 +30,10 @@ import { fileControllerDestroyReview } from "@/api/modules/filecontroller";
 const dialogVisible = ref(false);
 const auditStatus = ref("");
 const auditOpinion = ref("");
-const fileControllerIds = ref(); // 假设你有一个文件ID需要传递给API
+const fileControllerId = ref(); // 假设你有一个文件ID需要传递给API
 // 打开对话框方法
 const openDialog = data => {
-  fileControllerIds.value = [data.fileControllerIds];
+  fileControllerId.value = data.fileControllerId;
   dialogVisible.value = true;
   auditOpinion.value = "";
 };
@@ -44,10 +44,15 @@ const handleConfirm = async () => {
     ElMessage.warning("请输入审核意见");
     return;
   }
+  const statusMap = {
+    "1": "粉碎机粉碎",
+    "2": "剪烂",
+    "3": "其他"
+  }
   let obj = {
-    fileControllerIds: fileControllerIds.value,
+    fileControllerId: fileControllerId.value,
     remark: auditOpinion.value,
-    reviewStatus: auditStatus.value
+    reviewStatus: statusMap[auditStatus.value]
   };
   await fileControllerDestroyReview(obj);
   dialogVisible.value = false;
