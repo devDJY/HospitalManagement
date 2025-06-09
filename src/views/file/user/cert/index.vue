@@ -133,6 +133,8 @@ const initParam = reactive({ type: 1 });
 // dataCallback 是对于返回的表格数据做处理，如果你后台返回的数据不是 list && total 这些字段，可以在这里进行处理成这些字段
 
 const goToDetails = data => {
+  console.log(data);
+  debugger
   router.push({
     name: "fileDetails", // 路由名称
     params: {} // params 传参
@@ -192,7 +194,7 @@ const getTableList = (params: any) => {
                 goToDetails(scope);
               }}
             >
-              查看111
+              查看
             </div>
           );
         }
@@ -203,8 +205,8 @@ const getTableList = (params: any) => {
         width: 90,
         render(scope) {
           return (
-            <div style="color: #3878df; cursor: pointer" onClick={goToDetails(scope)}>
-              查看222
+            <div style="color: #3878df; cursor: pointer" onClick={() => goToDetails(scope)}>
+              查看
             </div>
           );
         }
