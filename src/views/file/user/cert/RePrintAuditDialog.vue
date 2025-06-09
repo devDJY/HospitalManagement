@@ -25,17 +25,26 @@
 </template>
 
 <script setup lang="ts">
+import { fileControllerCertPrintQueryCount, fileControllerCertPrint  } from "@/api/modules/fileInfo";
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 const dialogVisible = ref(false);
 const copies = ref(1);
 const remainingCopies = ref(3);
 const auditOpinion = ref("");
+const pa = ref({
+  fileId: "",
+});
 
 // 打开对话框方法
-const openDialog = () => {
+const openDialog = (data) => {
+  pa.value = { ...data };
   dialogVisible.value = true;
   auditOpinion.value = "";
+  fileControllerCertPrintQueryCount({ fileId: pa.value.fileId }).then((res: any) => {
+    remainingCopies.value = res.data;
+    copies.value = Math.min(1, res.data); // Default to 2 or remaining if less
+  });
 };
 
 // 不间断打印
@@ -50,9 +59,14 @@ const handleCancel = () => {
 };
 // 逐份打印
 const handleSequentialPrint = () => {
-  console.log("作废说明:", auditOpinion.value);
-  dialogVisible.value = false;
-  ElMessage.success("作废提交成功");
+  fileControllerCertPrint({ 
+    "fileCount": copies.value,
+    "fileId": pa.value.fileId
+  }).then((res: any) => {
+    console.log(res);
+    dialogVisible.value = false;
+    ElMessage.success("提交成功");
+  });
 };
 
 // 暴露方法给父组件调用

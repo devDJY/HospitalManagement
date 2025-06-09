@@ -114,7 +114,7 @@ const registration2s = ref();
 const registration3s = ref();
 const registration4s = ref();
 const openAuditDialog = (params: any) => {
-  auditDialog.value.openDialog();
+  auditDialog.value.openDialog(params);
 };
 const router = useRouter();
 

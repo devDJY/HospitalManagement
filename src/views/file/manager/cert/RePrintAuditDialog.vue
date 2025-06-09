@@ -34,7 +34,6 @@ const openDialog = data => {
   getAvailable(data.fileId);
   fileControllerIds.value = data.fileControllerIds;
   fileId.value = data.fileId;
-  auditStatus.value = data.attachmentName;
   dialogVisible.value = true;
   auditOpinion.value = "";
 };
@@ -43,6 +42,7 @@ const openDialog = data => {
 const getAvailable = async (fileId: number) => {
   const res = await fileControllerCancelGetAvailable({fileId}) as any;
   fileControllerIds.value = res.data.map((item: any) => item.fileControllerId);
+  auditStatus.value = res.data.map((item: any) => item.fileControllerCode).join("、");
 };
 
 // 确认提交
