@@ -39,10 +39,11 @@
         </el-button>
       </template>
       <!-- createTime -->
-      <template #createTime="scope">
-        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
-        </el-button>
+      <template #attachmentUrl="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
+      </template>
+      <template #attachmentUrl2="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 2)"> 查看 </el-button>
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -111,15 +112,9 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
@@ -147,15 +142,9 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
@@ -173,31 +162,45 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
+        width: 90
+      },
+      {
+        prop: "address",
+        label: "受控文件",
+        width: 115,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <a
+              style="color: #3878df;cursor: pointer;"
+              onClick={() => {
+                ElMessage.warning((scope.row as any).fileControllerCode);
+              }}
+              target="_blank"
+            >
               查看
             </a>
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-          查看
-        </a>;
-      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "applyUserName", label: "申报人", width: 115 },
       { prop: "applyRemark", label: "遗失说明", width: 85 },
-      { prop: "applyTime", label: "附件", width: 85, render(scope) {
-        return (scope.row as any).applyAttachmentName ? (
-          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
-            {(scope.row as any).applyAttachmentName}
-          </a>
-        ) : "--";
-      } },
+      {
+        prop: "applyTime",
+        label: "附件",
+        width: 85,
+        render(scope) {
+          return (scope.row as any).applyAttachmentName ? (
+            <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+              {(scope.row as any).applyAttachmentName}
+            </a>
+          ) : (
+            "--"
+          );
+        }
+      },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
       { prop: "reviewerTime", label: "审核日期", width: 115 }
     );
@@ -233,7 +236,17 @@ const deleteAccount = async (params: User.ResUserList) => {
   await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
   proTable.value?.getTableList();
 };
-
+const goToDetails = (scope, type: number) => {
+  console.log(scope);
+  router.push({
+    name: "fileDetails", // 路由名称
+    query: {
+      fileId: scope.row.fileId,
+      isManager: 0,
+      type: type
+    }
+  });
+};
 // 重置用户密码
 const resetPass = async (params: User.ResUserList) => {
   await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);

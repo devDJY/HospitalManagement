@@ -39,10 +39,11 @@
         </el-button>
       </template>
       <!-- createTime -->
-      <template #createTime="scope">
-        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
-        </el-button>
+      <template #attachmentUrl="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
+      </template>
+      <template #attachmentUrl2="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 2)"> 查看 </el-button>
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -111,24 +112,36 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
+        width: 90
+      },
+      {
+        prop: "address",
+        label: "受控文件",
+        width: 115,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <a
+              style="color: #3878df;cursor: pointer;"
+              onClick={() => {
+                ElMessage.warning((scope.row as any).fileControllerCode.join(","));
+              }}
+              target="_blank"
+            >
               查看
             </a>
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode.join(",")); }} target="_blank">
-          查看
-        </a>;
-      } },
-      { prop: "fileControllerCode", label: "文件受控编码", width: 115, render(scope) {
-        return (scope.row as any).fileControllerCode.join(",");
-      } },
+      {
+        prop: "fileControllerCode",
+        label: "文件受控编码",
+        width: 115,
+        render(scope) {
+          return (scope.row as any).fileControllerCode.join(",");
+        }
+      },
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "applyUserName", label: "申请人", width: 85 },
       { prop: "applyRemark", label: "申请说明", width: 115 },
@@ -143,24 +156,36 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
+        width: 90
+      },
+      {
+        prop: "address",
+        label: "受控文件",
+        width: 115,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <a
+              style="color: #3878df;cursor: pointer;"
+              onClick={() => {
+                ElMessage.warning((scope.row as any).fileControllerCode.join(","));
+              }}
+              target="_blank"
+            >
               查看
             </a>
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode.join(",")); }} target="_blank">
-          查看
-        </a>;
-      } },
-      { prop: "address", label: "文件受控编码", width: 115, render(scope) {
-        return (scope.row as any).fileControllerCode.join(",");
-      } },
+      {
+        prop: "address",
+        label: "文件受控编码",
+        width: 115,
+        render(scope) {
+          return (scope.row as any).fileControllerCode.join(",");
+        }
+      },
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "applyUserName", label: "申请人", width: 85 },
       { prop: "applyRemark", label: "申请说明", width: 115 },
@@ -174,24 +199,36 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
+        width: 90
+      },
+      {
+        prop: "address",
+        label: "受控文件",
+        width: 115,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <a
+              style="color: #3878df;cursor: pointer;"
+              onClick={() => {
+                ElMessage.warning((scope.row as any).fileControllerCode.join(","));
+              }}
+              target="_blank"
+            >
               查看
             </a>
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 115, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode.join(",")); }} target="_blank">
-          查看
-        </a>;
-      } },
-      { prop: "address", label: "文件受控编码", width: 115, render(scope) {
-        return (scope.row as any).fileControllerCode.join(",");
-      } },
+      {
+        prop: "address",
+        label: "文件受控编码",
+        width: 115,
+        render(scope) {
+          return (scope.row as any).fileControllerCode.join(",");
+        }
+      },
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "applyUserName", label: "申请人", width: 85 },
       { prop: "applyRemark", label: "申请说明", width: 115 },
@@ -224,7 +261,17 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   console.log(proTable.value?.tableData);
   ElMessage.success("修改列表排序成功");
 };
-
+const goToDetails = (scope, type: number) => {
+  console.log(scope);
+  router.push({
+    name: "fileDetails", // 路由名称
+    query: {
+      fileId: scope.row.fileId,
+      isManager: 0,
+      type: type
+    }
+  });
+};
 // 删除用户信息
 const deleteAccount = async (params: User.ResUserList) => {
   await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);

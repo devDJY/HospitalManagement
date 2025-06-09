@@ -182,7 +182,7 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "attachmentUrl",
+        prop: "attachmentUrl2",
         label: "受控文件",
         width: 90
       },

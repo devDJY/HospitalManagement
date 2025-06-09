@@ -45,10 +45,11 @@
         </el-button>
       </template>
       <!-- createTime -->
-      <template #createTime="scope">
-        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
-        </el-button>
+      <template #attachmentUrl="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
+      </template>
+      <template #attachmentUrl2="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 2)"> 查看 </el-button>
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -134,24 +135,22 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileVersion", label: "版本号" },
       { prop: "versionTime", label: "版本日期", width: 125 },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
       { prop: "reviewTime", label: "申请日期", width: 125 },
-      { prop: "fileStatus", label: "受控方式", width: 85, render(scope) {
-        const _fileStatus = (scope.row as any).checkType;
-        return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
-      } },
+      {
+        prop: "fileStatus",
+        label: "受控方式",
+        width: 85,
+        render(scope) {
+          const _fileStatus = (scope.row as any).checkType;
+          return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
+        }
+      },
       { prop: "operation", label: "操作", fixed: "right", width: 180 }
     );
   } else if (modeSwitching.value == "1") {
@@ -164,14 +163,7 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
@@ -186,9 +178,14 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "reviewRemark", label: "审查意见", width: 85 },
-      { prop: "reviewTime", label: "审查日期", width: 125, render(scope) {
-        return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
-      } },
+      {
+        prop: "reviewTime",
+        label: "审查日期",
+        width: 125,
+        render(scope) {
+          return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+        }
+      },
       {
         prop: "reuseStatus",
         label: "复用状态",
@@ -211,30 +208,42 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
-      { prop: "fileStatus", label: "受控方式", width: 85, render(scope) {
-        const _fileStatus = (scope.row as any).checkType;
-        return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
-      } },
+      {
+        prop: "fileStatus",
+        label: "受控方式",
+        width: 85,
+        render(scope) {
+          const _fileStatus = (scope.row as any).checkType;
+          return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
+        }
+      },
       { prop: "reviewRemark", label: "审查意见", width: 85 },
-      { prop: "rejectAttachmentName", label: "附件", width: 85, render(scope) {
-        return scope.row.rejectAttachmentName ? <a style="color: #3878df" href={(scope.row as any).rejectAttachmentUrl} target="_blank">
-          {scope.row.rejectAttachmentName}
-        </a> : "--";
-      } },
-      { prop: "reviewTime", label: "审查日期", width: 125, render(scope) {
-        return scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--";
-      } },
+      {
+        prop: "rejectAttachmentName",
+        label: "附件",
+        width: 85,
+        render(scope) {
+          return scope.row.rejectAttachmentName ? (
+            <a style="color: #3878df" href={(scope.row as any).rejectAttachmentUrl} target="_blank">
+              {scope.row.rejectAttachmentName}
+            </a>
+          ) : (
+            "--"
+          );
+        }
+      },
+      {
+        prop: "reviewTime",
+        label: "审查日期",
+        width: 125,
+        render(scope) {
+          return scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--";
+        }
+      },
       // 备注留空
       { prop: "", label: "备注", width: 85 }
     );
@@ -248,21 +257,19 @@ const getTableList = (params: any) => {
       {
         prop: "attachmentUrl",
         label: "源文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
-      { prop: "fileStatus", label: "受控方式", width: 85, render(scope) {
-        const _fileStatus = (scope.row as any).checkType;
-        return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
-      } },
+      {
+        prop: "fileStatus",
+        label: "受控方式",
+        width: 85,
+        render(scope) {
+          const _fileStatus = (scope.row as any).checkType;
+          return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
+        }
+      },
       { prop: "reviewTime", label: "审查意见", width: 85 },
       { prop: "reviewTime", label: "审查日期", width: 125 }
     );
@@ -292,24 +299,22 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   {
     prop: "attachmentUrl",
     label: "源文件",
-    width: 90,
-    render(scope) {
-      return (
-        <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-          查看
-        </a>
-      );
-    }
+    width: 90
   },
   { prop: "fileVersion", label: "版本号" },
   { prop: "versionTime", label: "版本日期", width: 125 },
   { prop: "fileCount", label: "份数", width: 85 },
   { prop: "creatorName", label: "申请人", width: 115 },
   { prop: "reviewTime", label: "申请日期", width: 125 },
-  { prop: "fileStatus", label: "受控方式", width: 85, render(scope) {
-        const _fileStatus = (scope.row as any).checkType;
-        return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
-      } },
+  {
+    prop: "fileStatus",
+    label: "受控方式",
+    width: 85,
+    render(scope) {
+      const _fileStatus = (scope.row as any).checkType;
+      return <el-tag type={_fileStatus === 0 ? "success" : "danger"}>{_fileStatus === 0 ? "线上" : "线下"}</el-tag>;
+    }
+  },
   { prop: "operation", label: "操作", fixed: "right", width: 180 }
 ]);
 
@@ -319,12 +324,22 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   console.log(proTable.value?.tableData);
   ElMessage.success("修改列表排序成功");
 };
-
+const goToDetails = (scope, type: number) => {
+  console.log(scope);
+  router.push({
+    name: "fileDetails", // 路由名称
+    query: {
+      fileId: scope.row.fileId,
+      isManager: 0,
+      type: type
+    }
+  });
+};
 // 导出表
 const exportTab = async params => {
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = params.attachmentUrl;
-  link.download = params.attachmentName || '文件下载'; // 使用文件名作为下载文件名
+  link.download = params.attachmentName || "文件下载"; // 使用文件名作为下载文件名
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

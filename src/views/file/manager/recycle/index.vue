@@ -39,10 +39,11 @@
         </el-button>
       </template>
       <!-- createTime -->
-      <template #createTime="scope">
-        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
-        </el-button>
+      <template #attachmentUrl="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
+      </template>
+      <template #attachmentUrl2="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 2)"> 查看 </el-button>
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -113,22 +114,28 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        width: 80,
+        width: 90
+      },
+      {
+        prop: "address",
+        label: "受控文件",
+        width: 85,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <a
+              style="color: #3878df;cursor: pointer;"
+              onClick={() => {
+                ElMessage.warning((scope.row as any).fileControllerCode);
+              }}
+              target="_blank"
+            >
               查看
             </a>
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 85, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-          查看
-        </a>;
-      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
       { prop: "applyReason", label: "回收原因", width: 85 },
@@ -142,13 +149,20 @@ const getTableList = (params: any) => {
             <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
               {(scope.row as any).applyAttachmentName}
             </a>
-          ) : "--";
+          ) : (
+            "--"
+          );
         }
       },
       { prop: "applyUserName", label: "申请人", width: 115 },
-      { prop: "reviewerTime", label: "申请时间", width: 125, render(scope) {
-        return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
-      } },
+      {
+        prop: "reviewerTime",
+        label: "申请时间",
+        width: 125,
+        render(scope) {
+          return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
+        }
+      },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else if (modeSwitching.value == "2") {
@@ -159,32 +173,46 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
+        width: 90
+      },
+      {
+        prop: "address",
+        label: "受控文件",
+        width: 85,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <a
+              style="color: #3878df;cursor: pointer;"
+              onClick={() => {
+                ElMessage.warning((scope.row as any).fileControllerCode);
+              }}
+              target="_blank"
+            >
               查看
             </a>
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 85, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-          查看
-        </a>;
-      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
       { prop: "applyReason", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "applyAttachmentName", label: "附件", width: 85, render(scope) {
-        return (scope.row as any).applyAttachmentName ? (
-          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
-            {(scope.row as any).applyAttachmentName}
-          </a>
-        ) : "--";
-      } },
+      {
+        prop: "applyAttachmentName",
+        label: "附件",
+        width: 85,
+        render(scope) {
+          return (scope.row as any).applyAttachmentName ? (
+            <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+              {(scope.row as any).applyAttachmentName}
+            </a>
+          ) : (
+            "--"
+          );
+        }
+      },
       { prop: "applyUserName", label: "申请人", width: 85 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
       { prop: "reviewerTime", label: "审核日期", width: 115 }
@@ -197,32 +225,46 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
+        width: 90
+      },
+      {
+        prop: "address",
+        label: "受控文件",
+        width: 85,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <a
+              style="color: #3878df;cursor: pointer;"
+              onClick={() => {
+                ElMessage.warning((scope.row as any).fileControllerCode);
+              }}
+              target="_blank"
+            >
               查看
             </a>
           );
         }
       },
-      { prop: "address", label: "受控文件", width: 85, render(scope) {
-        return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-          查看
-        </a>;
-      } },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
       { prop: "applyReason", label: "回收原因", width: 85 },
       { prop: "applyRemark", label: "回收说明", width: 115 },
-      { prop: "applyAttachmentName", label: "附件", width: 85, render(scope) {
-        return (scope.row as any).applyAttachmentName ? (
-          <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
-            {(scope.row as any).applyAttachmentName}
-          </a>
-        ) : "--";
-      } },
+      {
+        prop: "applyAttachmentName",
+        label: "附件",
+        width: 85,
+        render(scope) {
+          return (scope.row as any).applyAttachmentName ? (
+            <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+              {(scope.row as any).applyAttachmentName}
+            </a>
+          ) : (
+            "--"
+          );
+        }
+      },
       { prop: "applyUserName", label: "申请人", width: 85 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
       { prop: "reviewerTime", label: "审核日期", width: 115 }
@@ -246,7 +288,17 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "address", label: "申请日期", width: 85 },
   { prop: "operation", label: "操作", fixed: "right", width: 80 }
 ]);
-
+const goToDetails = (scope, type: number) => {
+  console.log(scope);
+  router.push({
+    name: "fileDetails", // 路由名称
+    query: {
+      fileId: scope.row.fileId,
+      isManager: 0,
+      type: type
+    }
+  });
+};
 // 表格拖拽排序
 const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: number }) => {
   console.log(newIndex, oldIndex);

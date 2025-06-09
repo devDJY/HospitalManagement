@@ -21,7 +21,7 @@
           {{ fileData.fileCount }}
         </el-descriptions-item>
         <el-descriptions-item label="页数">
-          {{ fileData.fileCount }}
+          {{ fileData.pageTotal }}
         </el-descriptions-item>
         <el-descriptions-item label="版本号">
           {{ fileData.fileVersion }}
