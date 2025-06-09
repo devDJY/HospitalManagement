@@ -87,7 +87,7 @@
 
 <script setup lang="tsx" name="useProTable">
 import { ref, reactive, watch } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
@@ -131,6 +131,16 @@ const proTable = ref<ProTableInstance>();
 const initParam = reactive({ type: 1 });
 
 // dataCallback 是对于返回的表格数据做处理，如果你后台返回的数据不是 list && total 这些字段，可以在这里进行处理成这些字段
+
+const goToDetails = data => {
+  router.push({
+    name: "fileDetails", // 路由名称
+    params: {} // params 传参
+    // 或者用 query:
+    // query: { id: props.attachmentUrl.id }
+  });
+};
+
 // 或者直接去 hooks/useTable.ts 文件中把字段改为你后端对应的就行
 watch(
   () => modeSwitching.value,
@@ -154,9 +164,9 @@ const getTableList = (params: any) => {
         label: "源文件",
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+            <RouterLink to={{ name: "/file/fileDetails", params: scope }} style="color: #3878df">
               查看
-            </a>
+            </RouterLink>
           );
         }
       },
@@ -175,9 +185,15 @@ const getTableList = (params: any) => {
         width: 90,
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
+            <div
+              style="color: #3878df; cursor: pointer"
+              onClick={event => {
+                event.stopPropagation(); // 阻止事件冒泡
+                goToDetails(scope);
+              }}
+            >
+              查看111
+            </div>
           );
         }
       },
@@ -186,9 +202,11 @@ const getTableList = (params: any) => {
         label: "受控文件",
         width: 90,
         render(scope) {
-          return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-            查看
-          </a>;
+          return (
+            <div style="color: #3878df; cursor: pointer" onClick={goToDetails(scope)}>
+              查看222
+            </div>
+          );
         }
       },
       { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" } },
@@ -201,14 +219,14 @@ const getTableList = (params: any) => {
           return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
         }
       },
-      { prop: "reviewerName", label: "受控发放人" },
+      { prop: "creatorName", label: "受控发放人" },
       {
-        prop: "reviewTime",
+        prop: "applyTime",
         label: "受控发放日期",
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{anyRow.reviewerTime ? dayjs(anyRow.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
+          return <div>{anyRow.applyTime ? dayjs(anyRow.applyTime).format("YYYY-MM-DD") : ""}</div>;
         }
       },
       { prop: "operation", label: "操作", fixed: "right", width: 120 }
@@ -237,9 +255,11 @@ const getTableList = (params: any) => {
         label: "受控文件",
         width: 90,
         render(scope) {
-          return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-            查看
-          </a>;
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
         }
       },
       { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" } },
@@ -287,22 +307,24 @@ const getTableList = (params: any) => {
         label: "受控文件",
         width: 90,
         render(scope) {
-          return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-            查看
-          </a>;
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
         }
       },
       { prop: "fileControllerCode", label: "文件受控码", search: { el: "input" }, width: 105 },
       { prop: "fileCount", label: "作废份数", width: 90 },
       { prop: "reviewerName", label: "作废人", width: 90 },
-      { prop: "remark", label: "作废说明", width: 85 },
+      { prop: "creatorName", label: "作废说明", width: 85 },
       {
-        prop: "reviewerTime",
+        prop: "createTime",
         label: "作废日期",
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{anyRow.reviewerTime ? dayjs(anyRow.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
+          return <div>{anyRow.createTime ? dayjs(anyRow.createTime).format("YYYY-MM-DD") : ""}</div>;
         }
       }
     );
@@ -330,9 +352,11 @@ const getTableList = (params: any) => {
         label: "受控文件",
         width: 90,
         render(scope) {
-          return <a style="color: #3878df;cursor: pointer;" onClick={() => { ElMessage.warning((scope.row as any).fileControllerCode); }} target="_blank">
-            查看
-          </a>;
+          return (
+            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
+              查看
+            </a>
+          );
         }
       },
       { prop: "fileControllerCode", label: "文件受控码", width: 105, search: { el: "input" } },
@@ -346,12 +370,12 @@ const getTableList = (params: any) => {
         }
       },
       {
-        prop: "reviewTime",
-        label: "登记日期",
+        prop: "createTime",
+        label: "使用登记日期",
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{anyRow.reviewTime ? dayjs(anyRow.reviewTime).format("YYYY-MM-DD") : ""}</div>;
+          return <div>{anyRow.createTime ? dayjs(anyRow.createTime).format("YYYY-MM-DD") : ""}</div>;
         }
       }
     );
