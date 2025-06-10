@@ -117,22 +117,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode.join(","));
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       {
         prop: "fileControllerCode",
@@ -161,22 +148,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode.join(","));
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       {
         prop: "address",
@@ -204,22 +178,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode.join(","));
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       {
         prop: "address",
@@ -267,7 +228,7 @@ const goToDetails = (scope, type: number) => {
     name: "fileDetails", // 路由名称
     query: {
       fileId: scope.row.fileId,
-      isManager: 0,
+      isManager: 1,
       type: type
     }
   });

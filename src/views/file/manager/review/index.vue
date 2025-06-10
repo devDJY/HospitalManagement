@@ -330,7 +330,7 @@ const goToDetails = (scope, type: number) => {
     name: "fileDetails", // 路由名称
     query: {
       fileId: scope.row.fileId,
-      isManager: 0,
+      isManager: 1,
       type: type
     }
   });

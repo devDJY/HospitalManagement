@@ -42,6 +42,9 @@
       <template #attachmentUrl="scope">
         <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
       </template>
+      <template #attachmentUrl2="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 2)"> 查看 </el-button>
+      </template>
       <!-- 表格操作 -->
       <template #operation="scope">
         <el-button type="primary" link :icon="Paperclip" @click="openAuditDialog(scope.row)">打印</el-button>
@@ -115,22 +118,9 @@ const getTableList = (params: any) => {
         label: "源文件"
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode.join(","));
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 115
       },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "printCount", label: "重新打印份数", width: 115 },
@@ -157,22 +147,9 @@ const getTableList = (params: any) => {
         label: "源文件"
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode.join(","));
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 115
       },
       {
         prop: "address",
@@ -210,22 +187,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode.join(","));
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 115
       },
       {
         prop: "address",

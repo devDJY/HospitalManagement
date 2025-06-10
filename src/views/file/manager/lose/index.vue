@@ -116,7 +116,11 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      {
+        prop: "attachmentUrl2",
+        label: "受控文件",
+        width: 90
+      },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "applyUserName", label: "申报人", width: 115 },
       { prop: "applyRemark", label: "遗失说明", width: 115 },
@@ -146,7 +150,11 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      {
+        prop: "attachmentUrl2",
+        label: "受控文件",
+        width: 90
+      },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "申报人", width: 115 },
       { prop: "applyUserName", label: "遗失说明", width: 85 },
@@ -167,22 +175,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode);
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "applyUserName", label: "申报人", width: 115 },
@@ -215,7 +210,11 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "idCard", label: "文件编码", width: 85, search: { el: "input" } },
   { prop: "idCard", label: "文件名" },
   { prop: "idCard", label: "源文件" },
-  { prop: "address", label: "受控文件", width: 115 },
+  {
+    prop: "attachmentUrl2",
+    label: "受控文件",
+    width: 90
+  },
   { prop: "address", label: "文件受控编码", width: 115 },
   { prop: "address", label: "重新打印份数", width: 115 },
   { prop: "address", label: "申请人", width: 85 },
@@ -242,7 +241,7 @@ const goToDetails = (scope, type: number) => {
     name: "fileDetails", // 路由名称
     query: {
       fileId: scope.row.fileId,
-      isManager: 0,
+      isManager: 1,
       type: type
     }
   });

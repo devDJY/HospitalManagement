@@ -8,73 +8,120 @@
         <el-button @click="isPreview = true" type="success"> 预览文件 </el-button>
       </div>
     </div>
-    <el-card shadow="hover" class="details-card" v-if="fileData">
-      <!-- 文件基本信息 -->
-      <el-descriptions title="文件详情" :column="3" border>
-        <el-descriptions-item label="项目名称" span="12">
-          {{ fileData.projectName }}
-        </el-descriptions-item>
-        <el-descriptions-item label="文件编号" span="12">
-          {{ fileData.fileCode }}
-        </el-descriptions-item>
-        <el-descriptions-item label="申请份数" span="12">
-          {{ fileData.fileCount }}
-        </el-descriptions-item>
-        <el-descriptions-item label="页数">
-          {{ fileData.pageTotal }}
-        </el-descriptions-item>
-        <el-descriptions-item label="版本号">
-          {{ fileData.fileVersion }}
-        </el-descriptions-item>
-        <el-descriptions-item label="版本日期">
-          {{ fileData.versionTime }}
-        </el-descriptions-item>
-        <el-descriptions-item label="申请人">
-          {{ fileData.applyUserName }}
-        </el-descriptions-item>
-        <el-descriptions-item label="电话">
-          {{ fileData.applyUserMobile }}
-        </el-descriptions-item>
-        <el-descriptions-item label="申请日期">
-          {{ fileData.applyTime }}
-        </el-descriptions-item>
-        <el-descriptions-item label="审查人">
-          {{ fileData.reviewUserName }}
-        </el-descriptions-item>
-        <el-descriptions-item label="电话">
-          {{ fileData.reviewUserMobile }}
-        </el-descriptions-item>
-        <el-descriptions-item label="审查日期">
-          {{ fileData.reviewTime }}
-        </el-descriptions-item>
-        <el-descriptions-item label="受控发放人">
-          {{ fileData.reviewControllerName }}
-        </el-descriptions-item>
-        <el-descriptions-item label="电话">
-          {{ fileData.reviewControllerMobile }}
-        </el-descriptions-item>
-        <el-descriptions-item label="受控发放日期">
-          {{ fileData.reviewControlTime }}
-        </el-descriptions-item>
-        <el-descriptions-item label="申请说明" span="12">
-          {{ fileData.applyReason }}
-        </el-descriptions-item>
-      </el-descriptions>
-      <div style="width: 100%; margin-top: 40px">
-        <el-pagination
-          style="margin: 0 auto; width: 100px; text-align: center"
-          :hide-on-single-page="value"
-          v-if="fileData.attachmentUrl.length > 1 && isPreview"
-          :current-page="currentPage"
-          :page-size="1"
-          :total="fileData.attachmentUrl.length"
-          layout="prev, pager, next"
-          :pager-count="1"
-          @current-change="handleCurrentChange"
-        />
-        <iframe v-if="isPreview" style="margin-top: 10px; min-height: 800px" :src="fileData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
-      </div>
-    </el-card>
+    <div style="width: 87%">
+      <el-card shadow="hover" class="details-card" v-if="fileControlData" style="margin-bottom: 10px">
+        <!-- 文件基本信息 -->
+        <el-descriptions title="文件使用概况" :column="3" border v-if="isManager"> </el-descriptions>
+        <div class="stats-grid">
+          <div class="stat-item" v-for="stat in stats" :key="stat.name">
+            <div class="stat-value">{{ stat.value }}</div>
+            <div class="stat-name">{{ stat.name }}</div>
+          </div>
+        </div>
+        <el-table v-if="!isManager" :data="fileControlData.fileCertDetailList" border style="width: 100%">
+          <el-table-column prop="fileControllerCode" label="文件受控编码" width="220" fixed />
+          <el-table-column label="打印" width="100">
+            <template #default="{ row }">
+              <el-checkbox v-model="row.printed" :disabled="true" />
+            </template>
+          </el-table-column>
+          <el-table-column label="使用" width="100">
+            <template #default="{ row }">
+              <el-checkbox v-model="row.used" :disabled="true" />
+            </template>
+          </el-table-column>
+          <el-table-column label="回收处理" width="100">
+            <template #default="{ row }">
+              <el-checkbox v-model="row.printed" :disabled="true" />
+              <!-- <el-select v-model="row.recycleType" placeholder="选择回收类型" size="small">
+                <el-option label="污渍" value="stained" />
+                <el-option label="破损" value="damaged" />
+                <el-option label="剩余" value="remaining" />
+                <el-option label="销毁" value="destroyed" />
+                <el-option label="其他" value="other" />
+              </el-select> -->
+            </template>
+          </el-table-column>
+          <el-table-column label="遗失" width="100">
+            <template #default="{ row }">
+              <el-checkbox v-model="row.lose" :disabled="true" />
+            </template>
+          </el-table-column>
+          <el-table-column label="作废" width="100">
+            <template #default="{ row }">
+              <el-checkbox v-model="row.cancel" :disabled="true" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+      <el-card shadow="hover" class="details-card" v-if="fileData">
+        <!-- 文件基本信息 -->
+        <el-descriptions title="文件详情" :column="3" border>
+          <el-descriptions-item label="项目名称" span="12">
+            {{ fileData.projectName }}
+          </el-descriptions-item>
+          <el-descriptions-item label="文件编号" span="12">
+            {{ fileData.fileCode }}
+          </el-descriptions-item>
+          <el-descriptions-item label="申请份数" span="12">
+            {{ fileData.fileCount }}
+          </el-descriptions-item>
+          <el-descriptions-item label="页数">
+            {{ fileData.pageTotal }}
+          </el-descriptions-item>
+          <el-descriptions-item label="版本号">
+            {{ fileData.fileVersion }}
+          </el-descriptions-item>
+          <el-descriptions-item label="版本日期">
+            {{ fileData.versionTime }}
+          </el-descriptions-item>
+          <el-descriptions-item label="申请人">
+            {{ fileData.applyUserName }}
+          </el-descriptions-item>
+          <el-descriptions-item label="电话">
+            {{ fileData.applyUserMobile }}
+          </el-descriptions-item>
+          <el-descriptions-item label="申请日期">
+            {{ fileData.applyTime }}
+          </el-descriptions-item>
+          <el-descriptions-item label="审查人">
+            {{ fileData.reviewUserName }}
+          </el-descriptions-item>
+          <el-descriptions-item label="电话">
+            {{ fileData.reviewUserMobile }}
+          </el-descriptions-item>
+          <el-descriptions-item label="审查日期">
+            {{ fileData.reviewTime }}
+          </el-descriptions-item>
+          <el-descriptions-item label="受控发放人">
+            {{ fileData.reviewControllerName }}
+          </el-descriptions-item>
+          <el-descriptions-item label="电话">
+            {{ fileData.reviewControllerMobile }}
+          </el-descriptions-item>
+          <el-descriptions-item label="受控发放日期">
+            {{ fileData.reviewControlTime }}
+          </el-descriptions-item>
+          <el-descriptions-item label="申请说明" span="12">
+            {{ fileData.applyReason }}
+          </el-descriptions-item>
+        </el-descriptions>
+        <div style="width: 100%; margin-top: 40px">
+          <el-pagination
+            style="margin: 0 auto; width: 100px; text-align: center"
+            :hide-on-single-page="value"
+            v-if="fileData.attachmentUrl.length > 1 && isPreview"
+            :current-page="currentPage"
+            :page-size="1"
+            :total="fileData.attachmentUrl.length"
+            layout="prev, pager, next"
+            :pager-count="1"
+            @current-change="handleCurrentChange"
+          />
+          <iframe v-if="isPreview" style="margin-top: 10px; min-height: 800px" :src="fileData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
+        </div>
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -84,10 +131,21 @@ import { ArrowLeftBold } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 import { fileInfoReviewControlAttachmentManager, fileInfoReviewControlAttachment, fileInfoReviewOriginalAttachment } from "@/api/modules/fileInfo";
 const fileData = ref();
+const fileControlData = ref();
 const type = ref();
 const isManager = ref();
 const fileId = ref();
 const isPreview = ref(false);
+// 统计数据
+const stats = ref([
+  { name: "受控份数", value: 3 },
+  { name: "作废份数", value: 0 },
+  { name: "打印份数", value: 2 },
+  { name: "使用份数", value: 0 },
+  { name: "回收份数", value: 0 },
+  { name: "销毁份数", value: 0 },
+  { name: "遗失份数", value: 0 }
+]);
 // 分页
 // 脚本部分保持不变
 const currentPage = ref(1);
@@ -103,21 +161,28 @@ onMounted(() => {
   const route = useRoute();
   isManager.value = route.query.isManager;
   fileId.value = route.query.fileId;
+  // fileId.value = 26;
   type.value = route.query.type;
   console.log(type.value);
-  if (type.value == 1) {
-    fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
-      fileData.value = res.data;
-    });
-  } else {
+  fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
+    fileData.value = res.data;
+  });
+  if (type.value == 2) {
     if (isManager.value == 1) {
       // 是管理
       fileInfoReviewControlAttachmentManager({ fileId: fileId.value }).then(res => {
-        fileData;
+        fileControlData.value = res.data;
+        stats.value[0].value = res.data.controlCount;
+        stats.value[1].value = res.data.cancelCount;
+        stats.value[2].value = res.data.printCount;
+        stats.value[3].value = res.data.usedCount;
+        stats.value[4].value = res.data.recycleCount;
+        stats.value[5].value = res.data.destroyCount;
+        stats.value[6].value = res.data.loseCount;
       });
     } else {
       fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
-        console.log(res);
+        fileControlData.value = res.data;
       });
     }
   }
@@ -222,5 +287,48 @@ const goBack = () => {
 :deep(.el-pagination button.is-disabled) {
   color: #c0c4cc;
   cursor: not-allowed;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 16px;
+  background-color: #f5f7fa;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.stat-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #409eff;
+  margin-bottom: 8px;
+}
+
+.stat-name {
+  font-size: 14px;
+  color: #606266;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

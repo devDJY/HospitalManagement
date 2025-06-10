@@ -127,7 +127,11 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      {
+        prop: "attachmentUrl2",
+        label: "受控文件",
+        width: 90
+      },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "applyRemark", label: "遗失说明", width: 115 },
       {
@@ -166,22 +170,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode);
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "applyRemark", label: "遗失说明", width: 85 },
@@ -215,7 +206,11 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      {
+        prop: "attachmentUrl2",
+        label: "受控文件",
+        width: 90
+      },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "applyRemark", label: "遗失说明", width: 85 },
       {

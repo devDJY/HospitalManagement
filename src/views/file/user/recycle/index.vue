@@ -138,22 +138,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode);
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
@@ -200,22 +187,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode);
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },
@@ -263,22 +237,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "address",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 115,
-        render(scope) {
-          return (
-            <a
-              style="color: #3878df;cursor: pointer;"
-              onClick={() => {
-                ElMessage.warning((scope.row as any).fileControllerCode);
-              }}
-              target="_blank"
-            >
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "文件页数", width: 115 },

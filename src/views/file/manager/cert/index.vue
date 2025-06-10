@@ -132,7 +132,7 @@ const goToDetails = (scope, type: number) => {
     name: "fileDetails", // 路由名称
     query: {
       fileId: scope.row.fileId,
-      isManager: 0,
+      isManager: 1,
       type: type
     }
   });
@@ -196,16 +196,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "attachmentUrl",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控码", width: 105 },
       { prop: "fileCount", label: "申请份数", width: 90 },
@@ -250,16 +243,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "attachmentUrl",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控码", width: 90 },
       { prop: "fileCount", label: "打印份数", width: 90 },
@@ -295,16 +281,9 @@ const getTableList = (params: any) => {
         width: 90
       },
       {
-        prop: "attachmentUrl",
+        prop: "attachmentUrl2",
         label: "受控文件",
-        width: 90,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
       { prop: "fileControllerCode", label: "文件受控码", width: 105 },
       { prop: "fileCount", label: "作废份数", width: 90 },
