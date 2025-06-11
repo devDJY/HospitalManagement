@@ -11,14 +11,14 @@
     <div style="width: 87%">
       <el-card shadow="hover" class="details-card" v-if="fileControlData" style="margin-bottom: 10px">
         <!-- 文件基本信息 -->
-        <el-descriptions title="文件使用概况" :column="3" border v-if="isManager"> </el-descriptions>
-        <div class="stats-grid">
+        <el-descriptions title="文件使用概况" :column="3" border> </el-descriptions>
+        <div class="stats-grid" v-if="isManager == 1">
           <div class="stat-item" v-for="stat in stats" :key="stat.name">
             <div class="stat-value">{{ stat.value }}</div>
             <div class="stat-name">{{ stat.name }}</div>
           </div>
         </div>
-        <el-table v-if="!isManager" :data="fileControlData.fileCertDetailList" border style="width: 100%">
+        <el-table v-if="isManager == 0" :data="fileControlData.fileCertDetailList" border style="width: 100%">
           <el-table-column prop="fileControllerCode" label="文件受控编码" width="220" fixed />
           <el-table-column label="打印" width="100">
             <template #default="{ row }">
