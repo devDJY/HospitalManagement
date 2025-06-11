@@ -235,7 +235,7 @@ const getTableList = (params: any) => {
           );
         }
       },
-      { prop: "remark", label: "备注", width: 105 },
+      { prop: "reviewRemark", label: "备注", width: 105 },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else if (modeSwitching.value == "3") {
