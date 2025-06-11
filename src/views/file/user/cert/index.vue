@@ -134,7 +134,6 @@ const initParam = reactive({ type: 1 });
 // dataCallback 是对于返回的表格数据做处理，如果你后台返回的数据不是 list && total 这些字段，可以在这里进行处理成这些字段
 
 const goToDetails = (scope, type: number) => {
-  console.log(scope);
   router.push({
     name: "fileDetails", // 路由名称
     query: {
