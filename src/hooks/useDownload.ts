@@ -9,6 +9,7 @@ import { ElNotification } from "element-plus";
  * @param {String} fileType 导出的文件格式 (默认为.xlsx)
  * */
 export const useDownload = async (
+  path: string,
   api: (param: any) => Promise<any>,
   tempName: string,
   params: any = {},
@@ -32,7 +33,9 @@ export const useDownload = async (
     const exportFile = document.createElement("a");
     exportFile.style.display = "none";
     exportFile.download = `${tempName}${fileType}`;
-    exportFile.href = blobUrl;
+    const _params = new URLSearchParams(params).toString();
+    const host = import.meta.env.VITE_API_URL as string;
+    exportFile.href = `${host}${path}?${_params}`;
     document.body.appendChild(exportFile);
     exportFile.click();
     // 去除下载对 url 的影响

@@ -38,7 +38,7 @@
       <!-- 表格操作 -->
       <template #operation="scope">
         <el-button type="success" link :icon="Search" @click="resetPass(scope.row)">查看</el-button>
-        <el-button type="success" link :icon="Download" @click="deletePro(scope.row)">导出</el-button>
+        <el-button type="success" link :icon="Download" @click="exportFile(scope.row)">导出</el-button>
       </template>
       <!-- <template #append>
         <span style="color: var(--el-color-primary)">我是插入在表格最后的内容。若表格有合计行，该内容会位于合计行之上。</span>
@@ -233,9 +233,9 @@ const getTableList = (params?: any) => {
   return projectList(params);
 };
 
-// 删除项目
-const deletePro = async (params: any) => {
-  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload(archiveExcelReport, `${params.projectName}项目详情`, params));
+// 导出项目
+const exportFile = async (params: any) => {
+  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload("/archive/excel/report",archiveExcelReport, `${params.projectName}项目详情`, params));
 };
 // 重置用户密码
 const resetPass = async params => {

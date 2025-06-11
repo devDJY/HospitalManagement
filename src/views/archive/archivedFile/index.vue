@@ -232,7 +232,7 @@ const resetPass = async (params: User.ResUserList) => {
 // 切换用户状态
 const download = async (row: any) => {
   await archiveFileDownload(row);
-  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload(archiveExcelReport, `${row.projectName}项目详情`, row));
+  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload("/archive/excel/report",archiveExcelReport, `${row.projectName}项目详情`, row));
 };
 
 // 导出用户列表

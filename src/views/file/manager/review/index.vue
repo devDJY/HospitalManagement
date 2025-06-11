@@ -348,7 +348,7 @@ const exportTab = async params => {
 // 导出用户列表
 // const downloadFile = async () => {
 //   ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
-//     useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam)
+//     useDownload('/user/export',exportUserInfo, "用户列表", proTable.value?.searchParam)
 //   );
 // };
 

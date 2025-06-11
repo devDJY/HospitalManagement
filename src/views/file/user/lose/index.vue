@@ -61,7 +61,6 @@ import { ref, reactive, watch } from "vue";
 import { useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
-import { useDownload } from "@/hooks/useDownload";
 import { useAuthButtons } from "@/hooks/useAuthButtons";
 import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
