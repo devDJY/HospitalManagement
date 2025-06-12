@@ -123,6 +123,7 @@ const openEditDialog = data => {
   resetForm();
   if ((mode.value = "edit")) {
     form.groupId = data.id;
+    (form.auditFlag = data.isAudit == 1 ? true : false), (form.displayFlag = data.isRegisterDisplay == 1 ? true : false);
     Object.assign(form, data);
     // 设置选中的菜单
     nextTick(() => {
@@ -156,11 +157,16 @@ const handleCheckChange = () => {
 // 提交表单
 const handleSubmit = async () => {
   try {
+    let data = {
+      ...form,
+      auditFlag: form.auditFlag ? 1 : 0,
+      displayFlag: form.displayFlag ? 1 : 0
+    };
     await formRef.value?.validate();
     if (mode.value == "create") {
-      await authGroupAddGroup(form);
+      await authGroupAddGroup(data);
     } else {
-      await authGroupUpdateGroupInfo(form);
+      await authGroupUpdateGroupInfo(data);
     }
     dialogVisible.value = false;
     ElMessage.success(`${dialogTitle.value}成功`);

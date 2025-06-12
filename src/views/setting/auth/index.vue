@@ -31,10 +31,10 @@
         </el-button>
       </template>
       <template #isRegisterDisplay="scope">
-        <el-switch v-model="scope.row.isRegisterDisplay" @click.stop="tabState(1, scope.row)" />
+        <el-switch v-model="scope.row.isRegisterDisplay" @click.stop="tabState(1, scope.row)" :active-value="1" :inactive-value="0" />
       </template>
       <template #isAudit="scope">
-        <el-switch v-model="scope.row.isAudit" @click.stop="tabState(2, scope.row)" />
+        <el-switch v-model="scope.row.isAudit" @click.stop="tabState(2, scope.row)" :active-value="1" :inactive-value="0" />
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">

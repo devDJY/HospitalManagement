@@ -64,7 +64,7 @@ import { ElMessage, type ElTable } from "element-plus";
 import { projectAuthorizeUser, projectAuthorizeUserAdd, projectAuthorizeUserDelete } from "@/api/modules/project";
 
 const visible = ref(false);
-const authStatus = ref(0);
+const authStatus = ref(1);
 const multipleSelection = ref([]);
 
 // 查询表单数据

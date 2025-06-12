@@ -66,7 +66,7 @@
               <el-dropdown-item @click="operate(scope.row, 1)">使用登记</el-dropdown-item>
               <el-dropdown-item @click="operate(scope.row, 2)">遗失审核</el-dropdown-item>
               <el-dropdown-item @click="operate(scope.row, 3)">文件回收</el-dropdown-item>
-              <el-dropdown-item @click="operate(scope.row, 4)">重新打印</el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.checkType === 0" @click="operate(scope.row, 4)">重新打印</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>

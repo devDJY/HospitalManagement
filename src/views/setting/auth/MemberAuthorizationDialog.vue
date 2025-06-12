@@ -20,8 +20,8 @@
       <el-table-column prop="nickName" label="真实姓名" width="180" />
       <el-table-column prop="status" label="状态">
         <template #default="{ row }">
-          <el-tag :type="getStatusType(row.status)">
-            {{ getStatus(row.status) }}
+          <el-tag :type="getStatusType(row.auditStatus)">
+            {{ getStatus(row.auditStatus) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -70,30 +70,36 @@ const getStatusType = status => {
 };
 //账号状态 0待审核 1正常 2驳回 3过期
 const getStatus = status => {
+  console.log(status);
   switch (status) {
     case 0:
       return "待审核";
+      break;
     case 1:
       return "正常";
+      break;
     case 2:
       return "驳回";
+      break;
     case 3:
       return "过期";
+      break;
     default:
       return "未知状态";
   }
 };
 const handleDelete = async row => {
   try {
-    await ElMessageBox.confirm(`确定要删除成员 ${row.realName} 吗?`, "提示", {
+    await ElMessageBox.confirm(`确定要删除成员 ${row.nickName} 吗?`, "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning"
     });
-    authGroupDeleteUser({
+    await authGroupDeleteUser({
       groupId: groupId.value,
       userId: row.id
     });
+    initlist();
     ElMessage.success("删除成功!");
   } catch {
     ElMessage.info("已取消删除");

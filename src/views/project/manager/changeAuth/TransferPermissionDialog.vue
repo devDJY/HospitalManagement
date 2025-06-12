@@ -162,8 +162,8 @@ const handleSubmit = async () => {
     return;
   }
   let obj = {
-    newUserId: 0,
-    oldUserId: 0,
+    newUserId: selectedRow.value.userId,
+    oldUserId: userId.value,
     remark: transferReason.value
   };
   await projectMoveAuthMove(obj);
