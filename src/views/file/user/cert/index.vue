@@ -309,7 +309,7 @@ const getTableList = (params: any) => {
         width: 120,
         render(scope) {
           const anyRow = scope.row as any;
-          return <div>{anyRow.reviewerTime ? dayjs(anyRow.reviewerTime).format("YYYY-MM-DD") : ""}</div>;
+          return <div>{anyRow.reviewTime ? dayjs(anyRow.revieweTime).format("YYYY-MM-DD") : ""}</div>;
         }
       }
     );
