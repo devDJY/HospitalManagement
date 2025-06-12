@@ -168,22 +168,22 @@ const getTableList = (params?: any) => {
         label: "文件",
         headerRender,
         _children: [
-          { prop: "waitReviewCount", label: "存档" },
-          { prop: "waitControllerCount", label: "打印" },
+          { prop: "saveCount", label: "存档" },
+          { prop: "printCount", label: "打印" },
           {
-            prop: "waitRecycleCount",
+            prop: "usedCount",
             label: "使用"
           },
           {
-            prop: "waitLoseCount",
+            prop: "recycleCount",
             label: "回收"
           },
           {
-            prop: "waitLoseCount",
+            prop: "destroyCount",
             label: "销毁"
           },
           {
-            prop: "waitLoseCount",
+            prop: "loseCount",
             label: "遗失"
           }
         ]
@@ -203,22 +203,22 @@ const getTableList = (params?: any) => {
         label: "文件",
         headerRender,
         _children: [
-          { prop: "waitReviewCount", label: "存档" },
-          { prop: "waitControllerCount", label: "打印" },
+          { prop: "saveCount", label: "存档" },
+          { prop: "printCount", label: "打印" },
           {
-            prop: "waitRecycleCount",
+            prop: "usedCount",
             label: "使用"
           },
           {
-            prop: "waitLoseCount",
+            prop: "recycleCount",
             label: "回收"
           },
           {
-            prop: "waitLoseCount",
+            prop: "destroyCount",
             label: "销毁"
           },
           {
-            prop: "waitLoseCount",
+            prop: "loseCount",
             label: "遗失"
           }
         ]
@@ -229,7 +229,7 @@ const getTableList = (params?: any) => {
       { prop: "operation", label: "操作", fixed: "right", width: 150 }
     );
   }
-  params.status = modeSwitching.value;
+  params.projectStatus = Number(modeSwitching.value) - 1;
   return archiveList(params);
 };
 

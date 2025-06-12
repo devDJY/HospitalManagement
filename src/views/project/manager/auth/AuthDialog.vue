@@ -112,7 +112,7 @@ const handleAuthStatusChange = (data: any) => {
 const emit = defineEmits(["success"]);
 // 单个用户授权/取消授权
 const handleAuth = user => {
-  if (authStatus.value === 0) {
+  if (authStatus.value === 1) {
     console.log(projectId.value, userIds.value);
     projectAuthorizeUserDelete({
       projectId: projectId.value,
