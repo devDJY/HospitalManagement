@@ -337,15 +337,6 @@ const goToDetails = (scope, type: number) => {
 
 // 批量添加用户
 const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);
-// const batchAdd = () => {
-//   const params = {
-//     title: "用户",
-//     tempApi: exportUserInfo,
-//     importApi: BatchAddUser,
-//     getTableList: proTable.value?.getTableList
-//   };
-//   dialogRef.value?.acceptParams(params);
-// };
 
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref<InstanceType<typeof UserDrawer> | any>(null);

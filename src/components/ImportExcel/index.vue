@@ -48,6 +48,7 @@ import { ElNotification, UploadRequestOptions, UploadRawFile } from "element-plu
 export interface ExcelParameterProps {
   title: string; // 标题
   fileSize?: number; // 上传文件的大小
+  path: string;
   fileType?: File.ExcelMimeType[]; // 上传文件的类型
   tempApi?: (params: any) => Promise<any>; // 下载模板的Api
   importApi?: (params: any) => Promise<any>; // 批量导入的Api
@@ -62,6 +63,7 @@ const excelLimit = ref(1);
 const dialogVisible = ref(false);
 // 父组件传过来的参数
 const parameter = ref<ExcelParameterProps>({
+  path: "",
   title: "",
   fileSize: 5,
   fileType: ["application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]
@@ -76,7 +78,7 @@ const acceptParams = (params: ExcelParameterProps) => {
 // Excel 导入模板下载
 const downloadTemp = () => {
   if (!parameter.value.tempApi) return;
-  useDownload(parameter.value.tempApi, `${parameter.value.title}模板`);
+  useDownload(parameter.value.path ?? "",parameter.value.tempApi, `${parameter.value.title}模板`);
 };
 
 // 文件上传

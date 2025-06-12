@@ -229,7 +229,8 @@ const batchAdd = () => {
     title: "用户",
     tempApi: exportUserInfo,
     importApi: BatchAddUser,
-    getTableList: proTable.value?.getTableList
+    getTableList: proTable.value?.getTableList,
+    path: '/user/export'
   };
   dialogRef.value?.acceptParams(params);
 };
