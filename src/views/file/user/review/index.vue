@@ -165,11 +165,11 @@ const getTableList = (params: any) => {
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
       {
-        prop: "reviewTime",
+        prop: "applyTime",
         label: "申请日期",
         width: 115,
         render(scope) {
-          return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+          return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
         }
       },
       {
@@ -302,11 +302,11 @@ const getTableList = (params: any) => {
       },
       { prop: "fileCount", label: "份数", width: 85 },
       {
-        prop: "reviewTime",
+        prop: "applyTime",
         label: "申请日期",
         width: 115,
         render(scope) {
-          return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
+          return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
         }
       },
       {
@@ -346,7 +346,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
     width: 90
   },
   { prop: "fileCount", label: "份数", width: 85 },
-  { prop: "reviewTime", label: "申请日期", width: 85 },
+  { prop: "applyTime", label: "申请日期", width: 85 },
   {
     prop: "fileStatus",
     label: "受控方式",

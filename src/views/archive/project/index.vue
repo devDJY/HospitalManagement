@@ -70,7 +70,7 @@ import { ProTableInstance, ColumnProps, HeaderRenderScope } from "@/components/P
 import { deleteUser, resetUserPassWord } from "@/api/modules/user";
 import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery } from "@/api/modules/project";
 import { Search, Download } from "@element-plus/icons-vue";
-import { archiveExcelReport, archiveFileDownload } from "@/api/modules/archives";
+import { archiveExcelReport, archiveFileDownload, archiveList } from "@/api/modules/archives";
 import { useDownload } from "@/hooks/useDownload";
 import router from "@/routers";
 const lockDialog = ref(false);
@@ -230,12 +230,12 @@ const getTableList = (params?: any) => {
     );
   }
   params.status = modeSwitching.value;
-  return projectList(params);
+  return archiveList(params);
 };
 
 // 导出项目
 const exportFile = async (params: any) => {
-  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload("/archive/excel/report",archiveExcelReport, `${params.projectName}项目详情`, params));
+  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload("/archive/excel/report", archiveExcelReport, `${params.projectName}项目详情`, params));
 };
 // 重置用户密码
 const resetPass = async params => {

@@ -27,8 +27,8 @@
         <el-radio-button label="unauthorized" :value="2">未授权</el-radio-button>
       </el-radio-group>
       <div>
-        <el-button v-if="authStatus == 0" type="success" @click="handleAuth">批量移除</el-button>
-        <el-button v-if="authStatus == 1" type="success" @click="handleAuth">批量授权</el-button>
+        <el-button v-if="authStatus == 1" type="success" @click="handleAuth">批量移除</el-button>
+        <el-button v-if="authStatus == 2" type="success" @click="handleAuth">批量授权</el-button>
       </div>
     </div>
 
@@ -42,7 +42,7 @@
       <el-table-column label="操作">
         <template #default="scope">
           <el-button link type="primary" @click="handleAuthStatusChange(scope.row)">
-            {{ authStatus == 0 ? "取消授权" : "授权" }}
+            {{ authStatus == 1 ? "取消授权" : "授权" }}
           </el-button>
         </template>
       </el-table-column>

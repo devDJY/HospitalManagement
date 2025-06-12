@@ -184,7 +184,7 @@ const getTableList = (params?: any) => {
         _children: [
           { prop: "waitReviewCount", label: "待审查" },
           { prop: "waitControllerCount", label: "待受控" },
-          { prop: "waitusedCount", label: "待使用" },
+          { prop: "waitUsedCount", label: "待使用" },
           {
             prop: "waitRecycleCount",
             label: "待回收"

@@ -141,9 +141,14 @@ const getTableList = (params: any) => {
       { prop: "versionTime", label: "版本日期", width: 125 },
       { prop: "fileCount", label: "份数", width: 85 },
       { prop: "creatorName", label: "申请人", width: 115 },
-      { prop: "applyTime", label: "申请日期", width: 125, render(scope) {
-        return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
-      } },
+      {
+        prop: "applyTime",
+        label: "申请日期",
+        width: 125,
+        render(scope) {
+          return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
+        }
+      },
       {
         prop: "fileStatus",
         label: "受控方式",
@@ -247,7 +252,7 @@ const getTableList = (params: any) => {
         }
       },
       // 备注留空
-      { prop: "", label: "备注", width: 85 }
+      { prop: "reviewRemark", label: "备注", width: 85 }
     );
   } else if (modeSwitching.value == "2") {
     columns.splice(
@@ -307,9 +312,14 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "versionTime", label: "版本日期", width: 125 },
   { prop: "fileCount", label: "份数", width: 85 },
   { prop: "creatorName", label: "申请人", width: 115 },
-  { prop: "applyTime", label: "申请日期", width: 125, render(scope) {
-    return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
-  } },
+  {
+    prop: "applyTime",
+    label: "申请日期",
+    width: 125,
+    render(scope) {
+      return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
+    }
+  },
   {
     prop: "fileStatus",
     label: "受控方式",
