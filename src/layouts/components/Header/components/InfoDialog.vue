@@ -9,9 +9,9 @@
       </el-form-item>
       <el-form-item label="性别">
         <el-radio-group v-model="form.gender">
-          <el-radio label="男" value="1" />
-          <el-radio label="女" value="2" />
-          <el-radio label="保密" value="0" />
+          <el-radio label="男" :value="1" />
+          <el-radio label="女" :value="2" />
+          <el-radio label="保密" :value="0" />
         </el-radio-group>
       </el-form-item>
       <el-form-item label="手机号">
@@ -30,10 +30,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="权限组">
-        <el-switch v-model="form.hasPermissionGroup" active-text="是" inactive-text="否" />
+        <el-input v-model="form.permissionGroupName" disabled />
       </el-form-item>
       <el-form-item label="永久用户">
-        <el-switch v-model="form.isPermanent" active-text="是" inactive-text="否" />
+        <el-switch v-model="form.isPermanent" :active-value="1" :inactive-value="0" />
       </el-form-item>
       <el-form-item label="注册日期">
         <el-input v-model="form.registerTime" disabled />
@@ -63,7 +63,7 @@ const form = reactive({
   mobile: "",
   email: "",
   organization: "",
-  hasPermissionGroup: false,
+  permissionGroupName: "",
   isPermanent: false,
   registerTime: "",
   companyType: ""
@@ -78,7 +78,11 @@ const openDialog = () => {
 const submitForm = async () => {
   // Here you would typically call an API to save the user info
   console.log("Form submitted:", form);
-  await updateSelfInfo(form);
+  let obj = {
+    ...form,
+    isPermanent: form.isPermanent ? 1 : 0
+  };
+  await updateSelfInfo(obj);
   ElMessage.success("个人信息保存成功");
   dialogVisible.value = false;
 };

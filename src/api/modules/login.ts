@@ -5,7 +5,7 @@ import authButtonList from "@/assets/json/authButtonList.json";
 import http from "@/api";
 import { lo } from "element-plus/es/locale";
 import { localGet } from "@/utils";
-
+import { useUserStore } from "@/stores/modules/user";
 /**
  * @name 登录模块
  */
@@ -24,7 +24,9 @@ export const forgetPasswordApi = params => {
 };
 // 修改密码 个人主页-用户修改密码
 export const changePasswordApi = params => {
-  return http.post("/userInfo/update/pwd", params, { loading: false });
+  const userStore = useUserStore();
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/userInfo/update/pwd", pa, { loading: false });
 };
 // 发送验证码
 export const sendCodeApi = params => {

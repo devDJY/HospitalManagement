@@ -1,7 +1,8 @@
 import { ResPage, User } from "@/api/interface/index";
 import { PORT1 } from "@/api/config/servicePort";
 import http from "@/api";
-
+import { useUserStore } from "@/stores/modules/user";
+const userStore = useUserStore();
 /**
  * @name 用户管理模块
  */
@@ -91,11 +92,13 @@ export const updateUserInfo = params => {
 };
 //个人主页-用户修改个人信息
 export const updateSelfInfo = params => {
-  return http.post("/userInfo/update/selfInfo", params);
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/userInfo/update/selfInfo", pa);
 };
 //个人主页-用户修改密码
 export const updateSelfPwd = params => {
-  return http.post("/userInfo/update/pwd", params);
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/userInfo/update/pwd", pa);
 };
 //用户列表-审核用户
 export const updateUserAudit = params => {
