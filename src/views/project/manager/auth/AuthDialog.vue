@@ -23,8 +23,8 @@
     <!-- 授权状态筛选 -->
     <div class="auth-filter">
       <el-radio-group v-model="authStatus" @change="initList()">
-        <el-radio-button label="authorized" :value="0">已授权</el-radio-button>
-        <el-radio-button label="unauthorized" :value="1">未授权</el-radio-button>
+        <el-radio-button label="authorized" :value="1">已授权</el-radio-button>
+        <el-radio-button label="unauthorized" :value="2">未授权</el-radio-button>
       </el-radio-group>
       <div>
         <el-button v-if="authStatus == 0" type="success" @click="handleAuth">批量移除</el-button>
@@ -161,10 +161,10 @@ defineExpose({
   }
 }
 .auth-filter {
-  margin-bottom: 15px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
 }
 .auth-table {
   margin-bottom: 20px;

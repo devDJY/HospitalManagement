@@ -2,14 +2,7 @@
 
 <template>
   <!-- 查询表单 -->
-  <SearchForm
-    v-show="isShowSearch"
-    :search="_search"
-    :reset="_reset"
-    :columns="searchColumns"
-    :search-param="searchParam"
-    :search-col="searchCol"
-  />
+  <SearchForm v-show="isShowSearch" :search="_search" :reset="_reset" :columns="searchColumns" :search-param="searchParam" :search-col="searchCol" />
 
   <!-- 表格主体 -->
   <div class="card table-main">
@@ -22,35 +15,17 @@
         <slot name="toolButton">
           <el-button v-if="showToolButton('refresh')" :icon="Refresh" circle @click="getTableList" />
           <el-button v-if="showToolButton('setting') && columns.length" :icon="Operation" circle @click="openColSetting" />
-          <el-button
-            v-if="showToolButton('search') && searchColumns?.length"
-            :icon="Search"
-            circle
-            @click="isShowSearch = !isShowSearch"
-          />
+          <el-button v-if="showToolButton('search') && searchColumns?.length" :icon="Search" circle @click="isShowSearch = !isShowSearch" />
         </slot>
       </div>
     </div>
     <!-- 表格主体 -->
-    <el-table
-      ref="tableRef"
-      v-bind="$attrs"
-      :id="uuid"
-      :data="processTableData"
-      :border="border"
-      :row-key="rowKey"
-      @selection-change="selectionChange"
-    >
+    <el-table ref="tableRef" v-bind="$attrs" :id="uuid" :data="processTableData" :border="border" :row-key="rowKey" @selection-change="selectionChange">
       <!-- 默认插槽 -->
       <slot />
       <template v-for="item in tableColumns" :key="item">
         <!-- selection || radio || index || expand || sort -->
-        <el-table-column
-          v-if="item.type && columnTypes.includes(item.type)"
-          v-bind="item"
-          :align="item.align ?? 'center'"
-          :reserve-selection="item.type == 'selection'"
-        >
+        <el-table-column v-if="item.type && columnTypes.includes(item.type)" v-bind="item" :align="item.align ?? 'center'" :reserve-selection="item.type == 'selection'">
           <template #default="scope">
             <!-- expand -->
             <template v-if="item.type == 'expand'">
@@ -90,12 +65,7 @@
     </el-table>
     <!-- 分页组件 -->
     <slot name="pagination">
-      <Pagination
-        v-if="pagination"
-        :pageable="pageable"
-        :handle-size-change="handleSizeChange"
-        :handle-current-change="handleCurrentChange"
-      />
+      <Pagination v-if="pagination" :pageable="pageable" :handle-size-change="handleSizeChange" :handle-current-change="handleCurrentChange" />
     </slot>
   </div>
   <!-- 列设置 -->
@@ -169,8 +139,13 @@ const radio = ref("");
 const { selectionChange, selectedList, selectedListIds, isSelected } = useSelection(props.rowKey);
 
 // 表格操作 Hooks
-const { tableData, pageable, searchParam, searchInitParam, getTableList, search, reset, handleSizeChange, handleCurrentChange } =
-  useTable(props.requestApi, props.initParam, props.pagination, props.dataCallback, props.requestError);
+const { tableData, pageable, searchParam, searchInitParam, getTableList, search, reset, handleSizeChange, handleCurrentChange } = useTable(
+  props.requestApi,
+  props.initParam,
+  props.pagination,
+  props.dataCallback,
+  props.requestError
+);
 
 // 清空选中数据列表
 const clearSelection = () => tableRef.value!.clearSelection();
@@ -186,10 +161,7 @@ onMounted(() => {
 const processTableData = computed(() => {
   if (!props.data) return tableData.value;
   if (!props.pagination) return props.data;
-  return props.data.slice(
-    (pageable.value.pageNum - 1) * pageable.value.pageSize,
-    pageable.value.pageSize * pageable.value.pageNum
-  );
+  return props.data.slice((pageable.value.pageNum - 1) * pageable.value.pageSize, pageable.value.pageSize * pageable.value.pageNum);
 });
 
 // 监听页面 initParam 改化，重新获取表格数据
@@ -242,9 +214,7 @@ const flatColumnsFunc = (columns: ColumnProps[], flatArr: ColumnProps[] = []) =>
 
 // 过滤需要搜索的配置项 && 排序
 const searchColumns = computed(() => {
-  return flatColumns.value
-    ?.filter(item => item.search?.el || item.search?.render)
-    .sort((a, b) => a.search!.order! - b.search!.order!);
+  return flatColumns.value?.filter(item => item.search?.el || item.search?.render).sort((a, b) => a.search!.order! - b.search!.order!);
 });
 
 // 设置 搜索表单默认排序 && 搜索表单项的默认值

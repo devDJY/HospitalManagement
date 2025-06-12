@@ -38,17 +38,17 @@
 <script setup lang="ts">
 import { ref, reactive, computed, nextTick, onMounted } from "vue";
 import { type FormInstance, type ElTree, ElMessage } from "element-plus";
-import { authGroupAddGroup, authGroupMenuList, authGroupUpdateGroupInfo } from "@/api/modules/authGroup";
+import { authGroupAddGroup, authGroupgroupMenu, authGroupMenuList, authGroupUpdateGroupInfo } from "@/api/modules/authGroup";
 
 const dialogVisible = ref(false);
 const formRef = ref<FormInstance>();
 const menuTree = ref<InstanceType<typeof ElTree>>();
 const mode = ref<"create" | "edit">("create");
-
 // 表单数据
 const form = reactive({
   groupName: "",
   groupDesc: "",
+  groupId: "",
   auditFlag: false,
   displayFlag: false,
   menuId: []
@@ -121,15 +121,19 @@ const initauthGroupMenuList = () => {
 const openEditDialog = data => {
   mode.value = "edit";
   resetForm();
-  Object.assign(form, data);
-  // 设置选中的菜单
-  nextTick(() => {
-    if (menuTree.value) {
-      menuTree.value.setCheckedKeys(data.menus);
-    }
-  });
-
-  dialogVisible.value = true;
+  if ((mode.value = "edit")) {
+    form.groupId = data.id;
+    Object.assign(form, data);
+    // 设置选中的菜单
+    nextTick(() => {
+      if (menuTree.value) {
+        menuTree.value.setCheckedKeys(data.menus);
+      }
+    });
+    dialogVisible.value = true;
+  } else {
+    dialogVisible.value = true;
+  }
 };
 
 // 重置表单

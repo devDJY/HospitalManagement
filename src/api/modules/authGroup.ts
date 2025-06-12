@@ -47,3 +47,7 @@ export const authGroupAddGroup = params => {
 export const authGroupUpdateGroupInfo = params => {
   return http.post("/authGroup/update/groupInfo", params, { loading: false });
 };
+
+export const authGroupgroupMenu = params => {
+  return http.get("/authGroup/groupMenu/list", params, { loading: false });
+};

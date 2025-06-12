@@ -105,7 +105,7 @@ const initlist = () => {
     groupId: groupId.value,
     ...searchForm
   }).then((res: any) => {
-    members.value = res.data || [];
+    members.value = res.records || [];
   });
 };
 // 暴露打开方法
