@@ -127,9 +127,9 @@ const getTableList = (params: any) => {
       { prop: "address", label: "受控文件", width: 115 },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "页数", width: 115 },
-      { prop: "applyUserName", label: "打印页数", width: 85 },
-      { prop: "applyRemark", label: "审查人", width: 115 },
-      { prop: "applyRemark", label: "受控发放人", width: 115 },
+      { prop: "printCount", label: "打印页数", width: 85 },
+      { prop: "reviewerName", label: "审查人", width: 115 },
+      { prop: "controllerName", label: "受控发放人", width: 115 },
       { prop: "operation", label: "操作", fixed: "right", width: 130 }
     );
   } else if (modeSwitching.value == "2") {

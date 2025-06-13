@@ -91,6 +91,7 @@ export namespace User {
     fileControllerCode: unknown;
     destroyTime?: string;
     applyTime?: string;
+    managers?: string[]
   }
   export interface ResStatus {
     userLabel: string;

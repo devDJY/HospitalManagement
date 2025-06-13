@@ -120,7 +120,9 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
       }
     ]
   },
-  { prop: "enrollCount", label: "管理员", width: 100 },
+  { prop: "managers", label: "管理员", width: 100, render(scope) {
+    return <div>{scope.row.managers?.map((item: any) => item).join("、")}</div>;
+  } },
   { prop: "operation", label: "操作", fixed: "right", width: 150 }
 ]);
 
@@ -188,7 +190,9 @@ const getTableList = (params?: any) => {
           }
         ]
       },
-      { prop: "enrollCount", label: "管理员", width: 100 },
+      { prop: "managers", label: "管理员", width: 100, render(scope) {
+    return <div>{scope.row.managers?.map((item: any) => item).join("、")}</div>;
+  } },
       { prop: "operation", label: "操作", fixed: "right", width: 150 }
     );
   } else if (modeSwitching.value == "2") {
@@ -223,7 +227,9 @@ const getTableList = (params?: any) => {
           }
         ]
       },
-      { prop: "enrollCount", label: "管理员", width: 100 },
+      { prop: "managers", label: "管理员", width: 100, render(scope) {
+    return <div>{scope.row.managers?.map((item: any) => item).join("、")}</div>;
+  } },
       { prop: "enrollCount", label: "锁库说明", width: 100 },
       { prop: "enrollCount", label: "锁库日期", width: 100 },
       { prop: "operation", label: "操作", fixed: "right", width: 150 }
