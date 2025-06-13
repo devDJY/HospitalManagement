@@ -65,11 +65,11 @@
         <el-checkbox v-model="formData.isSurveySms">接收调研短信</el-checkbox>
       </el-form-item>
 
-      <el-form-item v-show="!formData.isPermanent" label="开始有效期" prop="startTime">
+      <el-form-item v-if="!formData.isPermanent" label="开始有效期" prop="startTime">
         <el-date-picker v-model="formData.startTime" type="datetime" placeholder="选择日期时间" value-format="YYYY-MM-DD HH:mm:ss" />
       </el-form-item>
 
-      <el-form-item v-show="!formData.isPermanent" label="结束有效期" prop="expireTime">
+      <el-form-item v-if="!formData.isPermanent" label="结束有效期" prop="expireTime">
         <el-date-picker v-model="formData.expireTime" type="datetime" placeholder="选择日期时间" value-format="YYYY-MM-DD HH:mm:ss" />
       </el-form-item>
     </el-form>
@@ -172,8 +172,11 @@ const handleUnitConfirm = unitData => {
 const handleSubmit = async () => {
   await formRef.value.validate();
   try {
-    if (yesEditing.value) {
+    if (yesEditing.value && !formData.isPermanent) {
       const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id, startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
+      await updateUserInfo(_formData);
+    } else if (yesEditing.value && formData.isPermanent) {
+      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime:undefined, expireTime: undefined };
       await updateUserInfo(_formData);
     } else {
       const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id, startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
