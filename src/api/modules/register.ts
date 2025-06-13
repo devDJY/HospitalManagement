@@ -46,6 +46,13 @@ export const companyInfoList = params => {
   return http.get("/companyInfo/list ", params, { loading: false });
 };
 
+export const registerCompany = (params: {
+  "companyCode": string,
+  "companyName": string
+}) => {
+  return http.post("/companyInfo/register", params, { loading: false });
+};
+
 export const getVerifyCode = params => {
   return http.get("/userInfo/getVerifyCode", params, { loading: false });
 };

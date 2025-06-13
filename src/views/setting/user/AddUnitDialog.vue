@@ -33,6 +33,7 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
+import { registerCompany } from '@/api/modules/register'
 
 defineProps({
   visible: Boolean
@@ -72,10 +73,18 @@ const resetForm = () => {
 const handleConfirm = async () => {
   try {
     await formRef.value.validate();
-    emit("confirm", { ...form });
-    emit("update:visible", false);
-    ElMessage.success("单位信息添加成功");
-    formRef.value.resetFields();
+    const res = await registerCompany({
+      companyCode: form.creditCode,
+      companyName: form.unitName
+    })
+    if (res.code === 200) {
+      emit("confirm", { ...form });
+      emit("update:visible", false);
+      ElMessage.success("单位信息添加成功");
+      formRef.value.resetFields();
+    } else {
+      ElMessage.success("单位信息添加错误，请检查。");
+    }
   } catch (error) {
     ElMessage.error("请填写完整且正确的信息");
   }

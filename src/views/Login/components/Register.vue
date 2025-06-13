@@ -12,7 +12,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12"></el-col>
-
+ 
         <!-- 第二行 -->
         <el-col :span="8">
           <el-form-item label="账号" prop="userName" :rules="[{ required: true, message: '请输入账号', trigger: 'blur' }]">
@@ -284,7 +284,6 @@ const remoteMethod = query => {
 const handleSubmit = async () => {
   try {
     await formRef.value.validate();
-    console.log(form);
     const submitForm = {
       ...form,
       companyName: companyInfos.value.find(e => e.id === form.companyNo).companyName

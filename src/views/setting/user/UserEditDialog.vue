@@ -173,10 +173,10 @@ const handleSubmit = async () => {
   await formRef.value.validate();
   try {
     if (yesEditing.value) {
-      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id };
+      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id, startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
       await updateUserInfo(_formData);
     } else {
-      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id };
+      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id, startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
       await registerByManager(formData);
     }
   } catch (error) {
