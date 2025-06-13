@@ -151,7 +151,7 @@ const generateFileCode = () => {
     ElMessage.warning("请先选择项目名称");
     return;
   }
-  const projectCode = projectOptions.value?.find((p: any) => p.value === form.projectId)?.label || "PROJ";
+  const projectCode = projectOptions.value?.find((p: any) => p.value === form.projectId)?.value || "PROJ";
   form.fileCode = `${projectCode}-${Date.now().toString().slice(-4)}`;
 };
 const restForm = () => {
