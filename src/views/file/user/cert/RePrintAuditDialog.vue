@@ -18,26 +18,28 @@
 
     <template #footer>
       <el-button @click="handleCancel">取消</el-button>
-      <el-button type="primary" @click="handleContinuousPrint"> 不间断打印 </el-button>
-      <el-button type="success" @click="handleSequentialPrint"> 逐份打印 </el-button>
+      <el-button type="primary" :disabled="remainingCopies == 0" @click="handleContinuousPrint"> 不间断打印 </el-button>
+      <el-button type="success" :disabled="remainingCopies == 0" @click="handleSequentialPrint"> 逐份打印 </el-button>
     </template>
+    <Applicant ref="applicantRef" />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { fileControllerCertPrintQueryCount, fileControllerCertPrint  } from "@/api/modules/fileInfo";
+import { fileControllerCertPrintQueryCount, fileControllerCertPrint } from "@/api/modules/fileInfo";
 import { ref } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import Applicant from "@/views/file/printPreview/applicant.vue";
 const dialogVisible = ref(false);
 const copies = ref(1);
 const remainingCopies = ref(3);
 const auditOpinion = ref("");
+const applicantRef = ref();
 const pa = ref({
-  fileId: "",
+  fileId: ""
 });
 
 // 打开对话框方法
-const openDialog = (data) => {
+const openDialog = data => {
   pa.value = { ...data };
   dialogVisible.value = true;
   auditOpinion.value = "";
@@ -48,29 +50,35 @@ const openDialog = (data) => {
 };
 
 // 不间断打印
-const handleContinuousPrint = () => {
-  fileControllerCertPrint({ 
-    "fileCount": copies.value,
-    "fileId": pa.value.fileId
-  }).then((res: any) => {
-    console.log(res);
-    dialogVisible.value = false;
-    ElMessage.success("提交成功");
-  });
+const handleContinuousPrint = async () => {
+  //dialogVisible.value = false;
+  await applicantRef.value.openDialog({ fileCount: copies.value, fileId: pa.value.fileId, isFinite: 1 });
+
+  //   fileId: pa.value.fileId);
+  // fileControllerCertPrint({
+  //   fileCount: copies.value,
+  //   fileId: pa.value.fileId
+  // }).then((res: any) => {
+  //   console.log(res);
+  //   dialogVisible.value = false;
+  //   ElMessage.success("提交成功");
+  // });
 };
 const handleCancel = () => {
   dialogVisible.value = false;
 };
 // 逐份打印
 const handleSequentialPrint = () => {
-  fileControllerCertPrint({ 
-    "fileCount": copies.value,
-    "fileId": pa.value.fileId
-  }).then((res: any) => {
-    console.log(res);
-    dialogVisible.value = false;
-    ElMessage.success("提交成功");
-  });
+  console.log(applicantRef.value);
+  //dialogVisible.value = false;
+  applicantRef.value.openDialog({ fileCount: copies.value, fileId: pa.value.fileId, isFinite: 0 });
+  // fileControllerCertPrint({
+  //   fileCount: copies.value,
+  //   fileId: pa.value.fileId
+  // }).then((res: any) => {
+
+  //   // ElMessage.success("提交成功");
+  // });
 };
 
 // 暴露方法给父组件调用

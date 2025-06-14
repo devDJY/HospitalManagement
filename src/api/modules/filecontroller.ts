@@ -63,3 +63,8 @@ export const fileControllerPrintCertUpdateRePrint = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/fileController/print/cert/update/rePrint", pa, { loading: false });
 };
+//文件 - 受控 - 已受控列表 - 获取受控文件pdf;
+export const fileControllerPrintCertQueryFile = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/cert/print/queryFile", pa, { loading: false });
+};

@@ -154,8 +154,6 @@ const total = ref(40);
 
 const handleCurrentChange = val => {
   currentPage.value = val;
-  // 获取新数据逻辑
-  console.log(currentPage);
 };
 onMounted(() => {
   const route = useRoute();
