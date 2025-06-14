@@ -38,11 +38,11 @@
           {{ scope.column.label }}
         </el-button>
       </template>
-      <!-- createTime -->
-      <template #createTime="scope">
-        <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
-        </el-button>
+      <template #attachmentUrl="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
+      </template>
+      <template #attachmentUrl2="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 2)"> 查看 </el-button>
       </template>
       <!-- 表格操作 -->
       <template #operation="scope">
@@ -55,6 +55,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ExceptionNotesDialog ref="exceptionNotesDialog" />
+    <registrationDialog ref="registrationDi" />
     <!-- <RePrintAuditDialog ref="auditDialog" /> -->
   </div>
 </template>
@@ -76,7 +77,9 @@ import { deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, Bat
 import { archiveCancelList, archiveDownloadList, archiveExcelReport, archiveFileDownload, archiveFileList } from "@/api/modules/archives";
 import { c } from "vite/dist/node/types.d-aGj9QkWt";
 import ExceptionNotesDialog from "./ExceptionNotesDialog.vue";
+import registrationDialog from "./registrationDialog.vue";
 const exceptionNotesDialog = ref();
+const registrationDi = ref();
 const exceptionNotes = (params: any) => {
   exceptionNotesDialog.value.openDialog(params);
 };
@@ -100,6 +103,16 @@ watch(
     proTable.value?.getTableList();
   }
 );
+const goToDetails = (scope, type: number) => {
+  router.push({
+    name: "fileDetails", // 路由名称
+    query: {
+      fileId: scope.row.fileId,
+      isManager: 0,
+      type: type
+    }
+  });
+};
 // 如果你想在请求之前对当前请求参数做一些操作，可以自定义如下函数：params 为当前所有的请求参数（包括分页），最后返回请求列表接口
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
@@ -113,18 +126,15 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        width: 80,
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      {
+        prop: "attachmentUrl2",
+        label: "受控文件",
+        width: 90
+      },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "页数", width: 115 },
       { prop: "printCount", label: "打印页数", width: 85 },
@@ -140,17 +150,15 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
-      { prop: "address", label: "受控文件", width: 115 },
+      {
+        prop: "attachmentUrl2",
+        label: "受控文件",
+        width: 90
+      },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "页数", width: 115 },
       { prop: "pageTotal", label: "作废份数", width: 85 },
@@ -166,16 +174,11 @@ const getTableList = (params: any) => {
       { prop: "fileCode", label: "文件编码", search: { el: "input" } },
       { prop: "attachmentName", label: "文件名" },
       {
-        prop: "idCard",
+        prop: "attachmentUrl",
         label: "源文件",
-        render(scope) {
-          return (
-            <a style="color: #3878df" href={(scope.row as any).attachmentUrl} target="_blank">
-              查看
-            </a>
-          );
-        }
+        width: 90
       },
+
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "页数", width: 115 },
       { prop: "fileType", label: "文件类型", width: 85 },
@@ -232,11 +235,13 @@ const resetPass = async (params: User.ResUserList) => {
 // 切换用户状态
 const download = async (row: any) => {
   await archiveFileDownload(row);
-  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload("/archive/excel/report",archiveExcelReport, `${row.projectName}项目详情`, row));
+  ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() => useDownload("/archive/excel/report", archiveExcelReport, `${row.projectName}项目详情`, row));
 };
 
 // 导出用户列表
-const openAuditDialog = async (params: any) => {};
+const openAuditDialog = async (params: any) => {
+  registrationDi.value.openDialog(params);
+};
 
 // 批量添加用户
 const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);

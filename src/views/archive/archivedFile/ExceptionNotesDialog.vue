@@ -7,7 +7,11 @@
     <!-- 异常列表 -->
     <el-table :data="exceptionNotes" style="width: 100%" empty-text="暂无异常备注" class="exception-table">
       <el-table-column prop="creatorName" label="创建人" width="120" />
-      <el-table-column prop="createTime" label="创建日期" width="150" />
+      <el-table-column prop="createTime" label="创建日期">
+        <template #default="scope">
+          {{ dayjs(scope.row.createTime).format("YYYY-MM-DD HH:mm:ss") }}
+        </template>
+      </el-table-column>
       <el-table-column prop="remark" label="异常内容" />
     </el-table>
 
@@ -34,7 +38,7 @@
 import { archiveFileAddLog, archiveFileQueryLog } from "@/api/modules/archives";
 import { ElMessage } from "element-plus";
 import { reactive, ref } from "vue";
-
+import dayjs from "dayjs";
 const dialogVisible = ref(false);
 const addDialogVisible = ref(false);
 
@@ -44,12 +48,13 @@ const addExceptionNote = async () => {
     ElMessage.warning("请输入异常内容");
     return;
   }
-  archiveFileAddLog({
+  await archiveFileAddLog({
     printId: printId.value,
     remark: newNote.content
   });
   ElMessage.success("添加成功");
   addDialogVisible.value = false;
+  await init();
 };
 // 异常备注数据
 const exceptionNotes = ref([
@@ -77,7 +82,7 @@ const openRemarks = () => {
 };
 const init = async () => {
   let data: any = await archiveFileQueryLog({ printId: printId.value });
-  exceptionNotes.value = data.records as [];
+  exceptionNotes.value = data.data as [];
 };
 defineExpose({
   openDialog
