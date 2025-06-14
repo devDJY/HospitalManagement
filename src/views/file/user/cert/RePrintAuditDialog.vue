@@ -52,33 +52,15 @@ const openDialog = data => {
 // 不间断打印
 const handleContinuousPrint = async () => {
   //dialogVisible.value = false;
-  await applicantRef.value.openDialog({ fileCount: copies.value, fileId: pa.value.fileId, isFinite: 1 });
-
-  //   fileId: pa.value.fileId);
-  // fileControllerCertPrint({
-  //   fileCount: copies.value,
-  //   fileId: pa.value.fileId
-  // }).then((res: any) => {
-  //   console.log(res);
-  //   dialogVisible.value = false;
-  //   ElMessage.success("提交成功");
-  // });
+  applicantRef.value.openDialog({ fileCount: copies.value, fileId: pa.value.fileId, isFinite: 1 });
 };
 const handleCancel = () => {
   dialogVisible.value = false;
 };
 // 逐份打印
 const handleSequentialPrint = () => {
-  console.log(applicantRef.value);
   //dialogVisible.value = false;
   applicantRef.value.openDialog({ fileCount: copies.value, fileId: pa.value.fileId, isFinite: 0 });
-  // fileControllerCertPrint({
-  //   fileCount: copies.value,
-  //   fileId: pa.value.fileId
-  // }).then((res: any) => {
-
-  //   // ElMessage.success("提交成功");
-  // });
 };
 
 // 暴露方法给父组件调用
@@ -91,29 +73,25 @@ defineExpose({
 .print-copies-dialog {
   padding: 0 10px;
 }
-
 .tips {
-  color: #666;
+  margin-bottom: 15px;
   font-size: 14px;
   line-height: 1.5;
-  margin-bottom: 15px;
+  color: #666666;
 }
-
 .copies-input {
   display: flex;
-  align-items: center;
   gap: 15px;
+  align-items: center;
 }
-
 .label {
+  min-width: 60px;
   font-size: 16px;
   font-weight: bold;
-  min-width: 60px;
 }
-
 .remaining {
-  color: #888;
-  font-size: 14px;
   margin-left: auto;
+  font-size: 14px;
+  color: #888888;
 }
 </style>

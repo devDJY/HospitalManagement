@@ -1,6 +1,6 @@
 <template>
   <div class="file-details-container flex">
-    <div style="margin-right: 10px; padding-right: 10px">
+    <div style="padding-right: 10px; margin-right: 10px">
       <div style="margin-bottom: 10px">
         <el-button @click="goBack" :icon="ArrowLeftBold" type="primary"> 返回 </el-button>
       </div>
@@ -108,8 +108,7 @@
         </el-descriptions>
         <div style="width: 100%; margin-top: 40px">
           <el-pagination
-            style="margin: 0 auto; width: 100px; text-align: center"
-            :hide-on-single-page="value"
+            style="width: 100px; margin: 0 auto; text-align: center"
             v-if="fileData.attachmentUrl.length > 1 && isPreview"
             :current-page="currentPage"
             :page-size="1"
@@ -118,7 +117,7 @@
             :pager-count="1"
             @current-change="handleCurrentChange"
           />
-          <iframe v-if="isPreview" style="margin-top: 10px; min-height: 800px" :src="fileData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
+          <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
         </div>
       </el-card>
     </div>
@@ -206,63 +205,54 @@ const goBack = () => {
   width: 100%;
   padding: 20px;
 }
-
 .header {
   margin-bottom: 20px;
   text-align: center;
 }
-
 .title {
-  font-size: 24px;
-  color: #333;
   margin: 0;
+  font-size: 24px;
+  color: #333333;
 }
-
 .mt-10 {
   margin-top: 10px;
 }
-
 .mt-20 {
   margin-top: 20px;
 }
-
 .page-info {
-  font-size: 16px;
-  color: #666;
-  text-align: center;
   padding: 10px 0;
+  font-size: 16px;
+  color: #666666;
+  text-align: center;
 }
-
 .apply-note {
   padding: 15px;
   background-color: #f5f7fa;
   border-radius: 4px;
 }
-
 .note-title {
-  font-size: 16px;
-  color: #333;
   margin-top: 0;
+  font-size: 16px;
+  color: #333333;
 }
-
 .note-content {
-  font-size: 14px;
-  color: #666;
   margin-bottom: 0;
+  font-size: 14px;
   line-height: 1.6;
+  color: #666666;
 }
 
 /* 调整Element组件样式 */
 :deep(.el-descriptions__title) {
   font-size: 18px;
   font-weight: bold;
-  color: #333;
+  color: #333333;
 }
-
 :deep(.el-descriptions__label) {
   width: 120px;
   font-weight: normal;
-  color: #666;
+  color: #666666;
 }
 .pagination-container {
   display: flex;
@@ -275,7 +265,6 @@ const goBack = () => {
 :deep(.custom-pagination-next) {
   padding: 0 12px;
 }
-
 :deep(.custom-pagination-info) {
   padding: 0 16px;
   color: #606266;
@@ -291,40 +280,36 @@ const goBack = () => {
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 16px;
 }
-
 .stat-item {
-  text-align: center;
   padding: 16px;
+  text-align: center;
   background-color: #f5f7fa;
   border-radius: 6px;
   transition: all 0.3s;
 }
-
 .stat-item:hover {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
   transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
 .stat-value {
+  margin-bottom: 8px;
   font-size: 24px;
   font-weight: bold;
   color: #409eff;
-  margin-bottom: 8px;
 }
-
 .stat-name {
   font-size: 14px;
   color: #606266;
 }
 
 /* 响应式调整 */
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .stats-grid {
     grid-template-columns: 1fr;
   }

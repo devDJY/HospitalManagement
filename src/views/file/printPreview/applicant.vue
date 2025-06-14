@@ -57,15 +57,18 @@
           </el-form>
         </div>
       </div>
-
-      <!-- 二次确认 -->
       <div class="final-warning mt-20">
         <el-alert title="请先进行打印测试，正式打印仅可打印一次！" type="error" :closable="false" show-icon />
       </div>
+      <div>
+        <el-button @click="dialogVisible = false">取消打印</el-button>
+        <el-button @click="isPreview = true" type="success"> 预览文件 </el-button>
+        <el-button type="primary" @click="handlePrintTest">打印测试</el-button>
+        <el-button type="primary" @click="handleConfirmPrint">确认打印</el-button>
+      </div>
       <div style="width: 100%; margin-top: 40px">
         <el-pagination
-          style="margin: 0 auto; width: 100px; text-align: center"
-          :hide-on-single-page="value"
+          style="width: 100px; margin: 0 auto; text-align: center"
           v-if="printSettings.attachmentUrl.length > 1 && isPreview"
           :current-page="currentPage"
           :page-size="1"
@@ -74,21 +77,19 @@
           :pager-count="1"
           @current-change="handleCurrentChange"
         />
-        <iframe v-if="isPreview" style="margin-top: 10px; min-height: 800px" :src="printSettings.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
+        <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="printSettings.attachmentUrl[0]" width="100%" frameborder="0"></iframe>
       </div>
     </div>
-
-    <template #footer>
-      <el-button @click="dialogVisible = false">取消打印</el-button>
-      <el-button type="primary" @click="handlePrintTest">打印测试</el-button>
-      <el-button type="primary" @click="handleConfirmPrint">确认打印</el-button>
-    </template>
   </el-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
-
+import { ElMessage } from "element-plus";
+import { da } from "element-plus/es/locale";
+import { fileControllerPrintCertQueryFile } from "@/api/modules/filecontroller";
+import { fileControllerCertPrint } from "@/api/modules/fileInfo";
+import printJS from "print-js";
 const dialogVisible = ref(false);
 const selectedPrinter = ref("");
 const copies = ref(1);
@@ -106,7 +107,7 @@ const printSettings = ref({
   color: "grayscale", // 打印颜色
   attachmentUrl: []
 });
-const params = ref({ fileCount: copies.value, fileId: pa.value.fileId, isFinite: 1 });
+const params = ref({ fileCount: 1, fileId: 0, isFinite: 1 });
 const printerList = ref(["HP LaserJet Pro MFP M130fw", "Canon PIXMA TR4520", "Microsoft Print to PDF", "Foxit Reader PDF Printer"]);
 
 const openDialog = data => {
@@ -116,6 +117,10 @@ const openDialog = data => {
   } else {
     title.value = "本次打印为【逐份打印】，离开此页面即可中止打印，未打印的部分可重新发起打印！";
   }
+  fileControllerPrintCertQueryFile({ fileId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
+    printSettings.value.attachmentUrl = res.data;
+    console.log(printSettings.value.attachmentUrl);
+  });
   params.value = data;
 };
 const handleCurrentChange = val => {
@@ -131,76 +136,76 @@ const handlePrintTest = () => {
 
 const handleConfirmPrint = () => {
   // 正式打印逻辑
-  console.log("正式打印", printSettings.value, selectedPrinter.value, copies.value);
-  ElMessage.success("打印任务已提交");
-  dialogVisible.value = false;
+  // 打印PDF
+  printJS("https://yang-oss-test.oss-cn-hangzhou.aliyuncs.com/upload/20250608/20250608213416851658.pdf");
+  // fileControllerCertPrint({
+  //   fileCount: params.value.fileCount,
+  //   fileId: params.value.fileId
+  // }).then((res: any) => {
+  //   ElMessage.success("打印任务已提交");
+  // });
+  // dialogVisible.value = false;
 };
 
 // 暴露方法给父组件
-defineExpose({ openDialog });
+defineExpose({
+  openDialog
+});
 </script>
 
 <style scoped>
 .print-confirm-container {
   padding: 10px;
 }
-
 .mt-10 {
   margin-top: 10px;
 }
-
 .mt-15 {
   margin-top: 15px;
 }
-
 .mt-20 {
   margin-top: 20px;
 }
-
 .print-settings {
-  margin-top: 15px;
   padding: 10px;
+  margin-top: 15px;
   border: 1px solid #ebeef5;
   border-radius: 4px;
 }
-
 .print-settings h4 {
-  margin: 0 0 10px 0;
+  margin: 0 0 10px;
   font-size: 14px;
   color: #606266;
 }
-
 .print-copies {
   display: flex;
   align-items: center;
   font-size: 14px;
 }
-
 .print-copies span {
   margin-right: 10px;
 }
+
 /* 横向排列样式 */
 .print-settings-horizontal {
-  margin: 15px 0;
   padding: 10px;
+  margin: 15px 0;
   background: #f8f8f8;
   border-radius: 4px;
 }
-
 .demo-form-inline {
   display: flex;
   flex-wrap: nowrap;
-  align-items: center;
   gap: 10px;
+  align-items: center;
 }
-
 .demo-form-inline :deep(.el-form-item) {
   margin-right: 0;
   margin-bottom: 0;
 }
 
 /* 响应式调整 - 在小屏幕上换行 */
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .demo-form-inline {
     flex-wrap: wrap;
   }
