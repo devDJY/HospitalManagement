@@ -140,7 +140,7 @@ const getStatusType = (status: string) => {
       return "";
   }
 };
-
+const emit = defineEmits(["refreshData"]);
 // 提交审查结果
 const handleSubmit = async () => {
   if (!reviewData.fileStatus) {
@@ -155,6 +155,7 @@ const handleSubmit = async () => {
   };
   await fileInfoReview(data);
   ElMessage.success("审查结果提交成功");
+  emit("refreshData");
   visible.value = false;
   // 这里可以调用API提交审查结果
   // submitReview(reviewData)

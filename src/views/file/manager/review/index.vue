@@ -65,7 +65,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
-    <FileReviewDialog ref="fileReviewDialog" />
+    <FileReviewDialog ref="fileReviewDialog" @refreshData="handleRefresh" />
     <BanReuseDialog ref="banReuseDialog" @refresh="handleRefresh" />
   </div>
 </template>
