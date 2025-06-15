@@ -174,7 +174,7 @@ function viewPDF() {
 function printPDF() {
   const printJson = {
     action: "printfile",
-    content: printSettings.value.attachmentUrl[currentPage.value],
+    content: printSettings.value.attachmentUrl,
     format: "pdf_url",
     // 下面是可选字段:
     papersize: printSettings.value.paperSize, // 指定输出纸张类型。整数值，8为A3；9为A4；11为A5等等
