@@ -186,9 +186,8 @@ const handleSubmit = async () => {
       const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
       await registerByManager(_formData);
     }
-  } catch (error) {
-    debugger
-    ElMessage.error("操作失败");
+  } catch (error: any) {
+    ElMessage.error(error.message ?? "操作失败");
     return;
   }
   ElMessage.success("操作成功");
