@@ -14,24 +14,22 @@
           <el-form :inline="true" label-width="80px" size="small" class="demo-form-inline">
             <el-form-item label="打印方式">
               <el-select v-model="printSettings.side" style="width: 140px">
-                <el-option label="单面" value="single" />
-                <el-option label="双面-长边" value="double_long" />
-                <el-option label="双面-短边" value="double_short" />
+                <el-option label="单面" value="1" />
+                <el-option label="双面-长边" value="2" />
               </el-select>
             </el-form-item>
 
             <el-form-item label="纸张大小">
               <el-select v-model="printSettings.paperSize" style="width: 100px">
-                <el-option label="A4" value="A4" />
-                <el-option label="A5" value="A5" />
-                <el-option label="B5" value="B5" />
+                <el-option label="A4" value="9" />
+                <el-option label="A5" value="11" />
               </el-select>
             </el-form-item>
 
             <el-form-item label="方向">
               <el-select v-model="printSettings.orientation" style="width: 100px">
-                <el-option label="纵向" value="portrait" />
-                <el-option label="横向" value="landscape" />
+                <el-option label="纵向" :value="0" />
+                <el-option label="横向" :value="1" />
               </el-select>
             </el-form-item>
 
@@ -44,8 +42,8 @@
 
             <el-form-item label="颜色">
               <el-select v-model="printSettings.color" style="width: 100px">
-                <el-option label="黑白" value="grayscale" />
-                <el-option label="彩色" value="color" />
+                <el-option label="黑白" value="0" />
+                <el-option label="彩色" value="1" />
               </el-select>
             </el-form-item>
 
@@ -62,7 +60,7 @@
       </div>
       <div>
         <el-button @click="dialogVisible = false">取消打印</el-button>
-        <el-button @click="isPreview = true" type="success"> 预览文件 </el-button>
+        <el-button @click="viewPDF" type="success"> 预览文件 </el-button>
         <el-button type="primary" @click="handlePrintTest">打印测试</el-button>
         <el-button type="primary" @click="handleConfirmPrint">确认打印</el-button>
       </div>
@@ -77,19 +75,18 @@
           :pager-count="1"
           @current-change="handleCurrentChange"
         />
-        <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="printSettings.attachmentUrl[0]" width="100%" frameborder="0"></iframe>
+        <!-- <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="printSettings.attachmentUrl[0]" width="100%" frameborder="0"></iframe> -->
       </div>
     </div>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
-import { da } from "element-plus/es/locale";
 import { fileControllerPrintCertQueryFile } from "@/api/modules/filecontroller";
 import { fileControllerCertPrint } from "@/api/modules/fileInfo";
-import printJS from "print-js";
+import PrintWorld from "./PrintWorld";
 const dialogVisible = ref(false);
 const selectedPrinter = ref("");
 const copies = ref(1);
@@ -101,10 +98,10 @@ const total = ref(40);
 const title = ref("");
 const printSettings = ref({
   side: "single", // 单面/双面
-  paperSize: "A4", // 纸张大小
-  orientation: "portrait", // 打印方向
+  paperSize: "0", // 纸张大小
+  orientation: "0", // 打印方向
   scale: "default", // 缩放设置
-  color: "grayscale", // 打印颜色
+  color: "0", // 打印颜色
   attachmentUrl: []
 });
 const params = ref({ fileCount: 1, fileId: 0, isFinite: 1 });
@@ -137,16 +134,87 @@ const handlePrintTest = () => {
 const handleConfirmPrint = () => {
   // 正式打印逻辑
   // 打印PDF
-  printJS("https://yang-oss-test.oss-cn-hangzhou.aliyuncs.com/upload/20250608/20250608213416851658.pdf");
-  // fileControllerCertPrint({
-  //   fileCount: params.value.fileCount,
-  //   fileId: params.value.fileId
-  // }).then((res: any) => {
-  //   ElMessage.success("打印任务已提交");
-  // });
-  // dialogVisible.value = false;
+  // printJS("https://yang-oss-test.oss-cn-hangzhou.aliyuncs.com/upload/20250608/20250608213416851658.pdf");
+  fileControllerCertPrint({
+    fileCount: params.value.fileCount,
+    fileId: params.value.fileId
+  }).then((res: any) => {
+    printPDF();
+    ElMessage.success("打印任务已提交");
+  });
+  dialogVisible.value = false;
 };
 
+function Printers2List(json: any) {
+  //将（打天下打印服务能访问到的）打印机填充到下拉列表组合框SelPrinter中
+  //填充列表
+  var prns = json.val;
+  // 打印机相关信息 默认显示default为true的
+  console.log(prns); // 输出：[{name_original: 'Fax', name: 'Fax', print2file: false},{name_original: 'L8180 Series(网络)', name: 'L8180 Series(网络)', print2file: false, default: true}]
+}
+
+function viewPDF() {
+  const printJson = {
+    action: "previewfile",
+    content: printSettings.value.attachmentUrl[currentPage.value],
+    format: "pdf_url"
+  };
+  // @ts-ignore
+  var pw = GetPrintWorld(); //获取一个打天下对象。不提供URL参数，意为本机的打天下打印服务器（"ws://127.0.0.1:8888"）。
+  if (!pw.Act(printJson)) {
+    //数据发送失败
+    alert(pw.GetLastError());
+  }
+  pw.Act(printJson);
+}
+
+function printPDF() {
+  const printJson = {
+    action: "printfile",
+    content: printSettings.value.attachmentUrl[currentPage.value],
+    format: "pdf_url",
+    // 下面是可选字段:
+    papersize: printSettings.value.paperSize, // 指定输出纸张类型。整数值，8为A3；9为A4；11为A5等等
+    /**
+     * zoom 参数：
+     * 0，缩放至指定尺寸大小输出。
+     * 1，按照文档原稿尺寸输出在指定大小的纸张上。
+     * 2，文档被无失真缩放至可以刚好被指定的纸张全部包容。
+     * 3，文档被无失真缩放至其宽度可以刚好被指定纸张的宽度包容。
+     * 4，文档被无失真缩放至其高度可以刚好被指定纸张的高度包容。
+     */
+    zoom: 0, // 整数值，其值可以为1、2、3或者4。缺省为0。
+    copies: copies, // 打印份数
+    swap: printSettings.value.orientation == "0" ? true : false, // 为true，则打印页面横向/纵向切换
+    colorful: printSettings.value.color == "0" ? 1 : -1, // 2，彩色打印；1，黑白打印；-1，系统默认
+    duplex: printSettings.value.side // 1，不双面打印；2，双面打印，长边翻转；3，双面打印，短边翻转；4，自洽翻转，即纵向打印则长边反转、横向打印则短边反转。缺省为0，意为由打印机决定是否双面打印。
+  };
+  // @ts-ignore
+  var pw = GetPrintWorld(); //获取一个打天下对象。不提供URL参数，意为本机的打天下打印服务器（"ws://127.0.0.1:8888"）。
+  if (!pw.Act(printJson)) {
+    //数据发送失败
+    alert(pw.GetLastError());
+  }
+  pw.Act(printJson);
+}
+
+onMounted(() => {
+  var json = {
+    action: "12",
+    refresh: true,
+    defaultprn: true
+  };
+  json.action = "printers";
+  json.refresh = true; //为true，则可确保返回刚刚添加的打印机。
+  json.defaultprn = true; //是否包含缺省打印机信息
+  // @ts-ignore
+  var pw = GetPrintWorld(); //获取一个打天下对象。不提供URL参数，意为本机的打天下打印服务器（"ws://127.0.0.1:8888"）。
+  pw.CallbackOnPrinterList(Printers2List); //指定回调函数
+  if (!pw.Act(json)) {
+    //调用（异步发送JSON数据到）打天下打印服务器
+    alert(pw.GetLastError()); //出错，显示错误信息。
+  }
+});
 // 暴露方法给父组件
 defineExpose({
   openDialog
