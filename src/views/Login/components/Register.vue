@@ -186,7 +186,7 @@ const getVerificationCode = () => {
     return;
   }
   getVerifyCode({ mobile: form.mobile }).then(res => {
-    if (res.data.code === 200) {
+    if (res.code === 200) {
       ElMessage.success("验证码已发送");
       countdown.value = 60;
       timer = setInterval(() => {
@@ -194,7 +194,7 @@ const getVerificationCode = () => {
         if (countdown.value <= 0) clearInterval(timer);
       }, 1000);
     } else {
-      ElMessage.error(res.data.message);
+      ElMessage.error(res.message);
     }
   });
 };
@@ -290,12 +290,12 @@ const handleSubmit = async () => {
     };
     // 验证通过，提交表单
     register(submitForm).then(res => {
-      if (res.data.code === 200) {
+      if (res.code === 200) {
         ElMessage.success("注册成功");
         resetForm();
         emit("update:modelValue", false);
       } else {
-        ElMessage.error(res.data.message);
+        ElMessage.error(res.message);
       }
     });
   } catch (error) {
