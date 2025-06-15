@@ -77,7 +77,7 @@
     <ImportExcel ref="dialogRef" />
     <ReuseApplicationDialog ref="reuseDialog" />
     <BanReuseDialog ref="banReuseDialog" @success="handleSuccess" />
-    <FileApplicationDialog ref="fileApplicationDialog" />
+    <FileApplicationDialog @refreshData="refreshData" ref="fileApplicationDialog" />
   </div>
 </template>
 
@@ -334,7 +334,9 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
     </el-button>
   );
 };
-
+const refreshData = () => {
+  proTable.value?.getTableList();
+};
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },

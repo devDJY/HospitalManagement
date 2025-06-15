@@ -246,7 +246,7 @@ const openDialog = async (initialData: any) => {
 
   dialogVisible.value = true;
 };
-
+const emit = defineEmits(["refreshData"]);
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -272,10 +272,12 @@ const handleSubmit = async () => {
     }
     dialogVisible.value = false;
     ElMessage.success("文件提交成功");
+    emit("refreshData");
   } catch (error) {
     console.error("表单验证失败:", error);
   } finally {
     submitting.value = false;
+    // 通知父节点刷新数据
   }
 };
 
@@ -305,3 +307,5 @@ defineExpose({
   margin-top: 5px;
 }
 </style>
+
+function emit(arg0: string) { throw new Error("Function not implemented."); }
