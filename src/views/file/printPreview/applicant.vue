@@ -15,7 +15,8 @@
             <el-form-item label="打印方式">
               <el-select v-model="printSettings.side" style="width: 140px">
                 <el-option label="单面" value="1" />
-                <el-option label="双面-长边" value="2" />
+                <el-option label="双面-长边翻转" value="2" />
+                <el-option label="双面-短边翻转" value="3" />
               </el-select>
             </el-form-item>
 
@@ -35,15 +36,15 @@
 
             <el-form-item label="缩放">
               <el-select v-model="printSettings.scale" style="width: 180px">
-                <el-option label="默认不缩放" value="default" />
-                <el-option label="匹配纸张" value="fit" />
+                <el-option label="默认不缩放" value="0" />
+                <el-option label="无失真缩放至匹配纸张" value="2" />
               </el-select>
             </el-form-item>
 
             <el-form-item label="颜色">
               <el-select v-model="printSettings.color" style="width: 100px">
-                <el-option label="黑白" value="0" />
-                <el-option label="彩色" value="1" />
+                <el-option label="黑白" value="1" />
+                <el-option label="彩色" value="2" />
               </el-select>
             </el-form-item>
 
@@ -86,7 +87,6 @@ import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { fileControllerPrintCertQueryFile } from "@/api/modules/filecontroller";
 import { fileControllerCertPrint } from "@/api/modules/fileInfo";
-import PrintWorld from "./PrintWorld";
 const dialogVisible = ref(false);
 const selectedPrinter = ref("");
 const copies = ref(1);
@@ -100,8 +100,8 @@ const printSettings = ref({
   side: "single", // 单面/双面
   paperSize: "0", // 纸张大小
   orientation: "0", // 打印方向
-  scale: "default", // 缩放设置
-  color: "0", // 打印颜色
+  scale: "0", // 缩放设置
+  color: "-1", // 打印颜色
   attachmentUrl: []
 });
 const params = ref({ fileCount: 1, fileId: 0, isFinite: 1 });
@@ -148,9 +148,12 @@ const handleConfirmPrint = () => {
 function Printers2List(json: any) {
   //将（打天下打印服务能访问到的）打印机填充到下拉列表组合框SelPrinter中
   //填充列表
-  var prns = json.val;
+  const prns : Array<{name_original: string, name: string, print2file: boolean,default: boolean }> = json.val;
   // 打印机相关信息 默认显示default为true的
   console.log(prns); // 输出：[{name_original: 'Fax', name: 'Fax', print2file: false},{name_original: 'L8180 Series(网络)', name: 'L8180 Series(网络)', print2file: false, default: true}]
+  const defaultprn = prns.find(e => e.default);
+  selectedPrinter.value = defaultprn?.name ?? "";
+  printerList.value = prns.map(e => e.name);
 }
 
 function viewPDF() {
@@ -183,10 +186,10 @@ function printPDF() {
      * 3，文档被无失真缩放至其宽度可以刚好被指定纸张的宽度包容。
      * 4，文档被无失真缩放至其高度可以刚好被指定纸张的高度包容。
      */
-    zoom: 0, // 整数值，其值可以为1、2、3或者4。缺省为0。
+    zoom: printSettings.value.scale, // 整数值，其值可以为1、2、3或者4。缺省为0。
     copies: copies, // 打印份数
     swap: printSettings.value.orientation == "0" ? true : false, // 为true，则打印页面横向/纵向切换
-    colorful: printSettings.value.color == "0" ? 1 : -1, // 2，彩色打印；1，黑白打印；-1，系统默认
+    colorful: printSettings.value.color, // 2，彩色打印；1，黑白打印；-1，系统默认
     duplex: printSettings.value.side // 1，不双面打印；2，双面打印，长边翻转；3，双面打印，短边翻转；4，自洽翻转，即纵向打印则长边反转、横向打印则短边反转。缺省为0，意为由打印机决定是否双面打印。
   };
   // @ts-ignore
