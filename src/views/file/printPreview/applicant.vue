@@ -97,11 +97,11 @@ const pageSize = ref(10);
 const total = ref(40);
 const title = ref("");
 const printSettings = ref({
-  side: "single", // 单面/双面
-  paperSize: "0", // 纸张大小
-  orientation: "0", // 打印方向
+  side: "1", // 单面/双面
+  paperSize: "9", // 纸张大小
+  orientation: 0, // 打印方向
   scale: "0", // 缩放设置
-  color: "-1", // 打印颜色
+  color: "1", // 打印颜色
   attachmentUrl: []
 });
 const params = ref({ fileCount: 1, fileId: 0, isFinite: 1 });
@@ -188,7 +188,7 @@ function printPDF() {
      */
     zoom: printSettings.value.scale, // 整数值，其值可以为1、2、3或者4。缺省为0。
     copies: copies, // 打印份数
-    swap: printSettings.value.orientation == "0" ? true : false, // 为true，则打印页面横向/纵向切换
+    swap: printSettings.value.orientation == 0 ? true : false, // 为true，则打印页面横向/纵向切换
     colorful: printSettings.value.color, // 2，彩色打印；1，黑白打印；-1，系统默认
     duplex: printSettings.value.side // 1，不双面打印；2，双面打印，长边翻转；3，双面打印，短边翻转；4，自洽翻转，即纵向打印则长边反转、横向打印则短边反转。缺省为0，意为由打印机决定是否双面打印。
   };
@@ -212,6 +212,13 @@ onMounted(() => {
   json.defaultprn = true; //是否包含缺省打印机信息
   // @ts-ignore
   var pw = GetPrintWorld(); //获取一个打天下对象。不提供URL参数，意为本机的打天下打印服务器（"ws://127.0.0.1:8888"）。
+  var downloadUrl = "https://hospital-dy.oss-cn-hangzhou.aliyuncs.com/soft/打天下打印插件安装包-v1.8.24.1116(综合版).zip";   //把（32位）安装包放在你自己的web服务器上，然后这里指向它。
+  // @ts-ignore
+  if (IsX64Windows()) {
+      downloadUrl = "https://hospital-dy.oss-cn-hangzhou.aliyuncs.com/soft/打天下打印插件安装包-v1.8.24.1116(综合版).zip"; //把（64位）安装包放在你自己的web服务器上，然后这里指向它。
+  }
+  pw.DownloadUrlForPdfPrint(downloadUrl);             //指定打天下安装包（综合版）下载地址
+  // @ts-ignore
   pw.CallbackOnPrinterList(Printers2List); //指定回调函数
   if (!pw.Act(json)) {
     //调用（异步发送JSON数据到）打天下打印服务器
