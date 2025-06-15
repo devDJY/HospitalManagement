@@ -84,7 +84,7 @@
             <el-table-column prop="status" label="状态" />
           </el-table>
         </div>
-        <div class="card mb-10">
+        <!-- <div class="card mb-10">
           <div class="title">遗失申报</div>
           <el-table border :data="listdata.loseList" style="width: 100%">
             <el-table-column prop="projectName" label="项目名称" />
@@ -95,7 +95,7 @@
             <el-table-column prop="applyTime" label="申请日期" />
             <el-table-column prop="status" label="状态" />
           </el-table>
-        </div>
+        </div> -->
       </div>
       <div class="card mb-10" v-if="isManager == '2'">
         <div class="title">文件打印</div>
