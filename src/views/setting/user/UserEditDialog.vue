@@ -89,6 +89,8 @@ import { getRegisterGroups, companyInfoList, getVerifyCode, register } from "@/a
 import AddUnitDialog from "./AddUnitDialog.vue";
 import { registerByManager, updateUserInfo } from "@/api/modules/user";
 import { authGroupMenuList } from "@/api/modules/authGroup";
+import dayjs from "dayjs";
+
 const rules = {
   permissionGroupId: [{ required: true, message: "请选择申请角色", trigger: "change" }],
   userName: [{ required: true, message: "请输入账号", trigger: "blur" }],
@@ -172,9 +174,8 @@ const handleUnitConfirm = unitData => {
 const handleSubmit = async () => {
   await formRef.value.validate();
   try {
-    debugger
     if (yesEditing.value && !formData.isPermanent) {
-      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id, startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
+      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id, startTime: dayjs(formData.startTime).format('YYYY-MM-DDTHH:mm:ss'), expireTime: dayjs(formData.expireTime).format('YYYY-MM-DDTHH:mm:ss') };
       await updateUserInfo(_formData);
     } else if (yesEditing.value && formData.isPermanent) {
       const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime:undefined, expireTime: undefined };
@@ -183,7 +184,7 @@ const handleSubmit = async () => {
       const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime:undefined, expireTime: undefined };
       await registerByManager(_formData);
     } else {
-      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
+      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime: dayjs(formData.startTime).format('YYYY-MM-DDTHH:mm:ss'), expireTime: dayjs(formData.expireTime).format('YYYY-MM-DDTHH:mm:ss') };
       await registerByManager(_formData);
     }
   } catch (error: any) {
