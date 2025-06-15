@@ -172,17 +172,22 @@ const handleUnitConfirm = unitData => {
 const handleSubmit = async () => {
   await formRef.value.validate();
   try {
+    debugger
     if (yesEditing.value && !formData.isPermanent) {
       const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id, startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
       await updateUserInfo(_formData);
     } else if (yesEditing.value && formData.isPermanent) {
       const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime:undefined, expireTime: undefined };
       await updateUserInfo(_formData);
+    } else if (formData.isPermanent) {
+      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime:undefined, expireTime: undefined };
+      await registerByManager(_formData);
     } else {
-      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id, startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
-      await registerByManager(formData);
+      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime: formData.startTime.replaceAll(/-/, 'T'), expireTime: formData.expireTime.replaceAll(/-/, 'T') };
+      await registerByManager(_formData);
     }
   } catch (error) {
+    debugger
     ElMessage.error("操作失败");
     return;
   }
