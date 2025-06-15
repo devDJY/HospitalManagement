@@ -110,12 +110,12 @@
       </div>
       <div class="card mb-10" v-if="isManager == '2'">
         <div class="title">文件使用</div>
-        <el-table border :data="listdata.printList" style="width: 100%">
+        <el-table border :data="listdata.fileUsedCount" style="width: 100%">
           <el-table-column prop="fileCode" label="文件编码" />
           <el-table-column prop="fileName" label="文件名" />
           <el-table-column prop="pageTotal" label="页数" />
-          <el-table-column prop="fileCount" label="份数" />
-          <el-table-column prop="printDate" label="打印日期" />
+          <el-table-column prop="pageTotal" label="份数" />
+          <el-table-column prop="fileControllerDate" label="受控时间" />
           <el-table-column prop="status" label="状态" />
         </el-table>
       </div>
