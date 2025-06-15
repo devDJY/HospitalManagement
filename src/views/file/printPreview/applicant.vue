@@ -61,7 +61,7 @@
       </div>
       <div>
         <el-button @click="dialogVisible = false">取消打印</el-button>
-        <el-button @click="viewPDF" type="success"> 预览文件 </el-button>
+        <el-button @click="isPreview = true" type="success"> 预览文件 </el-button>
         <el-button type="primary" @click="handlePrintTest">打印测试</el-button>
         <el-button type="primary" @click="handleConfirmPrint">确认打印</el-button>
       </div>
@@ -76,7 +76,7 @@
           :pager-count="1"
           @current-change="handleCurrentChange"
         />
-        <!-- <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="printSettings.attachmentUrl[0]" width="100%" frameborder="0"></iframe> -->
+        <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="printSettings.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
       </div>
     </div>
   </el-dialog>
@@ -148,7 +148,7 @@ const handleConfirmPrint = () => {
 function Printers2List(json: any) {
   //将（打天下打印服务能访问到的）打印机填充到下拉列表组合框SelPrinter中
   //填充列表
-  const prns : Array<{name_original: string, name: string, print2file: boolean,default: boolean }> = json.val;
+  const prns: Array<{ name_original: string; name: string; print2file: boolean; default: boolean }> = json.val;
   // 打印机相关信息 默认显示default为true的
   console.log(prns); // 输出：[{name_original: 'Fax', name: 'Fax', print2file: false},{name_original: 'L8180 Series(网络)', name: 'L8180 Series(网络)', print2file: false, default: true}]
   const defaultprn = prns.find(e => e.default);
@@ -212,12 +212,12 @@ onMounted(() => {
   json.defaultprn = true; //是否包含缺省打印机信息
   // @ts-ignore
   var pw = GetPrintWorld(); //获取一个打天下对象。不提供URL参数，意为本机的打天下打印服务器（"ws://127.0.0.1:8888"）。
-  var downloadUrl = "https://hospital-dy.oss-cn-hangzhou.aliyuncs.com/soft/打天下打印插件安装包-v1.8.24.1116(综合版).zip";   //把（32位）安装包放在你自己的web服务器上，然后这里指向它。
+  var downloadUrl = "https://hospital-dy.oss-cn-hangzhou.aliyuncs.com/soft/打天下打印插件安装包-v1.8.24.1116(综合版).zip"; //把（32位）安装包放在你自己的web服务器上，然后这里指向它。
   // @ts-ignore
   if (IsX64Windows()) {
-      downloadUrl = "https://hospital-dy.oss-cn-hangzhou.aliyuncs.com/soft/打天下打印插件安装包-v1.8.24.1116(综合版).zip"; //把（64位）安装包放在你自己的web服务器上，然后这里指向它。
+    downloadUrl = "https://hospital-dy.oss-cn-hangzhou.aliyuncs.com/soft/打天下打印插件安装包-v1.8.24.1116(综合版).zip"; //把（64位）安装包放在你自己的web服务器上，然后这里指向它。
   }
-  pw.DownloadUrlForPdfPrint(downloadUrl);             //指定打天下安装包（综合版）下载地址
+  pw.DownloadUrlForPdfPrint(downloadUrl); //指定打天下安装包（综合版）下载地址
   // @ts-ignore
   pw.CallbackOnPrinterList(Printers2List); //指定回调函数
   if (!pw.Act(json)) {
