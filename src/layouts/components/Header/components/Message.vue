@@ -2,7 +2,7 @@
   <div class="message">
     <el-popover placement="bottom" :width="310" trigger="click">
       <template #reference>
-        <el-badge v-if="records.length > 0" :value="records.length" class="item">
+        <el-badge :value="records.length" class="item">
           <i :class="'iconfont icon-xiaoxi'" class="toolBar-icon"></i>
         </el-badge>
       </template>
@@ -123,8 +123,8 @@ onMounted(() => {
   .message-item {
     display: flex;
     align-items: center;
-    cursor: pointer;
     padding: 20px 0;
+    cursor: pointer;
     border-bottom: 1px solid var(--el-border-color-light);
     &:last-child {
       border: none;
@@ -158,9 +158,9 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   height: 50px;
-  background: var(--el-color-primary-light-9);
   margin: 10px;
   color: var(--el-color-primary);
+  background: var(--el-color-primary-light-9);
 }
 .infinite-list .infinite-list-item + .list-item {
   margin-top: 10px;
