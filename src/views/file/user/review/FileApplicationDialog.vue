@@ -101,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, nextTick } from "vue";
+import { ref, reactive } from "vue";
 import { ElMessage, UploadUserFile, type FormInstance, type FormRules, type UploadProps } from "element-plus";
 import { fileInfoAdd, fileInfoAddGetProjectList, fileInfoAddGetReviewerList, fileInfoReEdit, fileInfoupload } from "@/api/modules/fileInfo";
 
@@ -122,7 +122,8 @@ const form: any = reactive({
   versionTime: "",
   checkType: "0",
   reviewerId: "",
-  applyReason: ""
+  applyReason: "",
+  projectCode: ""
 });
 
 const projectOptions = ref();
@@ -151,10 +152,11 @@ const generateFileCode = () => {
     ElMessage.warning("请先选择项目名称");
     return;
   }
-  const projectCode = projectOptions.value?.find((p: any) => p.value === form.projectCode)?.value || "PROJ";
+  const projectCode = projectOptions.value?.find((p: any) => p.value === form.projectId)?.projectCode || "PROJ";
   form.fileCode = `${projectCode}-${Date.now().toString().slice(-4)}`;
 };
 const restForm = () => {
+  form.projectCode = "";
   form.projectId = "";
   form.fileCode = "";
   form.file = null;
@@ -219,7 +221,8 @@ const initData = async () => {
   fileInfoAddGetProjectList({}).then((response: any) => {
     projectOptions.value = response.data.map(item => ({
       value: item.projectId,
-      label: item.projectName
+      label: item.projectName,
+      projectCode: item.projectCode
     }));
   });
 };
