@@ -56,6 +56,7 @@
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
     <RePrintAuditDialog ref="auditDialog" />
+    <Applicant ref="applicantRef" />
   </div>
 </template>
 

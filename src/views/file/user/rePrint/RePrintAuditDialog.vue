@@ -14,6 +14,7 @@
         <el-button type="primary" @click="handleConfirm">确定</el-button>
       </span>
     </template>
+    <Applicant ref="applicantRef" />
   </el-dialog>
 </template>
 
@@ -21,11 +22,13 @@
 import { fileControllerCertPrint, fileControllerCertPrintQueryCount } from "@/api/modules/fileInfo";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
+import Applicant from "@/views/file/printPreview/applicant.vue";
 
 const dialogVisible = ref(false);
 const copies = ref(1);
 const remainingCopies = ref(5);
 const params = ref({});
+const applicantRef = ref();
 const openDialog = (pa: any) => {
   params.value = pa;
   fileControllerCertPrintQueryCount({ fileId: pa.fileId }).then((res: any) => {
@@ -43,11 +46,12 @@ const handleConfirm = async () => {
     return;
   }
   // Here you would call your print API
-  let data = {
+  let data: any = {
     fileCount: copies.value,
     ...params.value
   };
   await fileControllerCertPrint(data);
+  applicantRef.value.openDialog({ fileCount: copies.value, fileId: data.fileId, isFinite: 3 });
   ElMessage.success("申请提交成功");
   dialogVisible.value = false;
 };

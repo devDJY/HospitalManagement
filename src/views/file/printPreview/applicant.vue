@@ -87,6 +87,7 @@ import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { fileControllerPrintCertQueryFile } from "@/api/modules/filecontroller";
 import { fileControllerCertPrint } from "@/api/modules/fileInfo";
+import { da } from "element-plus/es/locale";
 const dialogVisible = ref(false);
 const selectedPrinter = ref("");
 const copies = ref(1);
@@ -106,12 +107,16 @@ const printSettings = ref({
 });
 const params = ref({ fileCount: 1, fileId: 0, isFinite: 1 });
 const printerList = ref(["HP LaserJet Pro MFP M130fw", "Canon PIXMA TR4520", "Microsoft Print to PDF", "Foxit Reader PDF Printer"]);
-
+const isFinite = ref(3);
 const openDialog = data => {
   dialogVisible.value = true;
+  isFinite.value = data.isFinite;
   if (data.isFinite == 1) {
     title.value = "本次打印为【不间断打印】，离开此页面即可中止打印，未打印的部分可重新发起打印！";
-  } else {
+  } else if (data.isFinite == 3) {
+    // 重新打印逻辑
+  }
+  {
     title.value = "本次打印为【逐份打印】，离开此页面即可中止打印，未打印的部分可重新发起打印！";
   }
   fileControllerPrintCertQueryFile({ fileId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
