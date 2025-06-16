@@ -105,6 +105,9 @@ const handleReadAll = () => {
 };
 onMounted(() => {
   getHomeNews();
+  setInterval(() => {
+    getHomeNews();
+  }, 10000);
 });
 </script>
 
