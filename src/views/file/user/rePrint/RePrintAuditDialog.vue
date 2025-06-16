@@ -19,10 +19,10 @@
 </template>
 
 <script setup lang="ts">
-import { fileControllerCertPrint, fileControllerCertPrintQueryCount } from "@/api/modules/fileInfo";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
 import Applicant from "@/views/file/printPreview/applicant.vue";
+import { fileControllerRePrintQueryCount } from "@/api/modules/filecontroller";
 
 const dialogVisible = ref(false);
 const copies = ref(1);
@@ -31,7 +31,7 @@ const params = ref({});
 const applicantRef = ref();
 const openDialog = (pa: any) => {
   params.value = pa;
-  fileControllerCertPrintQueryCount({ fileId: pa.fileId }).then((res: any) => {
+  fileControllerRePrintQueryCount({ fileRePrintId: pa.fileRePrintId }).then((res: any) => {
     remainingCopies.value = res.data;
     copies.value = Math.min(1, res.data); // Default to 2 or remaining if less
   });
@@ -50,7 +50,6 @@ const handleConfirm = async () => {
     fileCount: copies.value,
     ...params.value
   };
-  await fileControllerCertPrint(data);
   applicantRef.value.openDialog({ fileCount: copies.value, fileId: data.fileId, isFinite: 3 });
   ElMessage.success("申请提交成功");
   dialogVisible.value = false;

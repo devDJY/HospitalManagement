@@ -68,3 +68,8 @@ export const fileControllerPrintCertQueryFile = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/fileController/cert/print/queryFile", pa, { loading: true });
 };
+// 文件-重新打印-打印次数查询
+export const fileControllerRePrintQueryCount = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/rePrint/queryCount", pa, { loading: true });
+};
