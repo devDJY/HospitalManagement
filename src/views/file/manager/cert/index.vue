@@ -63,7 +63,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
-    <RePrintAuditDialog ref="auditDialog" />
+    <RePrintAuditDialog ref="auditDialog" @refreshData="handleRefresh" />
     <el-dialog v-model="dialogVisible" title="受控" width="500">
       <span>是否确定给该文件加受控编码、水印，并发放使用？</span>
       <template #footer>
@@ -324,6 +324,9 @@ const controlledDialog = (row: any) => {
 const cancelTheControlledDialog = (row: any) => {
   fileId.value = row.fileId;
   lockDialog.value = true;
+};
+const handleRefresh = () => {
+  proTable.value?.getTableList();
 };
 const issuanceAndUse = () => {
   fileControllerFileCert({ fileId: fileId.value }).then((res: any) => {

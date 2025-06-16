@@ -37,7 +37,7 @@ const openDialog = data => {
   dialogVisible.value = true;
   auditOpinion.value = "";
 };
-
+const emit = defineEmits(["refreshData"]);
 // 确认提交
 const handleConfirm = async () => {
   if (!auditOpinion.value.trim()) {
@@ -48,7 +48,7 @@ const handleConfirm = async () => {
     "1": "粉碎机粉碎",
     "2": "剪烂",
     "3": "其他"
-  }
+  };
   let obj = {
     fileControllerId: fileControllerId.value,
     remark: auditOpinion.value,
@@ -56,6 +56,7 @@ const handleConfirm = async () => {
   };
   await fileControllerDestroyReview(obj);
   dialogVisible.value = false;
+  emit("refreshData");
   ElMessage.success("审核提交成功");
 };
 

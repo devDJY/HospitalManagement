@@ -42,6 +42,9 @@
       <template #attachmentUrl="scope">
         <el-button type="primary" link @click="goToDetails(scope, 1)"> 查看 </el-button>
       </template>
+      <template #attachmentUrl2="scope">
+        <el-button type="primary" link @click="goToDetails(scope, 2)"> 查看 </el-button>
+      </template>
       <!-- 表格操作 -->
       <template #operation="scope">
         <el-button type="primary" link :icon="View" @click="openAuditDialog(scope.row)">审核</el-button>

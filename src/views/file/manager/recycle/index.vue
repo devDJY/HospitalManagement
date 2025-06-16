@@ -55,7 +55,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
-    <RePrintAuditDialog ref="auditDialog" />
+    <RePrintAuditDialog ref="auditDialog" @refreshData="handleRefresh" />
   </div>
 </template>
 
@@ -270,7 +270,9 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   console.log(proTable.value?.tableData);
   ElMessage.success("修改列表排序成功");
 };
-
+const handleRefresh = () => {
+  proTable.value?.getTableList();
+};
 // 删除用户信息
 const deleteAccount = async (params: User.ResUserList) => {
   await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);

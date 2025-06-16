@@ -40,11 +40,11 @@ const openDialog = data => {
 
 // 获取可作废文件
 const getAvailable = async (fileId: number) => {
-  const res = await fileControllerCancelGetAvailable({fileId}) as any;
+  const res = (await fileControllerCancelGetAvailable({ fileId })) as any;
   fileControllerIds.value = res.data.map((item: any) => item.fileControllerId);
   auditStatus.value = res.data.map((item: any) => item.fileControllerCode).join("、");
 };
-
+const emit = defineEmits(["refreshData"]);
 // 确认提交
 const handleConfirm = () => {
   if (!auditOpinion.value.trim()) {
@@ -59,6 +59,7 @@ const handleConfirm = () => {
   });
   console.log("作废说明:", auditOpinion.value);
   dialogVisible.value = false;
+  emit("refreshData");
   ElMessage.success("作废提交成功");
 };
 

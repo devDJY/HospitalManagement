@@ -36,7 +36,7 @@ const openDialog = data => {
   dialogVisible.value = true;
   auditOpinion.value = "";
 };
-
+const emit = defineEmits(["refreshData"]);
 // 确认提交
 const handleConfirm = async () => {
   if (!auditOpinion.value.trim()) {
@@ -50,6 +50,7 @@ const handleConfirm = async () => {
   };
   await fileControllerLoseReview(obj);
   console.log("提交审核意见:", auditOpinion.value);
+  emit("refreshData");
   dialogVisible.value = false;
   ElMessage.success("审核提交成功");
 };

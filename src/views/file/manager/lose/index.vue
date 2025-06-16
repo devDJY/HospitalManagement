@@ -55,7 +55,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
-    <RePrintAuditDialog ref="auditDialog" />
+    <RePrintAuditDialog ref="auditDialog" @refreshData="handleRefresh" />
   </div>
 </template>
 
@@ -259,7 +259,9 @@ const changeStatus = async (row: User.ResUserList) => {
 };
 
 // 导出用户列表
-
+const handleRefresh = () => {
+  proTable.value?.getTableList();
+};
 // 批量添加用户
 const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);
 

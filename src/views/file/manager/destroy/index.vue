@@ -49,7 +49,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
-    <RePrintAuditDialog ref="auditDialog" />
+    <RePrintAuditDialog ref="auditDialog" @refreshData="handleRefresh" />
   </div>
 </template>
 
@@ -225,6 +225,9 @@ const goToDetails = (scope, type: number) => {
       type: type
     }
   });
+};
+const handleRefresh = () => {
+  proTable.value?.getTableList();
 };
 // 删除用户信息
 const deleteAccount = async (params: User.ResUserList) => {
