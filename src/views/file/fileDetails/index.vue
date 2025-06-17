@@ -109,15 +109,15 @@
         <div style="width: 100%; margin-top: 40px">
           <el-pagination
             style="width: 100px; margin: 0 auto; text-align: center"
-            v-if="fileData.attachmentUrl.length > 1 && isPreview"
+            v-if="fileControlData.attachmentUrl.length > 1 && isPreview"
             :current-page="currentPage"
             :page-size="1"
-            :total="fileData.attachmentUrl.length"
+            :total="fileControlData.attachmentUrl.length"
             layout="prev, pager, next"
             :pager-count="1"
             @current-change="handleCurrentChange"
           />
-          <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
+          <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileControlData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
         </div>
       </el-card>
     </div>
