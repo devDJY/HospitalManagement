@@ -114,7 +114,6 @@
             :page-size="1"
             :total="fileControlData.attachmentUrl.length"
             layout="prev, pager, next"
-            :pager-count="1"
             @current-change="handleCurrentChange"
           />
           <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileControlData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
