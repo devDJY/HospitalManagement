@@ -114,7 +114,7 @@
             :page-size="1"
             :total="fileData.attachmentUrl.length"
             layout="prev, pager, next"
-            :pager-count="1"
+            :pager-count="5"
             @current-change="handleCurrentChange"
           />
           <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
@@ -161,9 +161,9 @@ onMounted(() => {
   // fileId.value = 26;
   type.value = route.query.type;
   console.log(type.value);
-  fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
-    fileData.value = res.data;
-  });
+  // fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
+  //   fileData.value = res.data;
+  // });
   if (type.value == 2) {
     if (isManager.value == 1) {
       // 是管理
@@ -176,6 +176,7 @@ onMounted(() => {
         stats.value[4].value = res.data.recycleCount;
         stats.value[5].value = res.data.destroyCount;
         stats.value[6].value = res.data.loseCount;
+        fileData.value = res.data;
       });
     } else {
       fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
