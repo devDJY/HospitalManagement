@@ -87,7 +87,7 @@ import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { fileControllerPrintCertQueryFile } from "@/api/modules/filecontroller";
 import { fileControllerRePrintQueryFile } from "@/api/modules/filecontroller";
-import { fileControllerCertPrint } from "@/api/modules/fileInfo";
+import { fileControllerCertPrint, fileControllerRePrint } from "@/api/modules/fileInfo";
 import { da } from "element-plus/es/locale";
 const dialogVisible = ref(false);
 const selectedPrinter = ref("");
@@ -98,6 +98,7 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(40);
 const title = ref("");
+const rePrint = ref(false);
 const printSettings = ref({
   side: "1", // 单面/双面
   paperSize: "9", // 纸张大小
@@ -121,15 +122,17 @@ const openDialog = data => {
     title.value = "本次打印为【逐份打印】，离开此页面即可中止打印，未打印的部分可重新发起打印！";
   }
   if (data.rePrint) {
-    fileControllerRePrintQueryFile({ fileId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
+    fileControllerRePrintQueryFile({ fileRePrintId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
       printSettings.value.attachmentUrl = res.data;
       console.log(printSettings.value.attachmentUrl);
     });
+    rePrint.value = true
   } else {
     fileControllerPrintCertQueryFile({ fileId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
       printSettings.value.attachmentUrl = res.data;
       console.log(printSettings.value.attachmentUrl);
     });
+    rePrint.value = false
   }
   params.value = data;
 };
@@ -148,13 +151,23 @@ const handleConfirmPrint = () => {
   // 正式打印逻辑
   // 打印PDF
   // printJS("https://yang-oss-test.oss-cn-hangzhou.aliyuncs.com/upload/20250608/20250608213416851658.pdf");
-  fileControllerCertPrint({
-    fileCount: params.value.fileCount,
-    fileId: params.value.fileId
-  }).then((res: any) => {
-    printPDF();
-    ElMessage.success("打印任务已提交");
-  });
+  if (rePrint.value) {
+    fileControllerRePrint({
+      fileCount: params.value.fileCount,
+      fileRePrintId: params.value.fileId
+    }).then((res: any) => {
+      printPDF();
+      ElMessage.success("重新打印任务已提交");
+    });
+  } else {
+    fileControllerCertPrint({
+      fileCount: params.value.fileCount,
+      fileId: params.value.fileId
+    }).then((res: any) => {
+      printPDF();
+      ElMessage.success("打印任务已提交");
+    });
+  }
   dialogVisible.value = false;
 };
 

@@ -103,6 +103,11 @@ export const fileControllerCertPrint = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/fileController/cert/print", pa, { loading: true });
 };
+//文件 - 重新打印 - 打印;
+export const fileControllerRePrint = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileController/rePrint/print", pa, { loading: true });
+};
 //文件 - 受控 - 已受控列表 - 打印次数查询;
 export const fileControllerCertPrintQueryCount = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
