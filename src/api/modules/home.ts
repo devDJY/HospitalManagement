@@ -28,7 +28,7 @@ export const overviewById = params => {
 // 首页-未读消息
 export const queryHomeNews = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
-  return http.get("/home/queryHomeNews", pa, { loading: true });
+  return http.get("/home/queryHomeNews", pa, { loading: false });
 };
 // 站内消息通知-全部标记为已读
 export const updateHomeNewsAll = params => {
