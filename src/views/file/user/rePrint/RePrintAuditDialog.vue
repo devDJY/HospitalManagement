@@ -50,7 +50,7 @@ const handleConfirm = async () => {
     fileCount: copies.value,
     ...params.value
   };
-  applicantRef.value.openDialog({ fileCount: copies.value, fileId: data.fileId, isFinite: 3 });
+  applicantRef.value.openDialog({ fileCount: copies.value, fileId: data.fileId, isFinite: 3, rePrint: true });
   ElMessage.success("申请提交成功");
   dialogVisible.value = false;
 };

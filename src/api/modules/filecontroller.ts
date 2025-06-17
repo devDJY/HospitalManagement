@@ -73,3 +73,9 @@ export const fileControllerRePrintQueryCount = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/fileController/rePrint/queryCount", pa, { loading: true });
 };
+// 文件-重新打印-打印文件查询
+export const fileControllerRePrintQueryFile = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileController/rePrint/queryFile", pa, { loading: true });
+};
+

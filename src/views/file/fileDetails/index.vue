@@ -32,7 +32,7 @@
           </el-table-column>
           <el-table-column label="回收处理" width="100">
             <template #default="{ row }">
-              <el-checkbox v-model="row.printed" :disabled="true" />
+              <el-checkbox v-model="row.recycled" :disabled="true" />
               <!-- <el-select v-model="row.recycleType" placeholder="选择回收类型" size="small">
                 <el-option label="污渍" value="stained" />
                 <el-option label="破损" value="damaged" />

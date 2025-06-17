@@ -86,6 +86,7 @@
 import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { fileControllerPrintCertQueryFile } from "@/api/modules/filecontroller";
+import { fileControllerRePrintQueryFile } from "@/api/modules/filecontroller";
 import { fileControllerCertPrint } from "@/api/modules/fileInfo";
 import { da } from "element-plus/es/locale";
 const dialogVisible = ref(false);
@@ -119,10 +120,17 @@ const openDialog = data => {
   {
     title.value = "本次打印为【逐份打印】，离开此页面即可中止打印，未打印的部分可重新发起打印！";
   }
-  fileControllerPrintCertQueryFile({ fileId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
-    printSettings.value.attachmentUrl = res.data;
-    console.log(printSettings.value.attachmentUrl);
-  });
+  if (data.rePrint) {
+    fileControllerRePrintQueryFile({ fileId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
+      printSettings.value.attachmentUrl = res.data;
+      console.log(printSettings.value.attachmentUrl);
+    });
+  } else {
+    fileControllerPrintCertQueryFile({ fileId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
+      printSettings.value.attachmentUrl = res.data;
+      console.log(printSettings.value.attachmentUrl);
+    });
+  }
   params.value = data;
 };
 const handleCurrentChange = val => {
