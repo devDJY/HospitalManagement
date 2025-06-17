@@ -53,6 +53,19 @@
             </template>
           </el-table-column>
         </el-table>
+        <div style="width: 100%; margin-top: 40px">
+          <el-pagination
+            style="width: 100px; margin: 0 auto; text-align: center"
+            v-if="fileControlData.attachmentUrl.length > 1 && isPreview"
+            :current-page="currentPage"
+            :page-size="1"
+            :total="fileControlData.attachmentUrl.length"
+            layout="prev, pager, next"
+            :pager-count="5"
+            @current-change="handleCurrentChange"
+          />
+          <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileControlData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
+        </div>
       </el-card>
       <el-card shadow="hover" class="details-card" v-if="fileData">
         <!-- 文件基本信息 -->
@@ -128,7 +141,7 @@
 import { ref, onMounted } from "vue";
 import { ArrowLeftBold } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
-import { fileInfoReviewControlAttachmentManager, fileInfoReviewControlAttachment, fileInfoReviewOriginalAttachment } from "@/api/modules/fileInfo";
+import { fileInfoReviewControlAttachmentManager, fileInfoReviewControlAttachment } from "@/api/modules/fileInfo";
 const fileData = ref();
 const fileControlData = ref();
 const type = ref();
@@ -181,6 +194,7 @@ onMounted(() => {
     } else {
       fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
         fileControlData.value = res.data;
+        fileControlData.attachmentUrl = res.data.attachmentUrl
       });
     }
   }
