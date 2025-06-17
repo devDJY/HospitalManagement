@@ -51,7 +51,7 @@ const handleConfirm = async () => {
     ...params.value
   };
   applicantRef.value.openDialog({ fileCount: copies.value, fileId: data.fileId, isFinite: 3, rePrint: true, fileRePrintId: data.fileRePrintId });
-  dialogVisible.value = false;
+  //dialogVisible.value = false;
 };
 
 defineExpose({ openDialog });

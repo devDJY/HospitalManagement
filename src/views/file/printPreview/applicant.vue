@@ -117,22 +117,23 @@ const openDialog = data => {
     title.value = "本次打印为【不间断打印】，离开此页面即可中止打印，未打印的部分可重新发起打印！";
   } else if (data.isFinite == 3) {
     // 重新打印逻辑
-  }
-  {
     title.value = "本次打印为【逐份打印】，离开此页面即可中止打印，未打印的部分可重新发起打印！";
+  }
+  title.value = "本次打印为【逐份打印】，离开此页面即可中止打印，未打印的部分可重新发起打印！";
+  {
   }
   if (data.rePrint) {
     fileControllerRePrintQueryFile({ fileRePrintId: data.fileRePrintId, fileCount: data.fileCount }).then((res: any) => {
       printSettings.value.attachmentUrl = res.data;
       console.log(printSettings.value.attachmentUrl);
     });
-    rePrint.value = true
+    rePrint.value = true;
   } else {
     fileControllerPrintCertQueryFile({ fileId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
       printSettings.value.attachmentUrl = res.data;
       console.log(printSettings.value.attachmentUrl);
     });
-    rePrint.value = false
+    rePrint.value = false;
   }
   params.value = data;
 };
