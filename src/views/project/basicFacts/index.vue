@@ -189,7 +189,6 @@ const getHomelist = async () => {
     data = await overviewById({ projectId: projectId });
   }
   listdata.value = data.data || {};
-  debugger
 };
 const formatDate = (date: string) => {
   return dayjs(date).format("YYYY-MM-DD");

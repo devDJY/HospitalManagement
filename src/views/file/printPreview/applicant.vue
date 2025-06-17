@@ -122,7 +122,7 @@ const openDialog = data => {
     title.value = "本次打印为【逐份打印】，离开此页面即可中止打印，未打印的部分可重新发起打印！";
   }
   if (data.rePrint) {
-    fileControllerRePrintQueryFile({ fileRePrintId: data.fileId, fileCount: data.fileCount }).then((res: any) => {
+    fileControllerRePrintQueryFile({ fileRePrintId: data.fileRePrintId, fileCount: data.fileCount }).then((res: any) => {
       printSettings.value.attachmentUrl = res.data;
       console.log(printSettings.value.attachmentUrl);
     });

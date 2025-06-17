@@ -56,7 +56,7 @@
         <div style="width: 100%; margin-top: 40px">
           <el-pagination
             style="width: 100px; margin: 0 auto; text-align: center"
-            v-if="fileControlData.attachmentUrl.length > 1 && isPreview"
+            v-if="fileControlData.attachmentUrl && fileControlData.attachmentUrl.length > 1 && isPreview"
             :current-page="currentPage"
             :page-size="1"
             :total="fileControlData.attachmentUrl.length"
@@ -122,7 +122,7 @@
         <div style="width: 100%; margin-top: 40px">
           <el-pagination
             style="width: 100px; margin: 0 auto; text-align: center"
-            v-if="fileControlData.attachmentUrl.length > 1 && isPreview"
+            v-if="fileControlData.attachmentUrl && fileControlData.attachmentUrl.length > 1 && isPreview"
             :current-page="currentPage"
             :page-size="1"
             :total="fileControlData.attachmentUrl.length"
