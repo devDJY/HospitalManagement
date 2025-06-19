@@ -1,10 +1,10 @@
 <template>
-  <el-dialog :title="type.value == 0 ? '申请禁止' : '申请解除禁止'" v-model="dialogVisible" width="600px" :close-on-click-modal="false">
+  <el-dialog :title="type == 0 ? '申请禁止' : '申请解除禁止'" v-model="dialogVisible" width="600px" :close-on-click-modal="false">
     <div class="confirm-message">
       <el-icon :size="20" color="#F56C6C" class="icon">
         <WarningFilled />
       </el-icon>
-      <span> 是否确定{{ type.value == 0 ? "申请禁止" : "申请解除禁止" }}该文件的复用？ </span>
+      <span> 是否确定{{ type == 0 ? "申请禁止" : "申请解除禁止" }}该文件的复用？ </span>
     </div>
 
     <el-form :model="form" label-width="80px" :rules="rules" ref="formRef">
