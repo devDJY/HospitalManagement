@@ -64,11 +64,11 @@
           <div v-if="scope.row.reuseApplyStatus !== null">
             {{ scope.row.reuseApplyStatus == 1 ? "申请禁止复用中" : "申请解除禁止复用中" }}
           </div>
-          <div v-else-if="scope.row.reuseStatus == 0">
+          <div v-else-if="scope.row.reuseStatus == 1">
             <el-button type="primary" link v :icon="Refresh" @click="applicationForReuse(scope.row)">申请复用</el-button>
             <el-button type="danger" link icon="CircleCloseFilled" @click="reuseProhibited(scope.row, 0)">禁止复用</el-button>
           </div>
-          <div v-else-if="scope.row.reuseStatus == 1">
+          <div v-else-if="scope.row.reuseStatus == 0">
             <el-button type="danger" link icon="CircleCloseFilled" @click="reuseProhibited(scope.row, 1)">解除禁止复用</el-button>
           </div>
         </div>
