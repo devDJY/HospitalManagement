@@ -58,8 +58,9 @@
           <el-button type="success" link :icon="Download" @click="exportTab(scope.row)">导出</el-button>
         </div>
         <div v-if="modeSwitching == '1'">
-          <el-button type="primary" link v-if="scope.row.reuseStatus == 1" :icon="RemoveFilled" @click="handleBanReuse(scope.row)">禁止复用</el-button>
-          <el-button type="primary" link v-if="scope.row.reuseStatus == 0" :icon="RemoveFilled" @click="liftingTheProhibitionOnReuse(scope.row)">解除禁止复用</el-button>
+          <el-button type="success" link v-if="scope.row.reuseApplyStatus !== null" :icon="View" @click="review(scope.row)">审核</el-button>
+          <el-button type="primary" link v-else-if="scope.row.reuseStatus == 1" :icon="RemoveFilled" @click="handleBanReuse(scope.row)">禁止复用</el-button>
+          <el-button type="primary" link v-else-if="scope.row.reuseStatus == 0" :icon="RemoveFilled" @click="liftingTheProhibitionOnReuse(scope.row)">解除禁止复用</el-button>
         </div>
       </template>
     </ProTable>
@@ -67,6 +68,7 @@
     <ImportExcel ref="dialogRef" />
     <FileReviewDialog ref="fileReviewDialog" @refreshData="handleRefresh" />
     <BanReuseDialog ref="banReuseDialog" @refresh="handleRefresh" />
+    <RePrintAuditDialog ref="RePrintAudit" @refresh="handleRefresh" />
   </div>
 </template>
 
@@ -86,6 +88,7 @@ import { CirclePlus, Delete, EditPen, Download, Upload, View, RemoveFilled, Coor
 import { getUserList, deleteUser, editUser, addUser, changeUserStatus, resetUserPassWord, exportUserInfo, BatchAddUser, getUserStatus } from "@/api/modules/user";
 import FileReviewDialog from "./FileReviewDialog.vue";
 import BanReuseDialog from "./BanReuseDialog.vue";
+import RePrintAuditDialog from "./RePrintAuditDialog.vue";
 import { fileInfoList } from "@/api/modules/fileInfo";
 import { pa } from "element-plus/es/locale";
 import dayjs from "dayjs";
@@ -95,6 +98,7 @@ const router = useRouter();
 const modeSwitching = ref("0");
 const fileReviewDialog = ref();
 const banReuseDialog = ref();
+const RePrintAudit = ref();
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
 
@@ -380,5 +384,10 @@ const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
     getTableList: proTable.value?.getTableList
   };
   drawerRef.value!.acceptParams(params);
+};
+
+// 审核
+const review = row => {
+  RePrintAudit.value!.openDialog(row);
 };
 </script>
