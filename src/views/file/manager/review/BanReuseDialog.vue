@@ -60,6 +60,7 @@ const open = (data, t) => {
   } else {
     title.value = "解除禁止复用";
   }
+  banData.remark = "";
   fileId.value = data;
   fileInfoReuseGetHistory({ fileId: data }).then((res: any) => {
     if (res.data) {

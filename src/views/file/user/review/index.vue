@@ -65,7 +65,7 @@
             {{ scope.row.reuseApplyStatus == 1 ? "禁止复用申请中" : "恢复复用申请中" }}
           </div>
           <div v-else>
-            <el-button type="primary" link :icon="Refresh" @click="applicationForReuse(scope.row)">申请复用</el-button>
+            <el-button type="primary" link v :icon="Refresh" @click="applicationForReuse(scope.row)">申请复用</el-button>
             <el-button type="danger" link icon="CircleCloseFilled" @click="reuseProhibited(scope.row)">禁止复用</el-button>
           </div>
         </div>
@@ -185,7 +185,7 @@ const getTableList = (params: any) => {
         label: "复用状态",
         width: 85,
         render(scope) {
-          return <div>{(scope.row as any).reuseStatus === 0 ? "禁用" : "复用"}</div>;
+          return <div>{(scope.row as any).reuseStatus === 0 ? "禁用" : "可复用"}</div>;
         }
       },
       { prop: "operation", label: "操作", fixed: "right", width: 205 }
@@ -285,8 +285,8 @@ const getTableList = (params: any) => {
         render(scope) {
           return <div>{scope.row.reviewTime ? dayjs(scope.row.reviewTime).format("YYYY-MM-DD") : "--"}</div>;
         }
-      },
-      { prop: "operation", label: "操作", fixed: "right", width: 80 }
+      }
+      // { prop: "operation", label: "操作", fixed: "right", width: 80 }
     );
   } else {
     columns.splice(

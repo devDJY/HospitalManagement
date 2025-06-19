@@ -104,9 +104,14 @@ const rules = reactive<FormRules>({
 
 // 打开弹窗方法
 const openDialog = (initialData?) => {
+  form.value = {
+    fileCount: 0,
+    applyReason: ""
+  };
   fileInfoGetReuseList({ fileId: initialData.fileId }).then((res: any) => {
     if (initialData) {
       initialData.historyRecords = res.data;
+      initialData.applyReason = "";
       Object.assign(form, initialData);
     }
     dialogVisible.value = true;

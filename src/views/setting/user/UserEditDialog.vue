@@ -155,9 +155,30 @@ const remoteMethod = query => {
 };
 const title = ref("新增用户");
 const yesEditing = ref(false);
+const initForm = () => {
+  let init = {
+    companyNo: "",
+    companyType: "",
+    mobile: "",
+    email: "",
+    expireTime: "",
+    gender: 1,
+    isPermanent: false,
+    isSurveySms: false,
+    nickName: "",
+    password: "",
+    permissionGroupId: "",
+    startTime: "",
+    userName: "",
+    verifyCode: "",
+    id: 0
+  };
+  Object.assign(formData, init);
+};
 const open = userData => {
   yesEditing.value = false;
   title.value = "新增用户";
+  initForm();
   if (userData) {
     title.value = "编辑用户";
     yesEditing.value = true;
@@ -175,16 +196,44 @@ const handleSubmit = async () => {
   await formRef.value.validate();
   try {
     if (yesEditing.value && !formData.isPermanent) {
-      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id, startTime: dayjs(formData.startTime).format('YYYY-MM-DDTHH:mm:ss'), expireTime: dayjs(formData.expireTime).format('YYYY-MM-DDTHH:mm:ss') };
+      const _formData = {
+        ...formData,
+        isPermanent: formData.isPermanent ? 1 : 0,
+        isSurveySms: formData.isSurveySms ? 1 : 0,
+        userId: formData.id,
+        startTime: dayjs(formData.startTime).format("YYYY-MM-DDTHH:mm:ss"),
+        expireTime: dayjs(formData.expireTime).format("YYYY-MM-DDTHH:mm:ss")
+      };
       await updateUserInfo(_formData);
     } else if (yesEditing.value && formData.isPermanent) {
-      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime:undefined, expireTime: undefined };
+      const _formData = {
+        ...formData,
+        isPermanent: formData.isPermanent ? 1 : 0,
+        isSurveySms: formData.isSurveySms ? 1 : 0,
+        userId: formData.id,
+        startTime: undefined,
+        expireTime: undefined
+      };
       await updateUserInfo(_formData);
     } else if (formData.isPermanent) {
-      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime:undefined, expireTime: undefined };
+      const _formData = {
+        ...formData,
+        isPermanent: formData.isPermanent ? 1 : 0,
+        isSurveySms: formData.isSurveySms ? 1 : 0,
+        userId: formData.id,
+        startTime: undefined,
+        expireTime: undefined
+      };
       await registerByManager(_formData);
     } else {
-      const _formData = { ...formData, isPermanent: formData.isPermanent ? 1 : 0, isSurveySms: formData.isSurveySms ? 1 : 0, userId: formData.id,startTime: dayjs(formData.startTime).format('YYYY-MM-DDTHH:mm:ss'), expireTime: dayjs(formData.expireTime).format('YYYY-MM-DDTHH:mm:ss') };
+      const _formData = {
+        ...formData,
+        isPermanent: formData.isPermanent ? 1 : 0,
+        isSurveySms: formData.isSurveySms ? 1 : 0,
+        userId: formData.id,
+        startTime: dayjs(formData.startTime).format("YYYY-MM-DDTHH:mm:ss"),
+        expireTime: dayjs(formData.expireTime).format("YYYY-MM-DDTHH:mm:ss")
+      };
       await registerByManager(_formData);
     }
   } catch (error: any) {

@@ -273,6 +273,7 @@ const handleSubmit = async () => {
     } else {
       await fileInfoAdd(obj);
     }
+    restForm();
     dialogVisible.value = false;
     ElMessage.success("文件提交成功");
     emit("refreshData");

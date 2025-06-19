@@ -205,7 +205,23 @@ const formRules = reactive<FormRules<ProjectForm>>({
 const formTitle = computed(() => {
   return mode.value === "add" ? "新增项目" : "编辑项目";
 });
-
+const initformData = () => {
+  formData.projectCode = "";
+  formData.projectName = "";
+  formData.deviceName = "";
+  formData.indication = "";
+  formData.applicant = "";
+  formData.cro = "";
+  formData.protocolNumber = "";
+  formData.stageNo = "";
+  formData.managerId = "";
+  formData.enrollCount = "";
+  formData.startTime = "";
+  formData.pmName = "";
+  formData.pmMobile = "";
+  formData.pmEmail = "";
+  formData.projectDesc = "";
+};
 // 打开弹窗（新增）
 const openAddDialog = () => {
   mode.value = "add";
@@ -224,6 +240,7 @@ const openEditDialog = (data: ProjectForm) => {
 // 重置表单
 const resetForm = () => {
   formRef.value?.resetFields();
+  initformData();
   currentId.value = "";
 };
 

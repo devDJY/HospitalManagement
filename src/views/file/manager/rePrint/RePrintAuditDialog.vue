@@ -37,6 +37,7 @@ const openDialog = data => {
   fileRePrintId.value = data.fileRePrintId;
   dialogVisible.value = true;
   auditOpinion.value = "";
+  auditStatus.value = "";
 };
 const emit = defineEmits(["refreshData"]);
 // 确认提交

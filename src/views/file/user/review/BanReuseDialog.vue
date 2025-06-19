@@ -102,6 +102,7 @@ const handleSubmit = async () => {
       reuseStatus: 0
     };
     await fileInfoApplyEditReuse(data);
+    formRef.value?.resetFields();
     emit("success", data); // 抛出成功事件
     dialogVisible.value = false;
     ElMessage.success("操作成功");

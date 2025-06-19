@@ -36,6 +36,7 @@ const openDialog = data => {
   fileId.value = data.fileId;
   dialogVisible.value = true;
   auditOpinion.value = "";
+  auditStatus.value = "";
 };
 
 // 获取可作废文件

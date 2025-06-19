@@ -141,6 +141,10 @@ const openEditDialog = data => {
 const resetForm = () => {
   formRef.value?.resetFields();
   form.menuId = [];
+  form.groupName = "";
+  form.groupDesc = "";
+  form.auditFlag = false;
+  form.displayFlag = false;
   if (menuTree.value) {
     menuTree.value.setCheckedKeys([]);
   }
