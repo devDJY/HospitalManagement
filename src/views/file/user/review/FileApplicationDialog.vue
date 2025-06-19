@@ -65,8 +65,8 @@
       <!-- 受控方式 -->
       <el-form-item label="受控方式" prop="checkType" required>
         <el-radio-group v-model="form.checkType">
-          <el-radio :value="1">线上受控</el-radio>
-          <el-radio :value="2">线下受控</el-radio>
+          <el-radio :value="0">线上受控</el-radio>
+          <el-radio :value="1">线下受控</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -120,7 +120,7 @@ const form: any = reactive({
   attachmentUrl: "",
   fileName: "",
   versionTime: "",
-  checkType: "0",
+  checkType: 0,
   reviewerId: "",
   applyReason: "",
   projectCode: ""
