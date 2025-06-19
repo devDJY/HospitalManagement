@@ -1,10 +1,10 @@
 <template>
-  <el-dialog title="禁止复用" v-model="dialogVisible" width="600px" :close-on-click-modal="false">
+  <el-dialog :title="type.value == 0 ? '申请禁止' : '申请解除禁止'" v-model="dialogVisible" width="600px" :close-on-click-modal="false">
     <div class="confirm-message">
       <el-icon :size="20" color="#F56C6C" class="icon">
         <WarningFilled />
       </el-icon>
-      <span>是否确定禁止该文件的申请复用？</span>
+      <span> 是否确定{{ type.value == 0 ? "申请禁止" : "申请解除禁止" }}该文件的复用？ </span>
     </div>
 
     <el-form :model="form" label-width="80px" :rules="rules" ref="formRef">
@@ -78,9 +78,10 @@ const rules = reactive<FormRules>({
     { min: 5, message: "备注不能少于5个字符", trigger: "blur" }
   ]
 });
-
+const type = ref(0);
 // 打开弹窗方法
-const openDialog = initialData => {
+const openDialog = (initialData, dialogType) => {
+  type.value = Number(dialogType);
   fileInfoReuseGetHistory({ fileId: initialData.fileId }).then((res: any) => {
     if (initialData) {
       Object.assign(form, initialData);
@@ -99,7 +100,7 @@ const handleSubmit = async () => {
       fileId: form.fileId,
       isManager: false,
       remark: form.remark,
-      reuseStatus: 0
+      reuseStatus: type.value
     };
     await fileInfoApplyEditReuse(data);
     formRef.value?.resetFields();

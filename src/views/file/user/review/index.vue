@@ -61,12 +61,15 @@
       <template #operation="scope">
         <el-button type="primary" link icon="Refresh" v-if="modeSwitching == '0'" @click="deleteAccount(scope.row)">撤回</el-button>
         <div v-if="modeSwitching == '1'">
-          <div v-if="scope.row.reuseApplyStatus">
-            {{ scope.row.reuseApplyStatus == 1 ? "禁止复用申请中" : "恢复复用申请中" }}
+          <div v-if="scope.row.reuseApplyStatus !== null">
+            {{ scope.row.reuseApplyStatus == 1 ? "申请禁止复用中" : "申请解除禁止复用中" }}
           </div>
-          <div v-else>
+          <div v-else-if="scope.row.reuseStatus == 0">
             <el-button type="primary" link v :icon="Refresh" @click="applicationForReuse(scope.row)">申请复用</el-button>
-            <el-button type="danger" link icon="CircleCloseFilled" @click="reuseProhibited(scope.row)">禁止复用</el-button>
+            <el-button type="danger" link icon="CircleCloseFilled" @click="reuseProhibited(scope.row, 0)">禁止复用</el-button>
+          </div>
+          <div v-else-if="scope.row.reuseStatus == 1">
+            <el-button type="danger" link icon="CircleCloseFilled" @click="reuseProhibited(scope.row, 1)">解除禁止复用</el-button>
           </div>
         </div>
         <el-button v-if="modeSwitching == '2' || modeSwitching == '3'" type="primary" link :icon="EditPen" @click="handleAdd(scope.row)"></el-button>
@@ -379,8 +382,8 @@ const handleSuccess = () => {
   proTable.value?.getTableList();
 };
 // 切换用户状态
-const reuseProhibited = async (row: User.ResUserList) => {
-  banReuseDialog.value.openDialog(row);
+const reuseProhibited = async (row, type: number) => {
+  banReuseDialog.value.openDialog(row, type);
 };
 
 // 导出用户列表
