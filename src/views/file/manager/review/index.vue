@@ -204,7 +204,7 @@ const getTableList = (params: any) => {
         render(scope) {
           const status = (scope.row as any).reuseStatus;
           const tagType = status === 1 ? "success" : "danger";
-          return <el-tag type={tagType}>{status === 1 ? "不复用" : "可复用"}</el-tag>;
+          return <el-tag type={tagType}>{status === 0 ? "不复用" : "可复用"}</el-tag>;
         }
       },
       { prop: "operation", label: "操作", fixed: "right", width: 180 }

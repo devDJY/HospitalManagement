@@ -82,7 +82,8 @@ const submitForm = async () => {
     ...form,
     isPermanent: form.isPermanent ? 1 : 0
   };
-  await updateSelfInfo(obj);
+  let data = await updateSelfInfo(obj);
+  userStore.setUserInfo(data.data);
   ElMessage.success("个人信息保存成功");
   dialogVisible.value = false;
 };

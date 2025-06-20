@@ -68,7 +68,7 @@
 import { ref, reactive, onBeforeMount } from "vue";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import { projectQueryManager } from "@/api/modules/project";
-import { fileInfoGetReuseList, fileInfoAddByReuse } from "@/api/modules/fileInfo";
+import { fileInfoGetReuseList, fileInfoAddByReuse, fileInfoReviewEditReuse } from "@/api/modules/fileInfo";
 
 // 挂载前初始化（如设置表单默认值）
 onBeforeMount(() => {
@@ -155,9 +155,10 @@ const handleSubmit = async () => {
       applyReason: form.applyReason,
       fileCount: form.fileCount,
       fileId: form.fileId,
-      reviewerId: form.reviewerId
+      reviewerId: form.reviewerId,
+      applyReuseStatus: 1
     };
-    await fileInfoAddByReuse(data);
+    await fileInfoReviewEditReuse(data);
     dialogVisible.value = false;
     ElMessage.success("申请提交成功");
   } catch (error) {
