@@ -65,6 +65,18 @@ defineExpose({
 </script>
 
 <style scoped>
+.confirm-message {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 20px;
+  color: #f56c6c;
+  background-color: #fef0f0;
+  border-radius: 4px;
+}
+.confirm-message .icon {
+  margin-right: 10px;
+}
 .dialog-footer {
   display: flex;
   justify-content: flex-end;

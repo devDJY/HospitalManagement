@@ -1,10 +1,16 @@
 <template>
-  <el-dialog title="审核" v-model="dialogVisible" width="500px" :close-on-click-modal="false">
+  <el-dialog title="审核" v-model="dialogVisible" width="60%" :close-on-click-modal="false">
+    <div class="confirm-message">
+      <el-icon :size="20" color="#F56C6C" class="icon">
+        <WarningFilled />
+      </el-icon>
+      <span> 是否同意该文件禁止申请复用？ </span>
+    </div>
     <el-form label-width="100px">
       <el-form-item label="审核状态" required>
         <el-select v-model="auditStatus" placeholder="请选择审核状态">
-          <el-option label="同意" value="1" />
-          <el-option label="拒绝" value="2" />
+          <el-option label="同意" :value="true" />
+          <el-option label="拒绝" :value="false" />
         </el-select>
       </el-form-item>
 
@@ -37,19 +43,19 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { fileControllerRePrintReview } from "@/api/modules/filecontroller";
+import { fileControllerRePrintReview, fileInfoReviewEditReuse } from "@/api/modules/filecontroller";
 import { fileInfoGetReuseList, fileInfoReuseGetHistory } from "@/api/modules/fileInfo";
 import dayjs from "dayjs";
 const dialogVisible = ref(false);
 const auditStatus = ref("");
 const auditOpinion = ref("");
 const historyRecords: any = ref([]);
-const rePrintId = ref(""); // 假设你有一个文件ID需要传递给API
-const fileRePrintId = ref("");
+const fileId = ref(""); // 假设你有一个文件ID需要传递给API
+const applyReuseStatus = ref();
 // 打开对话框方法
 const openDialog = data => {
-  rePrintId.value = data.rePrintId;
-  fileRePrintId.value = data.fileRePrintId;
+  fileId.value = data.fileId;
+  applyReuseStatus.value = data.reuseApplyStatus == 1 ? 0 : 1;
   auditOpinion.value = "";
   auditStatus.value = "";
   fileInfoReuseGetHistory({ fileId: data.fileId }).then((res: any) => {
@@ -65,12 +71,12 @@ const handleConfirm = async () => {
     return;
   }
   let obj = {
-    rePrintId: rePrintId.value,
+    applyReuseStatus: applyReuseStatus.value,
+    fileId: fileId.value,
     remark: auditOpinion.value,
-    reviewStatus: auditStatus.value,
-    fileRePrintId: fileRePrintId.value
+    approve: auditStatus.value
   };
-  await fileControllerRePrintReview(obj);
+  await fileInfoReviewEditReuse(obj);
   dialogVisible.value = false;
   emit("refreshData");
   ElMessage.success("审核提交成功");
@@ -83,6 +89,18 @@ defineExpose({
 </script>
 
 <style scoped>
+.confirm-message {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 20px;
+  color: #f56c6c;
+  background-color: #fef0f0;
+  border-radius: 4px;
+}
+.confirm-message .icon {
+  margin-right: 10px;
+}
 .dialog-footer {
   display: flex;
   justify-content: flex-end;

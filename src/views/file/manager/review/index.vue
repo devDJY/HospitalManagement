@@ -68,7 +68,7 @@
     <ImportExcel ref="dialogRef" />
     <FileReviewDialog ref="fileReviewDialog" @refreshData="handleRefresh" />
     <BanReuseDialog ref="banReuseDialog" @refresh="handleRefresh" />
-    <RePrintAuditDialog ref="RePrintAudit" @refresh="handleRefresh" />
+    <RePrintAuditDialog ref="RePrintAudit" @refreshData="handleRefresh" />
   </div>
 </template>
 

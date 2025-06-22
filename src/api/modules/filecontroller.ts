@@ -78,4 +78,8 @@ export const fileControllerRePrintQueryFile = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/fileController/rePrint/queryFile", pa, { loading: true });
 };
-
+// 文件-形式审查-通过-审批申请禁用/恢复复用
+export const fileInfoReviewEditReuse = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.post("/fileInfo/review/edit/reuse", pa, { loading: true });
+};
