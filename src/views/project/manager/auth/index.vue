@@ -63,7 +63,19 @@ const router = useRouter();
 const toDetail = () => {
   router.push(`/proTable/useProTable/detail/${Math.random().toFixed(3)}?params=detail-page`);
 };
-
+const stageNoOptions = [
+  { value: "1", label: "I期/BE" },
+  { value: "2", label: "II期" },
+  { value: "3", label: "III期" },
+  { value: "4", label: "IV期" },
+  { value: "5", label: "医疗器械" },
+  { value: "6", label: "医疗器械II类" },
+  { value: "7", label: "医疗器械III类" },
+  { value: "8", label: "体外诊断试剂II类" },
+  { value: "9", label: "体外诊断试剂III类" },
+  { value: "10", label: "IIT" },
+  { value: "11", label: "其他" }
+];
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
 
@@ -90,7 +102,13 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "projectCode", label: "项目立项号", search: { el: "input" } },
   { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
   { prop: "applicant", label: "申办方" },
-  { prop: "stageNo", label: "试验分期" },
+  {
+    prop: "stageNo",
+    label: "试验分期",
+    render: (scope: any) => {
+      return stageNoOptions.find(item => item.value == scope.row.stageNo)?.label || scope.row.stageNo;
+    }
+  },
   { prop: "enrollCount", label: "入组列数" },
   { prop: "startTime", label: " 启动日期" },
   { prop: "operation", label: "操作", fixed: "right", width: 330 }
@@ -123,7 +141,7 @@ const changeStatus = async (row: User.ResUserList) => {
 
 // 导出用户列表
 const downloadFile = async () => {
-  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload('/user/export',exportUserInfo, "用户列表", proTable.value?.searchParam));
+  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload("/user/export", exportUserInfo, "用户列表", proTable.value?.searchParam));
 };
 
 // 批量添加用户
