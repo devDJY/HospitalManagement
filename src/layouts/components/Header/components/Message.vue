@@ -1,15 +1,15 @@
 <template>
   <div class="message">
-    <el-popover placement="bottom" :width="310" trigger="click">
+    <el-popover placement="bottom" :width="400" trigger="click">
       <template #reference>
-        <el-badge :value="records.length" class="item">
+        <el-badge :value="huoqu()" class="item">
           <i :class="'iconfont icon-xiaoxi'" class="toolBar-icon"></i>
         </el-badge>
       </template>
       <el-tabs v-model="activeName" @tab-change="handleTabChange">
-        <el-tab-pane :label="'未读(' + records.length + ')'" name="first">
+        <el-tab-pane :label="`未读(${huoqu()})`" name="first">
           <ul class="infinite-list" style="overflow: auto">
-            <div class="message-list" v-for="item in records" :key="item.createTime">
+            <div class="message-list" v-for="item in records" :key="item.id">
               <div class="message-item" @click="handleRead(item)">
                 <img src="@/assets/images/msg02.png" alt="" class="message-icon" />
                 <div class="message-content">
@@ -21,10 +21,17 @@
           </ul>
         </el-tab-pane>
         <el-tab-pane label="已读" name="second">
-          <div class="message-empty">
-            <img src="@/assets/images/notData.png" alt="notData" />
-            <div>暂无消息</div>
-          </div>
+          <ul class="infinite-list" style="overflow: auto">
+            <div class="message-list" v-for="item in records" :key="item.id">
+              <div class="message-item" @click="handleRead(item)">
+                <img src="@/assets/images/msg02.png" alt="" class="message-icon" />
+                <div class="message-content">
+                  <span class="message-title">{{ item.msgContext }}</span>
+                  <span class="message-date">{{ dayjs(item.createTime).format("YYYY-MM-DD HH:mm:ss") }}</span>
+                </div>
+              </div>
+            </div>
+          </ul>
         </el-tab-pane>
       </el-tabs>
       <el-button type="text" v-if="activeName == 'first'" @click="handleReadAll"> 全部已读 </el-button>
@@ -48,6 +55,7 @@
 
 <script setup lang="ts">
 import { queryHomeNews, updateHomeNews, updateHomeNewsAll } from "@/api/modules/home";
+import { useUserStore } from "@/stores/modules/user";
 import dayjs from "dayjs";
 import { onMounted, ref } from "vue";
 
@@ -70,10 +78,13 @@ const fileName = ref("");
 const msgTitle = ref("");
 
 const getHomeNews = () => {
+  records.value = [];
   let obj = {
     msgStatus: activeName.value == "first" ? 0 : 1
   };
+
   queryHomeNews(obj).then((res: any) => {
+    console.log(res);
     records.value = res.records;
   });
 };
@@ -91,6 +102,10 @@ const handleRead = (item: any) => {
     getHomeNews();
   });
 };
+const huoqu = () => {
+  let num = activeName.value === "first" ? records.value.length : 0;
+  return num;
+};
 const handleReadAll = () => {
   let obj = {
     msgIds: [] as number[]
@@ -106,7 +121,10 @@ const handleReadAll = () => {
 onMounted(() => {
   getHomeNews();
   setInterval(() => {
-    getHomeNews();
+    const userStore = useUserStore();
+    if (userStore.token) {
+      getHomeNews();
+    }
   }, 10000);
 });
 </script>
