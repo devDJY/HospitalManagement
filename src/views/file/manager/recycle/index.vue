@@ -2,16 +2,16 @@
   <div class="table-box">
     <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
       <el-badge :value="0" class="item" v-if="modeSwitching === '0'" color="green">
-        <el-radio-button label="待审核" value="0" />
+        <el-radio-button label="待回收" value="0" />
       </el-badge>
       <template v-else>
-        <el-radio-button label="待审核" value="0" />
+        <el-radio-button label="待回收" value="0" />
       </template>
       <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
-        <el-radio-button label="通过" value="2" />
+        <el-radio-button label="已回收" value="2" />
       </el-badge>
       <template v-else>
-        <el-radio-button label="通过" value="2" />
+        <el-radio-button label="已回收" value="2" />
       </template>
       <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
         <el-radio-button label="驳回" value="1" />
@@ -147,7 +147,7 @@ const getTableList = (params: any) => {
         label: "申请时间",
         width: 125,
         render(scope) {
-          return <div>{scope.row.reviewerTime ? dayjs(scope.row.reviewerTime).format("YYYY-MM-DD") : "--"}</div>;
+          return <div>{scope.row.applyTime ? dayjs(scope.row.applyTime).format("YYYY-MM-DD") : "--"}</div>;
         }
       },
       { prop: "operation", label: "操作", fixed: "right", width: 80 }

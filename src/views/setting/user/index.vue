@@ -85,7 +85,7 @@
         </div>
       </template>
     </el-dialog>
-    <UserEditDialog ref="UserEdit" />
+    <UserEditDialog ref="UserEdit" @refreshData="refreshData" />
   </div>
 </template>
 
@@ -257,7 +257,9 @@ const getTableList = (params?: any) => {
   params.auditStatus = modeSwitching.value ? Number(modeSwitching.value) - 1 : "";
   return getUserInfoList(params);
 };
-
+const refreshData = () => {
+  proTable.value?.getTableList();
+};
 // 删除项目
 const deletePro = async (params: any) => {
   await useHandleData(deleteUserInfo, { userId: params.id }, `删除【${params.nickName}】用户（删除后无法恢复)?`);

@@ -157,7 +157,7 @@ const handleCheckChange = () => {
     console.log("选中的菜单:", form.menuId);
   }
 };
-
+const emit = defineEmits(["refreshData"]);
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -174,6 +174,7 @@ const handleSubmit = async () => {
     }
     dialogVisible.value = false;
     ElMessage.success(`${dialogTitle.value}成功`);
+    emit("refreshData");
     // 可以emit事件通知父组件
     // emit('success', form)
   } catch (error) {

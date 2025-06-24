@@ -44,7 +44,7 @@
         <el-button type="danger" v-if="modeSwitching == '1'" link :icon="Delete" @click="deletePro(scope.row)">删除</el-button>
       </template>
     </ProTable>
-    <PermissionGroupDialog ref="permissionDialog" />
+    <PermissionGroupDialog ref="permissionDialog" @refreshData="refreshData" />
     <MemberAuthorizationDialog ref="memberDialog" />
   </div>
 </template>
@@ -93,7 +93,9 @@ const modeSwitching = ref("1");
 const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
   return <div>{scope.column.label}</div>;
 };
-
+const refreshData = () => {
+  proTable.value?.getTableList();
+};
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "groupName", label: "权限组", search: { el: "input", tooltip: "" } },

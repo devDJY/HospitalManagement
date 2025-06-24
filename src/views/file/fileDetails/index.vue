@@ -122,15 +122,15 @@
         <div style="width: 100%; margin-top: 40px">
           <el-pagination
             style="width: 100px; margin: 0 auto; text-align: center"
-            v-if="fileControlData.attachmentUrl && fileControlData.attachmentUrl.length > 1 && isPreview"
+            v-if="fileData.attachmentUrl && fileData.attachmentUrl.length > 1 && isPreview"
             :current-page="currentPage"
             :page-size="1"
-            :total="fileControlData.attachmentUrl.length"
+            :total="fileData.attachmentUrl.length"
             layout="prev, pager, next"
             :pager-count="5"
             @current-change="handleCurrentChange"
           />
-          <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileControlData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
+          <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
         </div>
       </el-card>
     </div>
@@ -141,7 +141,7 @@
 import { ref, onMounted } from "vue";
 import { ArrowLeftBold } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
-import { fileInfoReviewControlAttachmentManager, fileInfoReviewControlAttachment } from "@/api/modules/fileInfo";
+import { fileInfoReviewControlAttachmentManager, fileInfoReviewControlAttachment, fileInfoReviewOriginalAttachment } from "@/api/modules/fileInfo";
 const fileData = ref();
 const fileControlData = ref();
 const type = ref();
@@ -174,9 +174,9 @@ onMounted(() => {
   // fileId.value = 26;
   type.value = route.query.type;
   console.log(type.value);
-  // fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
-  //   fileData.value = res.data;
-  // });
+  fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
+    fileData.value = res.data;
+  });
   if (type.value == 2) {
     if (isManager.value == 1) {
       // 是管理
@@ -194,7 +194,7 @@ onMounted(() => {
     } else {
       fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
         fileControlData.value = res.data;
-        fileControlData.attachmentUrl = res.data.attachmentUrl
+        fileControlData.value.attachmentUrl = res.data.attachmentUrl;
       });
     }
   }

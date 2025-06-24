@@ -163,7 +163,8 @@ const getTableList = (params: any) => {
       { prop: "printCount", label: "重新打印份数", width: 115 },
       { prop: "applyUserName", label: "申请人", width: 85 },
       { prop: "applyRemark", label: "申请说明", width: 115 },
-      { prop: "applyTime", label: "申请日期", width: 85 }
+      { prop: "reviewRemark", label: "审核意见", width: 85 },
+      { prop: "reviewerTime", label: "审核日期", width: 85 }
     );
   } else if (modeSwitching.value == "1") {
     columns.splice(

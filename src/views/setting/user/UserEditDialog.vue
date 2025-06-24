@@ -191,7 +191,7 @@ const handleUnitConfirm = unitData => {
   console.log("新增的单位信息:", unitData);
   // 这里可以处理提交逻辑
 };
-
+const emit = defineEmits(["refreshData"]);
 const handleSubmit = async () => {
   await formRef.value.validate();
   try {
@@ -236,6 +236,7 @@ const handleSubmit = async () => {
       };
       await registerByManager(_formData);
     }
+    emit("refreshData");
   } catch (error: any) {
     ElMessage.error(error.message ?? "操作失败");
     return;

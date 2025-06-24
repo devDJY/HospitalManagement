@@ -278,7 +278,14 @@ const getTableList = (params: any) => {
         width: 90
       },
       { prop: "fileCount", label: "份数", width: 85 },
-      { prop: "fileStatus", label: "受控方式", width: 105 },
+      {
+        prop: "fileStatus",
+        label: "受控方式",
+        width: 105,
+        render(scope) {
+          return <div>{(scope.row as any).checkType === 0 ? "线上受控" : "线下受控"}</div>;
+        }
+      },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "reviewRemark", label: "审查意见", width: 115 },
       {
