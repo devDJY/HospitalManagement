@@ -118,6 +118,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       {
         prop: "attachmentUrl2",
         label: "受控文件",
@@ -164,6 +166,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       {
         prop: "attachmentUrl2",
         label: "受控文件",
@@ -203,6 +207,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       {
         prop: "attachmentUrl2",
         label: "受控文件",
@@ -241,11 +247,14 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "idCard", label: "文件编码", width: 85, search: { el: "input" } },
   { prop: "idCard", label: "文件名" },
   { prop: "idCard", label: "源文件" },
+  { prop: "fileVersion", label: "版本号" },
+  { prop: "versionTime", label: "版本日期", width: 125 },
   {
     prop: "attachmentUrl2",
     label: "受控文件",
     width: 90
   },
+
   { prop: "address", label: "文件受控编码", width: 115 },
   { prop: "address", label: "重新打印份数", width: 115 },
   { prop: "address", label: "申请人", width: 85 },

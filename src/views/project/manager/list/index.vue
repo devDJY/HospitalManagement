@@ -83,6 +83,7 @@ import { deleteUser, resetUserPassWord } from "@/api/modules/user";
 import { projectList, projectLock, projectDelete, projectMoveAuthUserQuery, projectQueryManager, projectAdd, projectUpdate } from "@/api/modules/project";
 import { Search, Delete, Edit, Plus, RemoveFilled } from "@element-plus/icons-vue";
 import router from "@/routers";
+import { tr } from "element-plus/es/locale";
 const lockDialog = ref(false);
 const remark = ref("");
 const handleClose = () => {
@@ -148,7 +149,7 @@ const tableRowClassName = ({ rowIndex }: { row: User.ResUserList; rowIndex: numb
 // 单击行
 const rowClick = (row: User.ResUserList, column: TableColumnCtx<User.ResUserList>) => {
   if (column.property == "radio" || column.property == "operation") return;
-  ElMessage.success("当前行被点击了！");
+  projectFormDialog.value.openEditDialog(row, true);
 };
 watch(
   () => modeSwitching.value,

@@ -4,12 +4,12 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="项目立项号" prop="projectCode">
-            <el-input v-model="formData.projectCode" placeholder="请输入（请与CTMS系统立项号一致）" clearable />
+            <el-input :disabled="details" v-model="formData.projectCode" placeholder="请输入（请与CTMS系统立项号一致）" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="项目名称" prop="projectName">
-            <el-input v-model="formData.projectName" placeholder="请输入" clearable />
+            <el-input :disabled="details" v-model="formData.projectName" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
       </el-row>
@@ -17,12 +17,12 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="药物/器械名称">
-            <el-input v-model="formData.deviceName" placeholder="请输入" clearable />
+            <el-input :disabled="details" v-model="formData.deviceName" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="适应症">
-            <el-input v-model="formData.indication" placeholder="请输入" clearable />
+            <el-input :disabled="details" v-model="formData.indication" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
       </el-row>
@@ -30,12 +30,12 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="申办方" prop="applicant">
-            <el-input v-model="formData.applicant" placeholder="请输入" clearable />
+            <el-input :disabled="details" v-model="formData.applicant" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="CRO">
-            <el-input v-model="formData.cro" placeholder="请输入" clearable />
+            <el-input :disabled="details" v-model="formData.cro" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
       </el-row>
@@ -43,12 +43,12 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="方案编号">
-            <el-input v-model="formData.protocolNumber" placeholder="请输入" clearable />
+            <el-input :disabled="details" v-model="formData.protocolNumber" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="试验/研究分期" prop="stageNo">
-            <el-select v-model="formData.stageNo" placeholder="请选择" style="width: 100%" clearable>
+            <el-select :disabled="details" v-model="formData.stageNo" placeholder="请选择" style="width: 100%" clearable>
               <el-option v-for="item in stageNoOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -58,14 +58,14 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="文件审查员" prop="managerId">
-            <el-select v-model="formData.managerId" placeholder="请选择" style="width: 100%" clearable>
+            <el-select :disabled="details" v-model="formData.managerId" placeholder="请选择" style="width: 100%" clearable>
               <el-option v-for="user in userOptions" :key="user.userId" :label="user.nickName" :value="user.userId" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="入组例数" prop="enrollCount">
-            <el-input v-model="formData.enrollCount" placeholder="请输入（本中心入组例数）" clearable type="number" />
+            <el-input :disabled="details" v-model="formData.enrollCount" placeholder="请输入（本中心入组例数）" clearable type="number" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -73,12 +73,12 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="启动日期" prop="startTime">
-            <el-date-picker v-model="formData.startTime" type="date" placeholder="请选择" style="width: 100%" />
+            <el-date-picker :disabled="details" v-model="formData.startTime" type="date" placeholder="请选择" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="PM姓名" prop="pmName">
-            <el-input v-model="formData.pmName" placeholder="请输入" clearable />
+            <el-input :disabled="details" v-model="formData.pmName" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
       </el-row>
@@ -86,18 +86,18 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="PM手机" prop="pmMobile">
-            <el-input v-model="formData.pmMobile" placeholder="请输入" clearable />
+            <el-input :disabled="details" v-model="formData.pmMobile" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="PM邮箱" prop="pmEmail">
-            <el-input v-model="formData.pmEmail" placeholder="请输入" clearable />
+            <el-input :disabled="details" v-model="formData.pmEmail" placeholder="请输入" clearable />
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-form-item label="试验介绍">
-        <el-input v-model="formData.projectDesc" type="textarea" :rows="4" placeholder="请输入" />
+        <el-input :disabled="details" v-model="formData.projectDesc" type="textarea" :rows="4" placeholder="请输入" />
       </el-form-item>
     </el-form>
 
@@ -145,7 +145,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "submit", data: ProjectForm): void;
 }>();
-
+const details = ref(false);
 const visible = ref(false);
 const formRef = ref<FormInstance>();
 const mode = ref<"add" | "edit">("add");
@@ -203,6 +203,9 @@ const formRules = reactive<FormRules<ProjectForm>>({
 });
 
 const formTitle = computed(() => {
+  if (details.value) {
+    return "项目详情";
+  }
   return mode.value === "add" ? "新增项目" : "编辑项目";
 });
 const initFormData = () => {
@@ -228,9 +231,9 @@ const openAddDialog = () => {
   resetForm();
   visible.value = true;
 };
-
 // 打开弹窗（编辑）
-const openEditDialog = (data: ProjectForm) => {
+const openEditDialog = (data: ProjectForm, bl: boolean = false) => {
+  details.value = bl;
   mode.value = "edit";
   resetForm();
   Object.assign(formData, data);

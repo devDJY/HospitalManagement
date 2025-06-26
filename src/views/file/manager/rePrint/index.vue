@@ -116,6 +116,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       {
         prop: "attachmentUrl2",
         label: "受控文件",
@@ -147,6 +149,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       {
         prop: "attachmentUrl2",
         label: "受控文件",
@@ -178,6 +182,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       {
         prop: "attachmentUrl2",
         label: "受控文件",

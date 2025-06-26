@@ -156,6 +156,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       { prop: "fileCount", label: "份数", width: 85 },
       {
         prop: "checkType",
@@ -205,6 +207,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       { prop: "fileCount", label: "份数", width: 85 },
       {
         prop: "fileStatus",
@@ -253,6 +257,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       { prop: "fileCount", label: "份数", width: 85 },
       {
         prop: "fileStatus",
@@ -277,6 +283,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       { prop: "fileCount", label: "份数", width: 85 },
       {
         prop: "fileStatus",
@@ -310,6 +318,8 @@ const getTableList = (params: any) => {
         label: "源文件",
         width: 90
       },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       { prop: "fileCount", label: "份数", width: 85 },
       {
         prop: "applyTime",
@@ -357,6 +367,8 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
     label: "源文件",
     width: 90
   },
+  { prop: "fileVersion", label: "版本号" },
+  { prop: "versionTime", label: "版本日期", width: 125 },
   { prop: "fileCount", label: "份数", width: 85 },
   { prop: "applyTime", label: "申请日期", width: 85 },
   {
