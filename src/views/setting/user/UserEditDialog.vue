@@ -38,7 +38,7 @@
 
       <el-form-item label="单位名称" prop="companyNo">
         <el-select v-model="formData.companyNo" filterable remote reserve-keyword placeholder="请输入开始查询单位名称" :remote-method="remoteMethod" :loading="loading">
-          <el-option v-for="item in options" :key="item.value + 's'" :label="item.companyName" :value="item.id" />
+          <el-option v-for="item in options" :key="item.companyName" :label="item.companyName" :value="item.id" />
           <template #loading>
             <svg class="circular" viewBox="0 0 50 50">
               <circle class="path" cx="25" cy="25" r="20" fill="none" />
@@ -53,7 +53,7 @@
 
       <el-form-item label="权限组" prop="permissionGroupId">
         <el-select v-model="formData.permissionGroupId" placeholder="请选择">
-          <el-option :value="item.value" v-for="item in groupNameArr" :label="item.label" :key="item.value + 'c'"></el-option>
+          <el-option :value="item.value" v-for="item in groupNameArr" :label="item.groupName" :key="item.groupName"></el-option>
         </el-select>
       </el-form-item>
 
@@ -102,7 +102,7 @@ const rules = {
   expireTime: [{ required: true, message: "请选择结束有效期", trigger: "change" }],
   companyType: [{ required: true, message: "请选择单位类型", trigger: "change" }]
 };
-const groupNameArr = ref([]);
+const groupNameArr = ref();
 const visible = ref(false);
 const options = ref();
 const formRef = ref();
@@ -138,7 +138,7 @@ onMounted(() => {
     authGroupgetRegisterGroups({}).then((res: any) => {
       groupNameArr.value = res.data.map(item => {
         return {
-          label: item.groupName,
+          groupName: item.groupName,
           value: String(item.id)
         };
       });
