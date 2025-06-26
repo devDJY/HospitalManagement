@@ -38,7 +38,7 @@
 
       <el-form-item label="单位名称" prop="companyNo">
         <el-select v-model="formData.companyNo" filterable remote reserve-keyword placeholder="请输入开始查询单位名称" :remote-method="remoteMethod" :loading="loading">
-          <el-option v-for="item in options" :key="item.value" :label="item.companyName" :value="item.id" />
+          <el-option v-for="item in options" :key="item.value + 's'" :label="item.companyName" :value="item.id" />
           <template #loading>
             <svg class="circular" viewBox="0 0 50 50">
               <circle class="path" cx="25" cy="25" r="20" fill="none" />
