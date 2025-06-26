@@ -53,7 +53,7 @@
 
       <el-form-item label="权限组" prop="permissionGroupId">
         <el-select v-model="formData.permissionGroupId" placeholder="请选择">
-          <el-option :value="item.value" v-for="item in groupNameArr" :label="item.label" :key="item.value"></el-option>
+          <el-option :value="item.value" v-for="item in groupNameArr" :label="item.label" :key="item.value + 'c'"></el-option>
         </el-select>
       </el-form-item>
 
