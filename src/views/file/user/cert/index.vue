@@ -87,8 +87,8 @@
 </template>
 
 <script setup lang="tsx" name="useProTable">
-import { ref, reactive, watch } from "vue";
-import { RouterLink, useRouter } from "vue-router";
+import { ref, reactive, watch, onMounted } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
@@ -344,7 +344,10 @@ const getTableList = (params: any) => {
       return fileControllerWaitList(params);
   }
 };
-
+onMounted(() => {
+  const route = useRoute();
+  modeSwitching.value = String(route.query.step || "0");
+});
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "selection", fixed: "left", width: 70 },

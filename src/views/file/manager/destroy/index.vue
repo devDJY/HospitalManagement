@@ -54,8 +54,8 @@
 </template>
 
 <script setup lang="tsx" name="useProTable">
-import { ref, reactive, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, reactive, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
@@ -88,7 +88,10 @@ const proTable = ref<ProTableInstance>();
 
 // 如果表格需要初始化请求参数，直接定义传给 ProTable (之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
 const initParam = reactive({ type: 1 });
-
+onMounted(() => {
+  const route = useRoute();
+  modeSwitching.value = String(route.query.step || "0");
+});
 watch(
   () => modeSwitching.value,
   () => {
@@ -160,6 +163,8 @@ const getTableList = (params: any) => {
       { prop: "pageTotal", label: "文件页数", width: 85 },
       { prop: "applyUserName", label: "回收原因", width: 125 },
       { prop: "applyRemark", label: "回收说明", width: 125 },
+      { prop: "fileVersion", label: "版本号" },
+      { prop: "versionTime", label: "版本日期", width: 125 },
       {
         prop: "applyTime",
         label: "附件",

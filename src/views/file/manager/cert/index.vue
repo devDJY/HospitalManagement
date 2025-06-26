@@ -90,8 +90,8 @@
 </template>
 
 <script setup lang="tsx" name="useProTable">
-import { ref, reactive, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, reactive, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
@@ -123,7 +123,10 @@ const lockDialog = ref(false);
 const remark = ref("");
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
-
+onMounted(() => {
+  const route = useRoute();
+  modeSwitching.value = String(route.query.step || "0");
+});
 // 如果表格需要初始化请求参数，直接定义传给 ProTable (之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
 const initParam = reactive({ type: 1 });
 const goToDetails = (scope, type: number) => {

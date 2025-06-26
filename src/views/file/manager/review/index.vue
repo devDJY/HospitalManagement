@@ -73,8 +73,8 @@
 </template>
 
 <script setup lang="tsx" name="useProTable">
-import { ref, reactive, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, reactive, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
@@ -118,6 +118,10 @@ const liftingTheProhibitionOnReuse = (params: any) => {
   // 传入文件ID
   banReuseDialog.value?.open(params.fileId, 2); // file123是示例文件ID
 };
+onMounted(() => {
+  const route = useRoute();
+  modeSwitching.value = String(route.query.step || "0");
+});
 watch(
   () => modeSwitching.value,
   () => {

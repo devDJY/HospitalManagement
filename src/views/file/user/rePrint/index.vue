@@ -61,8 +61,8 @@
 </template>
 
 <script setup lang="tsx" name="useProTable">
-import { ref, reactive, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, reactive, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
@@ -102,6 +102,10 @@ watch(
     proTable.value?.getTableList();
   }
 );
+onMounted(() => {
+  const route = useRoute();
+  modeSwitching.value = String(route.query.step || "0");
+});
 // 如果你想在请求之前对当前请求参数做一些操作，可以自定义如下函数：params 为当前所有的请求参数（包括分页），最后返回请求列表接口
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
 const getTableList = (params: any) => {
@@ -208,6 +212,7 @@ const getTableList = (params: any) => {
         }
       },
       { prop: "printCount", label: "重新打印份数", width: 115 },
+      { prop: "applyRemark", label: "申请说明", width: 115 },
       { prop: "reviewerName", label: "审核人", width: 115 },
       { prop: "reviewRemark", label: "审核意见", width: 115 },
       {

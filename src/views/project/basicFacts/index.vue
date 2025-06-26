@@ -40,7 +40,10 @@
       </div>
       <div v-if="isManager == '1'">
         <div class="card mb-10">
-          <div class="title">文件申请</div>
+          <div class="flex" style="width: 100%">
+            <div class="title">文件申请</div>
+            <el-button type="primary" text size="small" @click="handleMore(1)">更多>></el-button>
+          </div>
           <el-table :data="listdata.fileApplyList" border style="width: 100%">
             <el-table-column prop="fileName" label="文件名" />
             <el-table-column prop="pageTotal" label="页数" />
@@ -51,7 +54,10 @@
           </el-table>
         </div>
         <div class="card mb-10">
-          <div class="title">文件受控</div>
+          <div class="flex" style="width: 100%">
+            <div class="title">文件受控</div>
+            <el-button type="primary" text size="small" @click="handleMore(2)">更多>></el-button>
+          </div>
           <el-table border :data="listdata.fileCertList" style="width: 100%">
             <el-table-column prop="fileCode" label="文件编码" />
             <el-table-column prop="fileName" label="文件名" />
@@ -63,7 +69,10 @@
           </el-table>
         </div>
         <div class="card mb-10">
-          <div class="title">回收申请</div>
+          <div class="flex" style="width: 100%">
+            <div class="title">回收申请</div>
+            <el-button type="primary" text size="small" @click="handleMore(3)">更多>></el-button>
+          </div>
           <el-table border :data="listdata.fileRecycleList" style="width: 100%">
             <el-table-column prop="fileCode" label="文件编码" />
             <el-table-column prop="fileName" label="文件名" />
@@ -74,7 +83,10 @@
           </el-table>
         </div>
         <div class="card mb-10">
-          <div class="title">遗失申报</div>
+          <div class="flex" style="width: 100%">
+            <div class="title">遗失申报</div>
+            <el-button type="primary" text size="small" @click="handleMore(4)">更多>></el-button>
+          </div>
           <el-table border :data="listdata.fileLoseList" style="width: 100%">
             <el-table-column prop="fileCode" label="文件编码" />
             <el-table-column prop="fileName" label="文件名" />
@@ -98,7 +110,10 @@
         </div> -->
       </div>
       <div class="card mb-10" v-if="isManager == '2'">
-        <div class="title">文件打印</div>
+        <div class="flex" style="width: 100%">
+          <div class="title">文件打印</div>
+          <el-button type="primary" text size="small" @click="handleMore(1)">更多>></el-button>
+        </div>
         <el-table border :data="listdata.filePrintList" style="width: 100%">
           <el-table-column prop="fileCode" label="文件编码" />
           <el-table-column prop="fileName" label="文件名" />
@@ -113,7 +128,10 @@
         </el-table>
       </div>
       <div class="card mb-10" v-if="isManager == '2'">
-        <div class="title">文件使用</div>
+        <div class="flex" style="width: 100%">
+          <div class="title">文件使用</div>
+          <el-button type="primary" text size="small" @click="handleMore(2)">更多>></el-button>
+        </div>
         <el-table border :data="listdata.fileUsedList" style="width: 100%">
           <el-table-column prop="fileCode" label="文件编码" />
           <el-table-column prop="fileName" label="文件名" />
@@ -165,6 +183,7 @@ import { getHomeInfoForManager, getHomeNews, overviewById, overviewByIdForManage
 import { useUserStore } from "@/stores/modules/user";
 import { useRoute } from "vue-router";
 import dayjs from "dayjs";
+import router from "@/routers";
 const userStore = useUserStore();
 const route = useRoute();
 const { projectId, isManager } = route.query;
@@ -193,6 +212,55 @@ const getHomelist = async () => {
 const formatDate = (date: string) => {
   return dayjs(date).format("YYYY-MM-DD");
 };
+const handleMore = (type: number) => {
+  if (isManager == "1") {
+    switch (type) {
+      case 1:
+        router.push({
+          path: "/file/manager/review",
+          query: { step: 0 }
+        });
+        break;
+      case 2:
+        router.push({
+          path: "/file/manager/cert",
+          query: { step: 1 }
+        });
+        break;
+      case 3:
+        router.push({
+          path: "/file/manager/recycle",
+          query: { step: 0 }
+        });
+        break;
+      case 4:
+        router.push({
+          path: "/file/manager/lose",
+          query: { step: 0 }
+        });
+        break;
+      default:
+        break;
+    }
+  } else {
+    switch (type) {
+      case 1:
+        router.push({
+          path: "/file/user/cert",
+          query: { step: 2 }
+        });
+        break;
+      case 2:
+        router.push({
+          path: "/file/user/cert",
+          query: { step: 3 }
+        });
+        break;
+      default:
+        break;
+    }
+  }
+};
 // 组件挂载时调用
 onMounted(() => {
   // fetchData();
@@ -218,7 +286,6 @@ onMounted(() => {
   font-weight: bold;
 }
 .title {
-  width: 100%;
   font-size: 16px;
 }
 .flex {

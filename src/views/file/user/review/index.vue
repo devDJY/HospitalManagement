@@ -85,8 +85,8 @@
 </template>
 
 <script setup lang="tsx" name="useProTable">
-import { ref, reactive, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, reactive, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { User } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
@@ -357,6 +357,10 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 const refreshData = () => {
   proTable.value?.getTableList();
 };
+onMounted(() => {
+  const route = useRoute();
+  modeSwitching.value = String(route.query.step || "0");
+});
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "projectName", label: "项目名称", width: 85, search: { el: "input" } },
