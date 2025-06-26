@@ -114,6 +114,7 @@
 import { ref, reactive, computed } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { ElMessage } from "element-plus";
+import { projectGetInfoById } from "@/api/modules/project";
 
 interface ProjectForm {
   projectCode: string;
@@ -232,11 +233,14 @@ const openAddDialog = () => {
   visible.value = true;
 };
 // 打开弹窗（编辑）
-const openEditDialog = (data: ProjectForm, bl: boolean = false) => {
+const openEditDialog = (data, bl: boolean = false) => {
   details.value = bl;
   mode.value = "edit";
   resetForm();
-  Object.assign(formData, data);
+  projectGetInfoById({ projectId: data.projectId }).then((res: any) => {
+    Object.assign(formData, res.data);
+    formData.stageNo = formData.stageNo + "";
+  });
   visible.value = true;
 };
 

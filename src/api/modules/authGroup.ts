@@ -51,3 +51,7 @@ export const authGroupUpdateGroupInfo = params => {
 export const authGroupgroupMenu = params => {
   return http.get("/authGroup/groupMenu/list", params, { loading: true });
 };
+//注册页面获取申请角色列表
+export const authGroupgetRegisterGroups = params => {
+  return http.get("/authGroup/getRegisterGroups", params, { loading: true });
+};

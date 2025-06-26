@@ -64,3 +64,8 @@ export const projectMoveAuthMove = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.post("/project/moveAuth/move", pa, { loading: true });
 };
+//项目-项目详情
+export const projectGetInfoById = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/project/getInfoById", pa, { loading: true });
+};

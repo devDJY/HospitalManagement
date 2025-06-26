@@ -53,10 +53,7 @@
 
       <el-form-item label="权限组" prop="permissionGroupId">
         <el-select v-model="formData.permissionGroupId" placeholder="请选择">
-          <el-option label="CRC" :value="1" />
-          <el-option label="CRA" :value="2" />
-          <el-option label="机构办秘书" :value="3" />
-          <el-option label="机构办质控员" :value="4" />
+          <el-option :value="item.value" v-for="item in groupNameArr" :label="item.label" :key="item.value"></el-option>
         </el-select>
       </el-form-item>
 
@@ -83,12 +80,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import { ElMessage } from "element-plus";
 import { getRegisterGroups, companyInfoList, getVerifyCode, register } from "@/api/modules/register";
 import AddUnitDialog from "./AddUnitDialog.vue";
 import { registerByManager, updateUserInfo } from "@/api/modules/user";
-import { authGroupMenuList } from "@/api/modules/authGroup";
+import { authGroupMenuList, authGroupgetRegisterGroups } from "@/api/modules/authGroup";
 import dayjs from "dayjs";
 
 const rules = {
@@ -105,6 +102,7 @@ const rules = {
   expireTime: [{ required: true, message: "请选择结束有效期", trigger: "change" }],
   companyType: [{ required: true, message: "请选择单位类型", trigger: "change" }]
 };
+const groupNameArr = ref([]);
 const visible = ref(false);
 const options = ref();
 const formRef = ref();
@@ -134,6 +132,17 @@ onMounted(() => {
   companyInfoList({}).then(res => {
     companyInfos.value = res.data;
   });
+  companyInfoList({}).then((res: any) => {
+    options.value = res.data;
+  }),
+    authGroupgetRegisterGroups({}).then((res: any) => {
+      groupNameArr.value = res.data.map(item => {
+        return {
+          label: item.groupName,
+          value: String(item.id)
+        };
+      });
+    });
   // authGroupMenuList({}).then(res => {});
   // list.value = states.map(item => {
   //   return { value: `value:${item}`, label: `label:${item}` };
@@ -182,7 +191,10 @@ const open = userData => {
   if (userData) {
     title.value = "编辑用户";
     yesEditing.value = true;
-    Object.assign(formData, userData);
+    nextTick(() => {
+      Object.assign(formData, userData);
+      formData.permissionGroupId = String(userData.permissionGroupId);
+    });
   }
   visible.value = true;
 };
