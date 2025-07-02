@@ -14,6 +14,7 @@ export const useTable = (
   initParam: object = {},
   isPageable: boolean = true,
   dataCallBack?: (data: any) => any,
+  total?: (data: any) => any,
   requestError?: (error: any) => void
 ) => {
   const state = reactive<Table.StateProps>({
@@ -66,6 +67,7 @@ export const useTable = (
       // 解构后台返回的分页数据 (如果有分页更新分页信息)
       if (isPageable) {
         state.pageable.total = data.total;
+        total && total(data.total);
       }
     } catch (error) {
       requestError && requestError(error);

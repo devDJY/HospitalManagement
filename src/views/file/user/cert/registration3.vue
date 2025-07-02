@@ -82,7 +82,7 @@
           <el-option label="其他" value="其他" />
         </el-select>
         <div class="dialog-footer" style="margin-top: 20px; text-align: right">
-          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button @click="dialogVisiblerecycleReason = false">取消</el-button>
           <el-button type="primary" @click="confirmReason(1)">确定</el-button>
           <el-button @click="batchFill(1)">批量填写</el-button>
         </div>
@@ -96,7 +96,7 @@
         </div>
         <el-input v-model="instructions" type="textarea" :rows="4" placeholder="请输入回收说明..." resize="none" class="instructions-input" />
         <div class="dialog-footer" style="margin-top: 20px; text-align: right">
-          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button @click="dialogVisibleinstructions = false">取消</el-button>
           <el-button type="primary" @click="confirmReason(2)">确定</el-button>
           <el-button @click="batchFill(2)">批量填写</el-button>
         </div>
@@ -148,6 +148,7 @@ const openDialog = data => {
     fileCode: data.fileCode || "",
     fileName: data.attachmentName || "" // 注意字段名对应
   });
+  dialogVisiblerecycleReason.value = false;
   fileControllerPrintCertGetWaitFile({ filePrintId: data.filePrintId }).then(res => {
     fileList.value = res.data;
   });
@@ -328,9 +329,9 @@ defineExpose({
   }
 }
 .reason-header {
+  margin-bottom: 10px;
   font-size: 14px;
   color: #606266;
-  margin-bottom: 10px;
 }
 .file-item {
   display: flex;
@@ -338,8 +339,8 @@ defineExpose({
   align-items: center;
 }
 .required-mark {
-  color: #f56c6c;
   margin-right: 4px;
+  color: #f56c6c;
 }
 .remaining-text {
   float: right;

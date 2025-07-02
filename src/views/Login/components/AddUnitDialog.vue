@@ -1,11 +1,5 @@
 <template>
-  <el-dialog
-    title="新增单位信息"
-    :model-value="visible"
-    @update:model-value="$emit('update:visible', $event)"
-    width="500px"
-    class="add-unit-dialog"
-  >
+  <el-dialog title="新增单位信息" :model-value="visible" @update:model-value="$emit('update:visible', $event)" width="500px" class="add-unit-dialog">
     <el-form :model="form" :rules="rules" ref="formRef" label-width="150px">
       <el-form-item label="单位名称：" prop="unitName">
         <el-input v-model="form.unitName" placeholder="请输入..." clearable />
@@ -33,7 +27,7 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
-import { registerCompany } from '@/api/modules/register'
+import { registerCompany } from "@/api/modules/register";
 
 defineProps({
   visible: Boolean
@@ -76,7 +70,7 @@ const handleConfirm = async () => {
     const res = await registerCompany({
       companyCode: form.creditCode,
       companyName: form.unitName
-    })
+    });
     if (res.code === 200) {
       emit("confirm", { ...form });
       emit("update:visible", false);

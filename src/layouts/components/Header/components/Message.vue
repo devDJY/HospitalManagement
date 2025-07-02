@@ -84,7 +84,6 @@ const getHomeNews = () => {
   };
 
   queryHomeNews(obj).then((res: any) => {
-    console.log(res);
     records.value = res.records;
   });
 };

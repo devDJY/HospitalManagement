@@ -149,7 +149,7 @@ const handlePageChange = (page: number) => {
   jumpPage.value = page;
   initList();
 };
-
+const emit = defineEmits(["refreshData"]);
 // 提交转移
 const handleSubmit = async () => {
   if (selectedRow.value.length === 0) {
@@ -167,6 +167,7 @@ const handleSubmit = async () => {
     remark: transferReason.value
   };
   await projectMoveAuthMove(obj);
+  emit("refreshData");
   ElMessage.success("权限转移成功");
   visible.value = false;
 };

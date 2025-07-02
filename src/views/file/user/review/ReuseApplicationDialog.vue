@@ -158,7 +158,7 @@ const handleSubmit = async () => {
       reviewerId: form.reviewerId,
       applyReuseStatus: 1
     };
-    await fileInfoReviewEditReuse(data);
+    await fileInfoAddByReuse(data);
     dialogVisible.value = false;
     ElMessage.success("申请提交成功");
   } catch (error) {

@@ -157,17 +157,17 @@ const generateFileCode = () => {
 };
 const restForm = () => {
   form.projectCode = "";
-  form.projectId = "";
+  form.projectId = null;
   form.fileCode = "";
   form.file = null;
+  form.reviewerId = null;
   form.fileVersion = "";
   form.fileCount = 1;
   form.attachmentId = "";
   form.attachmentUrl = "";
   form.fileName = "";
   form.versionTime = "";
-  form.checkType = "";
-  form.reviewerId = "";
+  form.checkType = 0;
   form.applyReason = "";
   fileList.value = [];
 };
@@ -242,6 +242,12 @@ const openDialog = async (initialData: any) => {
         uid: Date.now() // 唯一标识（可选但推荐）
       }
     ];
+    fileInfoAddGetReviewerList({ projectId: initialData.projectId }).then((response: any) => {
+      reviewerOptions.value = response.data.map((item: any) => ({
+        value: item.userId,
+        label: item.nickName
+      }));
+    });
     form.file = "112121";
     initialData.fileName = initialData.attachmentName;
     Object.assign(form, initialData);

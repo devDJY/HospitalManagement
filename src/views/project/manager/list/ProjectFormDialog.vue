@@ -58,7 +58,7 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="文件审查员" prop="managerId">
-            <el-select :disabled="details" v-model="formData.managerId" placeholder="请选择" style="width: 100%" clearable>
+            <el-select :disabled="details || mode == 'edit'" v-model="formData.managerId" placeholder="请选择" style="width: 100%" clearable>
               <el-option v-for="user in userOptions" :key="user.userId" :label="user.nickName" :value="user.userId" />
             </el-select>
           </el-form-item>

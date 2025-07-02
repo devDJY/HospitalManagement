@@ -54,7 +54,7 @@ const openQichacha = () => {
 };
 
 const handleCancel = () => {
-  this.resetForm();
+  formRef.value.resetFields();
   emit("update:visible", false);
 };
 // 重置表单方法
@@ -73,6 +73,7 @@ const handleConfirm = async () => {
     if (res.code === 200) {
       emit("confirm", { ...form });
       emit("update:visible", false);
+      formRef.value.resetFields();
       ElMessage.success("单位信息添加成功");
       formRef.value.resetFields();
     } else {
