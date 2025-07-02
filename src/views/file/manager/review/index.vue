@@ -189,7 +189,7 @@ const getTableList = (params: any) => {
         label: "受控方式",
         width: 85,
         render(scope) {
-          const status = (scope.row as any).reuseStatus;
+          const status = (scope.row as any).checkType;
           const tagType = status === 1 ? "success" : "danger";
           return <el-tag type={tagType}>{status === 0 ? "线上" : "线下"}</el-tag>;
         }

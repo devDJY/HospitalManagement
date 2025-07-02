@@ -1,38 +1,38 @@
 <template>
   <div class="table-box">
     <el-radio-group v-model="modeSwitching" size="large" style="margin-bottom: 10px">
-      <el-badge :value="0" class="item" v-if="modeSwitching === '1'" color="green">
+      <el-badge :value="total" class="item" v-if="modeSwitching === '1'" color="green">
         <el-radio-button label="受控中" value="1" />
       </el-badge>
       <template v-else>
         <el-radio-button label="受控中" value="1" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '2'" color="green">
+      <el-badge :value="total" class="item" v-if="modeSwitching === '2'" color="green">
         <el-radio-button label="已受控" value="2" />
       </el-badge>
       <template v-else>
         <el-radio-button label="已受控" value="2" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '3'" color="green">
+      <el-badge :value="total" class="item" v-if="modeSwitching === '3'" color="green">
         <el-radio-button label="已打印" value="3" />
       </el-badge>
       <template v-else>
         <el-radio-button label="已打印" value="3" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '5'" color="green">
+      <el-badge :value="total" class="item" v-if="modeSwitching === '5'" color="green">
         <el-radio-button label="已使用" value="5" />
       </el-badge>
       <template v-else>
         <el-radio-button label="已使用" value="5" />
       </template>
-      <el-badge :value="0" class="item" v-if="modeSwitching === '4'" color="green">
+      <el-badge :value="total" class="item" v-if="modeSwitching === '4'" color="green">
         <el-radio-button label="已作废" value="4" />
       </el-badge>
       <template v-else>
         <el-radio-button label="已作废" value="4" />
       </template>
     </el-radio-group>
-    <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" @drag-sort="sortTable">
+    <ProTable ref="proTable" :columns="columns" :request-api="getTableList" :init-param="initParam" @drag-sort="sortTable" :total="dataCallback">
       <!-- 表格 header 按钮 -->
       <!-- <template #tableHeader="scope">
         <el-button v-auth="'add'" type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增用户</el-button>
@@ -114,6 +114,7 @@ const registration1s = ref();
 const registration2s = ref();
 const registration3s = ref();
 const registration4s = ref();
+const total = ref(0);
 const openAuditDialog = (params: any) => {
   auditDialog.value.openDialog(params);
 };
@@ -132,7 +133,9 @@ const proTable = ref<ProTableInstance>();
 const initParam = reactive({ type: 1 });
 
 // dataCallback 是对于返回的表格数据做处理，如果你后台返回的数据不是 list && total 这些字段，可以在这里进行处理成这些字段
-
+const dataCallback = (data: any) => {
+  total.value = data;
+};
 const goToDetails = (scope, type: number) => {
   router.push({
     name: "fileDetails", // 路由名称
@@ -346,7 +349,7 @@ const getTableList = (params: any) => {
 };
 onMounted(() => {
   const route = useRoute();
-  modeSwitching.value = String(route.query.step || "0");
+  modeSwitching.value = String(route.query.step || "1");
 });
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([

@@ -5,7 +5,7 @@
         <el-button @click="goBack" :icon="ArrowLeftBold" type="primary"> 返回 </el-button>
       </div>
       <div>
-        <el-button @click="isPreview = true" type="success"> 预览文件 </el-button>
+        <el-button @click="isPreview = true" :disabled="fileData.attachmentUrl && fileData.attachmentUrl.length < 1" type="success"> 预览文件 </el-button>
       </div>
     </div>
     <div style="width: 87%">
@@ -54,7 +54,7 @@
           </el-table-column>
         </el-table>
         <div style="width: 100%; margin-top: 40px">
-          <el-pagination
+          <!-- <el-pagination
             style="width: 100px; margin: 0 auto; text-align: center"
             v-if="fileControlData.attachmentUrl && fileControlData.attachmentUrl.length > 1 && isPreview"
             :current-page="currentPage"
@@ -63,8 +63,14 @@
             layout="prev, pager, next"
             :pager-count="5"
             @current-change="handleCurrentChange"
-          />
-          <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileControlData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
+          /> -->
+          <!-- <iframe
+            v-if="isPreview && isManager == 0"
+            style="min-height: 800px; margin-top: 10px"
+            :src="fileControlData.attachmentUrl[currentPage - 1]"
+            width="100%"
+            frameborder="0"
+          ></iframe> -->
         </div>
       </el-card>
       <el-card shadow="hover" class="details-card" v-if="fileData">

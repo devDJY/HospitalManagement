@@ -131,8 +131,8 @@ const getTableList = (params: any) => {
         label: "附件",
         render(scope) {
           return (
-            <a style="color: #3878df" href={(scope.row as any).applyAttachmentName} target="_blank">
-              查看
+            <a style="color: #3878df" href={(scope.row as any).applyAttachmentUrl} target="_blank">
+              {(scope.row as any).applyAttachmentName}
             </a>
           );
         }

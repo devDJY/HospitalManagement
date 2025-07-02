@@ -23,11 +23,8 @@
       <h4>历史记录</h4>
       <div class="history-list">
         <div v-for="(record, index) in historyRecords" :key="index" class="history-item">
-          <div class="history-content">
-            <span class="history-date">{{ dayjs(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}</span>
-            <span class="history-operator">{{ record.nickName }}</span>
-            <span class="history-action">{{ record.remark }}</span>
-          </div>
+          <p class="history-time">{{ dayjs(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}，{{ record.nickName }} {{ record.operationName }}</p>
+          <p class="history-remark">{{ record.remark }}</p>
         </div>
       </div>
     </div>

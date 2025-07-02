@@ -5,7 +5,7 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="姓名">
-            <el-input v-model="queryForm.name" placeholder="请输入..." clearable />
+            <el-input v-model="queryForm.nickName" placeholder="请输入..." clearable />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -69,7 +69,7 @@ const multipleSelection = ref([]);
 
 // 查询表单数据
 const queryForm = reactive({
-  name: "",
+  nickName: "",
   companyName: ""
 });
 
@@ -100,7 +100,7 @@ const handleQuery = () => {
 
 // 重置查询
 const handleReset = () => {
-  queryForm.name = "";
+  queryForm.nickName = "";
   queryForm.companyName = "";
   initList();
 };

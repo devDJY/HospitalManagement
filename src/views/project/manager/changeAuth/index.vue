@@ -34,7 +34,7 @@
     </ProTable>
     <UserDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
-    <TransferPermissionDialog ref="transferDialogRef" />
+    <TransferPermissionDialog ref="transferDialogRef" @refreshData="refreshData" />
   </div>
 </template>
 
@@ -120,10 +120,12 @@ const changeStatus = async (row: User.ResUserList) => {
   await useHandleData(changeUserStatus, { id: row.id, status: row.status == 1 ? 0 : 1 }, `切换【${row.username}】用户状态`);
   proTable.value?.getTableList();
 };
-
+const refreshData = () => {
+  proTable.value?.getTableList();
+};
 // 导出用户列表
 const downloadFile = async () => {
-  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload('/user/export',exportUserInfo, "用户列表", proTable.value?.searchParam));
+  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() => useDownload("/user/export", exportUserInfo, "用户列表", proTable.value?.searchParam));
 };
 
 // 批量添加用户

@@ -37,7 +37,7 @@
       </el-form-item>
 
       <el-form-item label="单位名称" prop="companyNo">
-        <el-select v-model="formData.companyNo" filterable remote reserve-keyword placeholder="请输入开始查询单位名称" :remote-method="remoteMethod" :loading="loading">
+        <el-select v-model="formData.companyNo" filterable placeholder="请输入开始查询单位名称">
           <el-option v-for="item in options" :key="item.companyName" :label="item.companyName" :value="item.id" />
           <template #loading>
             <svg class="circular" viewBox="0 0 50 50">
@@ -72,7 +72,7 @@
     </el-form>
 
     <template #footer>
-      <el-button @click="visible = false">取消</el-button>
+      <el-button @click="cancel">取消</el-button>
       <el-button type="primary" @click="handleSubmit">确定</el-button>
     </template>
     <AddUnitDialog :visible="dialogVisible" @update:visible="val => (dialogVisible = val)" @confirm="handleUnitConfirm" />
@@ -129,9 +129,6 @@ onMounted(() => {
   // getRegisterGroups().then(res => {
   //   registerGroups.value = res.data;
   // });
-  companyInfoList({}).then(res => {
-    companyInfos.value = res.data;
-  });
   companyInfoList({}).then((res: any) => {
     options.value = res.data;
   }),
@@ -148,6 +145,10 @@ onMounted(() => {
   //   return { value: `value:${item}`, label: `label:${item}` };
   // });
 });
+const cancel = () => {
+  visible.value = false;
+  formRef.value.resetFields();
+};
 const loading = ref(false);
 const remoteMethod = query => {
   if (query) {
@@ -202,6 +203,9 @@ const open = userData => {
 const handleUnitConfirm = unitData => {
   console.log("新增的单位信息:", unitData);
   // 这里可以处理提交逻辑
+  companyInfoList({}).then((res: any) => {
+    options.value = res.data;
+  });
 };
 const emit = defineEmits(["refreshData"]);
 const handleSubmit = async () => {

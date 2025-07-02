@@ -14,8 +14,7 @@ export const archiveDownloadList = params => {
 
 //档案库 - 导出excel;
 export const archiveExcelReport = params => {
-  let pa = { userId: userStore.userInfo.id, ...params };
-  return http.get("/archive/excel/report", pa, { loading: true });
+  return http.get("/archive/excel/report", params, { loading: true });
 };
 //档案库 - 全部 - 查看文件 - 添加异常备注;
 export const archiveFileAddLog = params => {

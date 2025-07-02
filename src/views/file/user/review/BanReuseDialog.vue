@@ -18,15 +18,8 @@
       <h4>历史记录</h4>
       <div class="history-list">
         <div v-for="(record, index) in historyRecords" :key="index" class="history-item">
-          <div class="history-content">
-            <span class="history-date">{{ record.date }}</span
-            >，
-            <span class="history-operator">{{ record.operator }}</span>
-            <span class="history-action">{{ record.action }}</span>
-          </div>
-          <div v-if="record.comment" class="history-comment">
-            {{ record.comment }}
-          </div>
+          <p class="history-time">{{ dayjs(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}，{{ record.nickName }} {{ record.operationName }}</p>
+          <p class="history-remark">{{ record.remark }}</p>
         </div>
       </div>
     </div>
@@ -43,6 +36,7 @@ import { ref, reactive } from "vue";
 import { WarningFilled } from "@element-plus/icons-vue";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import { fileInfoReuseGetHistory, fileInfoApplyEditReuse } from "@/api/modules/fileInfo";
+import dayjs from "dayjs";
 
 interface HistoryRecord {
   date: string;
@@ -59,18 +53,7 @@ const form = reactive<any>({
   remark: ""
 });
 
-const historyRecords = ref<HistoryRecord[]>([
-  {
-    date: "2025-05-25 09:23:55",
-    operator: "杨1",
-    action: "申请禁止文件复用"
-  },
-  {
-    date: "2025-05-29 23:17:08",
-    operator: "杨洛希",
-    action: "驳回禁止文件复用"
-  }
-]);
+const historyRecords = ref();
 
 const rules = reactive<FormRules>({
   remark: [
@@ -83,6 +66,7 @@ const type = ref(0);
 const openDialog = (initialData, dialogType) => {
   type.value = Number(dialogType);
   fileInfoReuseGetHistory({ fileId: initialData.fileId }).then((res: any) => {
+    historyRecords.value = res.data;
     if (initialData) {
       Object.assign(form, initialData);
     }
@@ -157,6 +141,17 @@ defineExpose({
 }
 .history-date {
   color: #909399;
+}
+.history-time {
+  margin: 0 0 5px;
+  font-size: 14px;
+  color: var(--el-text-color-regular);
+}
+.history-remark {
+  padding-left: 20px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
 }
 .history-operator {
   font-weight: 500;

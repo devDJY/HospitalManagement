@@ -21,7 +21,7 @@
       <el-button type="primary" :disabled="remainingCopies == 0" @click="handleContinuousPrint"> 不间断打印 </el-button>
       <el-button type="success" :disabled="remainingCopies == 0" @click="handleSequentialPrint"> 逐份打印 </el-button>
     </template>
-    <Applicant ref="applicantRef" />
+    <Applicant ref="applicantRef" @closeDialog="handleCancel" />
   </el-dialog>
 </template>
 

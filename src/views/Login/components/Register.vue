@@ -12,7 +12,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12"></el-col>
- 
+
         <!-- 第二行 -->
         <el-col :span="8">
           <el-form-item label="账号" prop="userName" :rules="[{ required: true, message: '请输入账号', trigger: 'blur' }]">
@@ -265,7 +265,9 @@ onMounted(() => {
 
 const handleUnitConfirm = unitData => {
   console.log("新增的单位信息:", unitData);
-  // 这里可以处理提交逻辑
+  companyInfoList().then(res => {
+    companyInfos.value = res.data;
+  });
 };
 const remoteMethod = query => {
   if (query) {

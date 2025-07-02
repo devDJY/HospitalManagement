@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" v-model="visible" width="500px" :close-on-click-modal="false">
+  <el-dialog :title="title" v-model="visible" width="60%" :close-on-click-modal="false">
     <div class="ban-reuse-dialog">
       <p class="confirm-text">● {{ title == "禁止复用" ? "是否确定禁止该文件的申请复用？" : "是否确定解除禁止该文件的申请复用？" }}</p>
 
@@ -13,7 +13,7 @@
         <p class="history-title">历史记录</p>
         <div class="history-list">
           <div v-for="(record, index) in banData.history" :key="index" class="history-item">
-            <p class="history-time">{{ record.createTime }}，{{ record.nickName }} {{ record.operationName }}</p>
+            <p class="history-time">{{ dayjs(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}，{{ record.nickName }} {{ record.operationName }}</p>
             <p class="history-remark">{{ record.remark }}</p>
           </div>
         </div>
@@ -31,7 +31,7 @@
 import { ref, reactive, defineEmits } from "vue";
 import { ElMessage } from "element-plus";
 import { fileInfoApplyEditReuse, fileInfoReuseGetHistory } from "@/api/modules/fileInfo";
-
+import dayjs from "dayjs";
 interface BanRecord {
   operationName: string;
   createTime: string;
@@ -109,30 +109,35 @@ defineExpose({
   font-size: 15px;
   color: var(--el-color-danger);
 }
-.history-section {
-  padding-top: 15px;
-  margin-top: 20px;
-  border-top: 1px solid var(--el-border-color);
-}
 .history-title {
   margin: 0 0 10px;
   font-weight: bold;
   color: var(--el-text-color-primary);
 }
-.history-item {
-  padding-bottom: 15px;
-  margin-bottom: 15px;
-  border-bottom: 1px dashed var(--el-border-color);
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.history-item:last-child {
-  padding-bottom: 0;
-  margin-bottom: 0;
-  border-bottom: none;
+.history-section {
+  padding: 10px;
+  margin: 20px 0;
+  background-color: #f5f7fa;
+  border-radius: 4px;
 }
-.history-time {
-  margin: 0 0 5px;
+.history-section h4 {
+  margin: 0 0 10px;
   font-size: 14px;
-  color: var(--el-text-color-regular);
+  color: #606266;
+}
+.history-item {
+  padding: 8px;
+  background-color: white;
+  border-left: 3px solid #409eff;
+  border-radius: 4px;
+}
+.history-date {
+  color: #909399;
 }
 .history-remark {
   padding-left: 20px;

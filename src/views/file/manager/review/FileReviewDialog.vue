@@ -27,7 +27,7 @@
           <el-radio label="线上受控" :value="0" />
           <el-radio label="线下受控" :value="1" />
         </el-radio-group>
-        <p class="hint">（文件中请者选择的[受控方式]为"{{ reviewData.checkType }}"）</p>
+        <p class="hint">（文件中请者选择的[受控方式]为"{{ reviewData.checkType == 0 ? "线上受控" : "线下受控" }}"）</p>
       </div>
 
       <el-divider />

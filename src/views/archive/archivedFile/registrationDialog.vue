@@ -7,7 +7,7 @@
         <div class="print-time">打印时间：{{ printTime }}</div>
       </div>
 
-      <table class="print-table" border="1" style="border: 1px solid rgb(239, 239, 239)">
+      <table class="print-table" border="1" style="border: 1px solid rgb(239 239 239)">
         <tr>
           <td class="left-width"><strong>项目名称</strong></td>
           <td class="right-width">{{ fileData.projectName }}</td>
@@ -141,7 +141,7 @@
                   <td class="w-430">{{ item.fileControllerCode }}</td>
                   <td class="w-200">{{ item.fileCount }}</td>
                   <td class="w-200">{{ item.creatorName }}</td>
-                  <td class="w-200">{{ item.reviewerName }}</td>
+                  <td class="w-200">{{ item.remark }}</td>
                   <td class="w-170">{{ dayjs(item.reviewTime).format("YYYY-MM-DD") }}</td>
                 </tr>
               </tbody>
@@ -294,83 +294,83 @@ const dialogVisible = ref(false);
 const printTime = ref("");
 
 const fileData = ref({
-    "projectName": "初始测试流程",
-    "fileCode": "PPP-8701-V1",
-    "fileName": "创建API模块.pdf",
-    "fileControllerInfo": {
-        "fileControllerCode": "PPP-8701-V1-0001~PPP-8701-V1-0015",
-        "fileCount": 15,
-        "creatorName": "chcha",
-        "reviewerName": "admin1",
-        "reviewTime": "2025-06-08T21:37:59"
+  projectName: "初始测试流程",
+  fileCode: "PPP-8701-V1",
+  fileName: "创建API模块.pdf",
+  fileControllerInfo: {
+    fileControllerCode: "PPP-8701-V1-0001~PPP-8701-V1-0015",
+    fileCount: 15,
+    creatorName: "chcha",
+    reviewerName: "admin1",
+    reviewTime: "2025-06-08T21:37:59"
+  },
+  fileCancelList: [
+    {
+      fileControllerCode: "FF_CODE_V4-0006,FF_CODE_V4-0007,FF_CODE_V4-0008,FF_CODE_V4-0009,FF_CODE_V4-0010",
+      fileCount: 5,
+      creatorName: "admin1",
+      reviewTime: "2025-06-08T22:21:00"
+    }
+  ],
+  filePrintList: [
+    {
+      fileControllerCode: "DJFI01-V1-0001~DJFI01-V1-0011",
+      fileCount: 2,
+      creatorName: "chcha",
+      remark: null,
+      reviewTime: "2025-06-09T12:04:27"
+    }
+  ],
+  fileUseList: [
+    {
+      fileControllerCode: "PPP-8701-V1-0002",
+      fileCount: 1,
+      creatorName: "admin1",
+      remark: null,
+      reviewTime: "2025-06-09T12:25:16"
+    }
+  ],
+  fileRecycleList: [
+    {
+      fileControllerCode: "PPP-8701-V1-0010",
+      fileCount: 3,
+      creatorName: "chcha",
+      reviewerName: "admin1",
+      remark: "损坏",
+      reviewTime: "2025-06-14T23:52:46"
+    }
+  ],
+  fileDestroyList: [
+    {
+      fileControllerCode: "PPP-8701-V1-0012",
+      fileCount: 3,
+      creatorName: "admin1",
+      destroyReason: "污渍",
+      destroyMethod: "其他",
+      reviewTime: "2025-06-14T23:56:10"
+    }
+  ],
+  fileLoseList: [
+    {
+      fileControllerCode: "PPP-8701-V1-0011",
+      fileCount: 1,
+      creatorName: "chcha",
+      reviewerName: "admin1",
+      reviewTime: "2025-06-14T23:53:57"
+    }
+  ],
+  fileLogList: [
+    {
+      remark: "12321",
+      creatorName: "admin1",
+      reviewTime: "2025-06-13T01:33:47"
     },
-    "fileCancelList": [
-        {
-            "fileControllerCode": "FF_CODE_V4-0006,FF_CODE_V4-0007,FF_CODE_V4-0008,FF_CODE_V4-0009,FF_CODE_V4-0010",
-            "fileCount": 5,
-            "creatorName": "admin1",
-            "reviewTime": "2025-06-08T22:21:00"
-        }
-    ],
-    "filePrintList": [
-        {
-            "fileControllerCode": "DJFI01-V1-0001~DJFI01-V1-0011",
-            "fileCount": 2,
-            "creatorName": "chcha",
-            "remark": null,
-            "reviewTime": "2025-06-09T12:04:27"
-        }
-    ],
-    "fileUseList": [
-        {
-            "fileControllerCode": "PPP-8701-V1-0002",
-            "fileCount": 1,
-            "creatorName": "admin1",
-            "remark": null,
-            "reviewTime": "2025-06-09T12:25:16"
-        }
-    ],
-    "fileRecycleList": [
-        {
-            "fileControllerCode": "PPP-8701-V1-0010",
-            "fileCount": 3,
-            "creatorName": "chcha",
-            "reviewerName": "admin1",
-            "remark": "损坏",
-            "reviewTime": "2025-06-14T23:52:46"
-        }
-    ],
-    "fileDestroyList": [
-        {
-            "fileControllerCode": "PPP-8701-V1-0012",
-            "fileCount": 3,
-            "creatorName": "admin1",
-            "destroyReason": "污渍",
-            "destroyMethod": "其他",
-            "reviewTime": "2025-06-14T23:56:10"
-        }
-    ],
-    "fileLoseList": [
-        {
-            "fileControllerCode": "PPP-8701-V1-0011",
-            "fileCount": 1,
-            "creatorName": "chcha",
-            "reviewerName": "admin1",
-            "reviewTime": "2025-06-14T23:53:57"
-        }
-    ],
-    "fileLogList": [
-        {
-            "remark": "12321",
-            "creatorName": "admin1",
-            "reviewTime": "2025-06-13T01:33:47"
-        },
-        {
-            "remark": "12321",
-            "creatorName": "admin1",
-            "reviewTime": "2025-06-13T01:33:55"
-        }
-    ]
+    {
+      remark: "12321",
+      creatorName: "admin1",
+      reviewTime: "2025-06-13T01:33:55"
+    }
+  ]
 });
 
 // 更新打印时间
@@ -465,52 +465,48 @@ defineExpose({
   margin-bottom: 20px;
 }
 table tr td {
+  padding: 8px 0 !important;
   line-height: 16px;
   text-align: center;
-  padding: 8px 0 !important;
 }
-
 .left-width {
+  width: 200px;
   background-color: #f0f0f0;
   border: 1px solid #e4e4e4;
-  width: 200px;
 }
 .right-width {
   width: 800px;
 }
 .remark-section {
-  border-top: 1px solid #ebeef5;
   padding-top: 15px;
+  border-top: 1px solid #ebeef5;
 }
 table {
   width: 100%;
 }
 thead tr th {
-  background: #fafafa;
   padding: 10px 0;
+  background: #fafafa;
 }
 table th {
   border: 1px solid #efefef;
 }
 .remark-content {
-  margin-top: 5px;
   padding: 10px;
+  margin-top: 5px;
   background: #f5f7fa;
   border-radius: 4px;
 }
-
 .header {
+  margin-bottom: 20px;
   text-align: center;
-  margin-bottom: 20px;
 }
-
 .header h2 {
-  margin: 0 0 10px 0;
+  margin: 0 0 10px;
 }
-
 .print-time {
-  color: #666;
   margin-bottom: 20px;
+  color: #666666;
 }
 
 @media print {

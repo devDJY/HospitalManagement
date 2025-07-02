@@ -14,7 +14,7 @@
         <el-button type="primary" @click="handleConfirm">确定</el-button>
       </span>
     </template>
-    <Applicant ref="applicantRef" />
+    <Applicant ref="applicantRef" @closeDialog="dialogVisible = false" />
   </el-dialog>
 </template>
 

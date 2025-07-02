@@ -107,7 +107,8 @@ const printSettings = ref({
   color: "1", // 打印颜色
   attachmentUrl: []
 });
-const params = ref({ fileCount: 1, fileId: 0, isFinite: 1 });
+const emit = defineEmits(["closeDialog"]);
+const params = ref({ fileCount: 1, fileId: 0, isFinite: 1, fileRePrintId: 0 });
 const printerList = ref(["HP LaserJet Pro MFP M130fw", "Canon PIXMA TR4520", "Microsoft Print to PDF", "Foxit Reader PDF Printer"]);
 const isFinite = ref(3);
 const openDialog = data => {
@@ -155,7 +156,7 @@ const handleConfirmPrint = () => {
   if (rePrint.value) {
     fileControllerRePrint({
       fileCount: params.value.fileCount,
-      fileRePrintId: params.value.fileId
+      fileRePrintId: params.value.fileRePrintId
     }).then((res: any) => {
       printPDF();
       ElMessage.success("重新打印任务已提交");
@@ -170,6 +171,7 @@ const handleConfirmPrint = () => {
     });
   }
   dialogVisible.value = false;
+  emit("closeDialog");
 };
 
 function Printers2List(json: any) {
