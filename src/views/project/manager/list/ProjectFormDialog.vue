@@ -238,6 +238,7 @@ const openAddDialog = () => {
   mode.value = "add";
   resetForm();
   visible.value = true;
+  details.value = false;
 };
 // 打开弹窗（编辑）
 const openEditDialog = (data, bl: boolean = false) => {
