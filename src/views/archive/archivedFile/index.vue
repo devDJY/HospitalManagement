@@ -236,7 +236,8 @@ const resetPass = async (params: User.ResUserList) => {
 const download = async (row: any) => {
   await archiveFileDownload(row);
   ElMessageBox.confirm("确认导出?", "温馨提示", { type: "warning" }).then(() =>
-    useDownload("archive/excel/report", archiveExcelReport, `${row.projectName}项目详情`, { projectId: row.projectId })
+    // useDownload("archive/excel/report", archiveExcelReport, `${row.projectName}项目详情`, { projectId: row.projectId })
+    window.open(row.attachmentUrl)
   );
 };
 

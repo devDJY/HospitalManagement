@@ -144,8 +144,6 @@ const tableRowClassName = ({ rowIndex }: { row: User.ResUserList; rowIndex: numb
 // 单击行
 const rowClick = (row: User.ResUserList, column: TableColumnCtx<User.ResUserList>) => {
   if (column.property == "radio" || column.property == "operation") return;
-  console.log(row);
-  ElMessage.success("当前行被点击了！");
 };
 
 // 删除用户信息

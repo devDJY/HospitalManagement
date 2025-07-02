@@ -5,7 +5,7 @@
         <el-button @click="goBack" :icon="ArrowLeftBold" type="primary"> 返回 </el-button>
       </div>
       <div>
-        <el-button @click="isPreview = true" :disabled="fileData.attachmentUrl && fileData.attachmentUrl.length < 1" type="success"> 预览文件 </el-button>
+        <el-button v-if="fileData" @click="isPreview = true" :disabled="fileData.attachmentUrl && fileData.attachmentUrl.length < 1" type="success"> 预览文件 </el-button>
       </div>
     </div>
     <div style="width: 87%">
@@ -180,9 +180,9 @@ onMounted(() => {
   // fileId.value = 26;
   type.value = route.query.type;
   console.log(type.value);
-  fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
+  fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
     fileData.value = res.data;
-  });
+  });  
   if (type.value == 2) {
     if (isManager.value == 1) {
       // 是管理
@@ -199,8 +199,8 @@ onMounted(() => {
       });
     } else {
       fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
+        fileData.value = res.data;
         fileControlData.value = res.data;
-        fileControlData.value.attachmentUrl = res.data.attachmentUrl;
       });
     }
   }

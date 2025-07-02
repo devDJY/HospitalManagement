@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
 import { fileControllerCertCancel } from "@/api/modules/filecontroller";
 import { fileControllerCancelGetAvailable } from "@/api/modules/fileInfo";
 const dialogVisible = ref(false);
@@ -47,13 +47,13 @@ const getAvailable = async (fileId: number) => {
 };
 const emit = defineEmits(["refreshData"]);
 // 确认提交
-const handleConfirm = () => {
+const handleConfirm = async () => {
   if (!auditOpinion.value.trim()) {
     ElMessage.warning("请输入作废说明");
     return;
   }
   // 这里可以调用API提交审核意见
-  fileControllerCertCancel({
+  await fileControllerCertCancel({
     fileId: fileId.value,
     remark: auditOpinion.value,
     fileCertIds: fileControllerIds.value
