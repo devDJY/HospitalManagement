@@ -108,8 +108,8 @@
 
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="handleCancel">取消</el-button>
-        <el-button type="primary" @click="handleSubmit">提交</el-button>
+        <el-button @click="handleCancel">{{ showRef ? "关闭" : "取消" }}</el-button>
+        <el-button v-if="!showRef" type="primary" @click="handleSubmit">提交</el-button>
       </span>
     </template>
   </el-dialog>
@@ -156,6 +156,7 @@ const details = ref(false);
 const visible = ref(false);
 const formRef = ref<FormInstance>();
 const mode = ref<"add" | "edit">("add");
+const showRef = ref<boolean>(false);
 const currentId = ref<string>("");
 
 const formData = reactive<ProjectForm>({
@@ -241,8 +242,9 @@ const openAddDialog = () => {
   details.value = false;
 };
 // 打开弹窗（编辑）
-const openEditDialog = (data, bl: boolean = false) => {
+const openEditDialog = (data, bl: boolean = false, show: boolean = false) => {
   details.value = bl;
+  showRef.value = show;
   mode.value = "edit";
   resetForm();
   projectGetInfoById({ projectId: data.projectId }).then((res: any) => {
