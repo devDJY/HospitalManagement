@@ -56,6 +56,7 @@
     "sortablejs": "^1.15.2",
     "vue": "^3.4.31",
     "vue-i18n": "^9.13.1",
+    "vue-pdf": "^4.3.0",
     "vue-router": "^4.4.0",
     "vuedraggable": "^4.1.0"
   },

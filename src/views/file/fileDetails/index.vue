@@ -136,6 +136,7 @@
             :pager-count="5"
             @current-change="handleCurrentChange"
           />
+          <pdf v-if="isPreview" src="https://yang-oss-test.oss-cn-hangzhou.aliyuncs.com/upload/20250630/20250630091700644181.pdf" :page="1"></pdf>
           <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
         </div>
       </el-card>
@@ -148,6 +149,7 @@ import { ref, onMounted } from "vue";
 import { ArrowLeftBold } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 import { fileInfoReviewControlAttachmentManager, fileInfoReviewControlAttachment, fileInfoReviewOriginalAttachment } from "@/api/modules/fileInfo";
+import pdf from "vue-pdf";
 const fileData = ref();
 const fileControlData = ref();
 const type = ref();
