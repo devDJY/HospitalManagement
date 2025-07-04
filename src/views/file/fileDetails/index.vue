@@ -136,8 +136,9 @@
             :pager-count="5"
             @current-change="handleCurrentChange"
           />
-          <pdf v-if="isPreview" src="https://yang-oss-test.oss-cn-hangzhou.aliyuncs.com/upload/20250630/20250630091700644181.pdf" :page="1"></pdf>
-          <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="fileData.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
+          <div class="pdf-container" v-if="isPreview">
+            <VuePdfEmbed annotation-layer text-layer :source="fileData.attachmentUrl[currentPage - 1]" />
+          </div>
         </div>
       </el-card>
     </div>
@@ -148,8 +149,11 @@
 import { ref, onMounted } from "vue";
 import { ArrowLeftBold } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
+import VuePdfEmbed from "vue-pdf-embed";
+// optional styles
+import "vue-pdf-embed/dist/styles/annotationLayer.css";
+import "vue-pdf-embed/dist/styles/textLayer.css";
 import { fileInfoReviewControlAttachmentManager, fileInfoReviewControlAttachment, fileInfoReviewOriginalAttachment } from "@/api/modules/fileInfo";
-import pdf from "vue-pdf";
 const fileData = ref();
 const fileControlData = ref();
 const type = ref();
@@ -184,7 +188,7 @@ onMounted(() => {
   console.log(type.value);
   fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
     fileData.value = res.data;
-  });  
+  });
   if (type.value == 2) {
     if (isManager.value == 1) {
       // 是管理
@@ -215,14 +219,18 @@ const goBack = () => {
 </script>
 
 <style scoped>
+/* 隐藏所有工具栏 */
 .file-details-container {
   padding: 10px;
   margin: 0 auto;
 }
+.pdf-container {
+  padding: 10px;
+  padding-right: 15px;
+  background: #333333;
+}
 .flex {
   display: flex;
-}
-.left {
 }
 .details-card {
   width: 100%;
