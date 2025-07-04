@@ -185,10 +185,7 @@ onMounted(() => {
   fileId.value = route.query.fileId;
   // fileId.value = 26;
   type.value = route.query.type;
-  console.log(type.value);
-  fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
-    fileData.value = res.data;
-  });
+
   if (type.value == 2) {
     if (isManager.value == 1) {
       // 是管理
@@ -207,6 +204,16 @@ onMounted(() => {
       fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
         fileData.value = res.data;
         fileControlData.value = res.data;
+      });
+    }
+  } else {
+    if (isManager.value == 1) {
+      fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
+        fileData.value = res.data;
+      });
+    } else {
+      fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
+        fileData.value = res.data;
       });
     }
   }
