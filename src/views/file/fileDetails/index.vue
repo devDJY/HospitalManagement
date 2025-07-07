@@ -207,15 +207,18 @@ onMounted(() => {
       });
     }
   } else {
-    if (isManager.value == 1) {
-      fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
-        fileData.value = res.data;
-      });
-    } else {
-      fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
-        fileData.value = res.data;
-      });
-    }
+    // if (isManager.value == 1) {
+    //   fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
+    //     fileData.value = res.data;
+    //   });
+    // } else {
+    //   fileInfoReviewControlAttachment({ fileId: fileId.value }).then(res => {
+    //     fileData.value = res.data;
+    //   });
+    // }
+    fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
+      fileData.value = res.data;
+    });
   }
 });
 

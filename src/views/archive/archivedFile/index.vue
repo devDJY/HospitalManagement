@@ -137,7 +137,7 @@ const getTableList = (params: any) => {
       },
       { prop: "fileControllerCode", label: "文件受控编码", width: 115, search: { el: "input" } },
       { prop: "pageTotal", label: "页数", width: 115 },
-      { prop: "printCount", label: "打印页数", width: 85 },
+      { prop: "printCount", label: "打印份数", width: 85 },
       { prop: "reviewerName", label: "审查人", width: 115 },
       { prop: "controllerName", label: "受控发放人", width: 115 },
       { prop: "operation", label: "操作", fixed: "right", width: 130 }

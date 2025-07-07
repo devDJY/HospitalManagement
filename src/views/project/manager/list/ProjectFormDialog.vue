@@ -120,6 +120,7 @@ import { ref, reactive, computed } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { ElMessage } from "element-plus";
 import { projectGetInfoById } from "@/api/modules/project";
+import dayjs from "dayjs";
 
 interface ProjectForm {
   projectCode: string;
@@ -268,6 +269,7 @@ const handleCancel = () => {
 
 // 提交
 const handleSubmit = async () => {
+  formData.startTime = dayjs(formData.startTime).format('YYYY-MM-DD')
   try {
     await formRef.value?.validate();
     emit("submit", { ...formData });
