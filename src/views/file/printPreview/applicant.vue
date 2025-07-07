@@ -219,7 +219,7 @@ function printPDF() {
      * 4，文档被无失真缩放至其高度可以刚好被指定纸张的高度包容。
      */
     zoom: printSettings.value.scale, // 整数值，其值可以为1、2、3或者4。缺省为0。
-    copies: copies, // 打印份数
+    copies: 1, // 打印份数
     swap: printSettings.value.orientation == 0 ? true : false, // 为true，则打印页面横向/纵向切换
     colorful: printSettings.value.color, // 2，彩色打印；1，黑白打印；-1，系统默认
     duplex: printSettings.value.side // 1，不双面打印；2，双面打印，长边翻转；3，双面打印，短边翻转；4，自洽翻转，即纵向打印则长边反转、横向打印则短边反转。缺省为0，意为由打印机决定是否双面打印。
