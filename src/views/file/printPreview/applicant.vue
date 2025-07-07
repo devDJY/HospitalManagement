@@ -76,7 +76,7 @@
           :pager-count="1"
           @current-change="handleCurrentChange"
         />
-        <iframe v-if="isPreview" style="min-height: 800px; margin-top: 10px" :src="printSettings.attachmentUrl[currentPage - 1]" width="100%" frameborder="0"></iframe>
+        <VuePdfEmbed v-if="isPreview" annotation-layer text-layer :source="printSettings.attachmentUrl[currentPage - 1]" />
       </div>
     </div>
   </el-dialog>
@@ -88,7 +88,10 @@ import { ElMessage } from "element-plus";
 import { fileControllerPrintCertQueryFile } from "@/api/modules/filecontroller";
 import { fileControllerRePrintQueryFile } from "@/api/modules/filecontroller";
 import { fileControllerCertPrint, fileControllerRePrint } from "@/api/modules/fileInfo";
-import { da } from "element-plus/es/locale";
+import VuePdfEmbed from "vue-pdf-embed";
+// optional styles
+import "vue-pdf-embed/dist/styles/annotationLayer.css";
+import "vue-pdf-embed/dist/styles/textLayer.css";
 const dialogVisible = ref(false);
 const selectedPrinter = ref("");
 const copies = ref(1);
