@@ -55,16 +55,7 @@ const form = reactive({
 });
 
 // 菜单树数据（示例，实际应从API获取）
-const menuTreeData = ref([
-  {
-    id: "5",
-    name: "设置",
-    children: [
-      { id: "51", name: "用户管理" },
-      { id: "52", name: "权限组管理" }
-    ]
-  }
-]);
+const menuTreeData = ref([]);
 
 const treeProps = {
   label: "name",
@@ -128,6 +119,8 @@ const openEditDialog = data => {
     // 设置选中的菜单
     nextTick(() => {
       if (menuTree.value) {
+        console.log(data.menus);
+
         menuTree.value.setCheckedKeys(data.menus);
       }
     });
@@ -174,7 +167,9 @@ const handleSubmit = async () => {
     }
     dialogVisible.value = false;
     ElMessage.success(`${dialogTitle.value}成功`);
-    emit("refreshData");
+    setTimeout(() => {
+      emit("refreshData");
+    }, 500);
     // 可以emit事件通知父组件
     // emit('success', form)
   } catch (error) {

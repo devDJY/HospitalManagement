@@ -73,7 +73,7 @@ const editData = ref({
   id: 1,
   name: "管理员组",
   description: "系统管理员权限组",
-  menus: ["1", "11", "2", "21"],
+  menus: [],
   showOnRegister: false,
   isReviewGroup: true
 });
