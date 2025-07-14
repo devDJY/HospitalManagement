@@ -17,7 +17,7 @@
           node-key="id"
           :props="treeProps"
           :default-expand-all="false"
-          :check-strictly="false"
+          :check-strictly="true"
           @check-change="handleCheckChange"
         />
       </el-form-item>
