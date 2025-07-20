@@ -149,6 +149,7 @@ const handleCurrentChange = val => {
 const handlePrintTest = () => {
   // 打印测试逻辑
   console.log("打印测试", printSettings.value, selectedPrinter.value);
+  // https://rmyydy.com/soft/test.pdf
   ElMessage.success("已发送打印测试任务");
 };
 
@@ -203,6 +204,36 @@ function viewPDF() {
   pw.Act(printJson);
 }
 
+function printTestPDF() {
+  const printJson = {
+    action: "printfile",
+    content: 'https://rmyydy.com/soft/test.pdf',
+    format: "pdf_url",
+    // 下面是可选字段:
+    papersize: printSettings.value.paperSize, // 指定输出纸张类型。整数值，8为A3；9为A4；11为A5等等
+    /**
+     * zoom 参数：
+     * 0，缩放至指定尺寸大小输出。
+     * 1，按照文档原稿尺寸输出在指定大小的纸张上。
+     * 2，文档被无失真缩放至可以刚好被指定的纸张全部包容。
+     * 3，文档被无失真缩放至其宽度可以刚好被指定纸张的宽度包容。
+     * 4，文档被无失真缩放至其高度可以刚好被指定纸张的高度包容。
+     */
+    copies: 1, // 打印份数
+    colorful: printSettings.value.color, // 2，彩色打印；1，黑白打印；-1，系统默认
+    duplex: printSettings.value.side // 1，不双面打印；2，双面打印，长边翻转；3，双面打印，短边翻转；4，自洽翻转，即纵向打印则长边反转、横向打印则短边反转。缺省为0，意为由打印机决定是否双面打印。
+  };
+  // @ts-ignore
+  var pw = GetPrintWorld(); //获取一个打天下对象。不提供URL参数，意为本机的打天下打印服务器（"ws://127.0.0.1:8888"）。
+  if (!pw.Act(printJson)) {
+    //数据发送失败
+    alert(pw.GetLastError());
+  }
+  console.log('print info:');
+  console.log(printJson);
+  pw.Act(printJson);
+}
+
 function printPDF() {
   const printJson = {
     action: "printfile",
@@ -230,6 +261,8 @@ function printPDF() {
     //数据发送失败
     alert(pw.GetLastError());
   }
+  console.log('print info:');
+  console.log(printJson);
   pw.Act(printJson);
 }
 
