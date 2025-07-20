@@ -2,13 +2,14 @@
   <div class="file-details-container flex">
     <div style="padding-right: 10px; margin-right: 10px">
       <div style="margin-bottom: 10px">
-        <el-button @click="goBack" :icon="ArrowLeftBold" type="primary"> 返回 </el-button>
+        <el-button @click="goBack" :icon="ArrowLeftBold" type="primary"> 返回</el-button>
       </div>
       <div>
         <el-button v-if="fileData" @click="isPreview = true" :disabled="fileData.attachmentUrl && fileData.attachmentUrl.length < 1" type="success"> 预览文件 </el-button>
       </div>
     </div>
     <div style="width: 87%">
+      <el-button type="primary" plain v-if="!fileData.canApprove" style="margin-bottom: 20px" @click="openReview"> 审查 </el-button>
       <el-card shadow="hover" class="details-card" v-if="fileControlData" style="margin-bottom: 10px">
         <!-- 文件基本信息 -->
         <el-descriptions title="文件使用概况" :column="3" border> </el-descriptions>
@@ -141,6 +142,7 @@
           </div>
         </div>
       </el-card>
+      <FileReviewDialog ref="fileReviewDialog" />
     </div>
   </div>
 </template>
@@ -154,12 +156,14 @@ import VuePdfEmbed from "vue-pdf-embed";
 import "vue-pdf-embed/dist/styles/annotationLayer.css";
 import "vue-pdf-embed/dist/styles/textLayer.css";
 import { fileInfoReviewControlAttachmentManager, fileInfoReviewControlAttachment, fileInfoReviewOriginalAttachment } from "@/api/modules/fileInfo";
+import FileReviewDialog from "../manager/review/FileReviewDialog.vue";
 const fileData = ref();
 const fileControlData = ref();
 const type = ref();
 const isManager = ref();
 const fileId = ref();
 const isPreview = ref(false);
+const fileReviewDialog = ref();
 // 统计数据
 const stats = ref([
   { name: "受控份数", value: 3 },
@@ -178,6 +182,9 @@ const total = ref(40);
 
 const handleCurrentChange = val => {
   currentPage.value = val;
+};
+const openReview = () => {
+  fileReviewDialog.value?.open(fileData);
 };
 onMounted(() => {
   const route = useRoute();
