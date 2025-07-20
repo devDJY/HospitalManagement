@@ -149,6 +149,7 @@ const handleCurrentChange = val => {
 const handlePrintTest = () => {
   // 打印测试逻辑
   console.log("打印测试", printSettings.value, selectedPrinter.value);
+  printTestPDF()
   // https://rmyydy.com/soft/test.pdf
   ElMessage.success("已发送打印测试任务");
 };
