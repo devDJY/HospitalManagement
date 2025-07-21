@@ -208,6 +208,7 @@ function viewPDF() {
 function printTestPDF() {
   const printJson = {
     action: "printfile",
+    cert: "https://rmyydy.com/soft/rmyydy.com.ctf",
     content: 'https://rmyydy.com/soft/test.pdf',
     format: "pdf_url",
     // 下面是可选字段:
@@ -239,6 +240,7 @@ function printPDF() {
   const printJson = {
     action: "printfile",
     content: printSettings.value.attachmentUrl,
+    cert: "https://rmyydy.com/soft/rmyydy.com.ctf",
     format: "pdf_url",
     // 下面是可选字段:
     papersize: printSettings.value.paperSize, // 指定输出纸张类型。整数值，8为A3；9为A4；11为A5等等
