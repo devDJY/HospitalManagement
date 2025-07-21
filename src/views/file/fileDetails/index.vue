@@ -223,9 +223,15 @@ onMounted(() => {
     //     fileData.value = res.data;
     //   });
     // }
-    fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
-      fileData.value = res.data;
-    });
+    if (isManager.value == 1) {
+      fileInfoReviewOriginalAttachment({ fileId: fileId.value, isManager: true }).then(res => {
+        fileData.value = res.data;
+      });
+    } else {
+      fileInfoReviewOriginalAttachment({ fileId: fileId.value }).then(res => {
+        fileData.value = res.data;
+      });
+    }
   }
 });
 
