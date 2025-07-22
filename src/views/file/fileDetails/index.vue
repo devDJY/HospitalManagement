@@ -9,7 +9,7 @@
       </div>
     </div>
     <div style="width: 87%">
-      <el-button type="primary" plain v-if="!fileData.canApprove" style="margin-bottom: 20px" @click="openReview"> 审查 </el-button>
+      <el-button type="primary" plain v-if="fileData.canApprove" style="margin-bottom: 20px" @click="openReview"> 审查 </el-button>
       <el-card shadow="hover" class="details-card" v-if="fileControlData" style="margin-bottom: 10px">
         <!-- 文件基本信息 -->
         <el-descriptions title="文件使用概况" :column="3" border> </el-descriptions>
