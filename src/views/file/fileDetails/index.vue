@@ -186,10 +186,10 @@ const handleCurrentChange = val => {
 const openReview = () => {
   fileInfoReviewGetFileInfo({ fileId: fileId.value }).then(res => {
     let applyLogs = res.data.applyLogs[0];
-    console.log(applyLogs);
     let data = {
       ...applyLogs,
-      ...res.data
+      ...res.data,
+      fileId: fileId.value
     };
     fileReviewDialog.value?.open(data);
   });
