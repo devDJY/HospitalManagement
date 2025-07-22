@@ -154,6 +154,11 @@ export const fileInfoReviewControlAttachmentManager = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
   return http.get("/fileInfo/review/control/attachment/manager", pa, { loading: true });
 };
+// 查看附件-数据
+export const fileInfoReviewGetFileInfo = params => {
+  let pa = { userId: userStore.userInfo.id, ...params };
+  return http.get("/fileInfo/review/getFileInfo", pa, { loading: true });
+};
 // 查看附件-原文件
 export const fileInfoReviewOriginalAttachment = params => {
   let pa = { userId: userStore.userInfo.id, ...params };
