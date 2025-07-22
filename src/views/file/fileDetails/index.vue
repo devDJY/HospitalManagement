@@ -142,7 +142,7 @@
           </div>
         </div>
       </el-card>
-      <FileReviewDialog ref="fileReviewDialog" />
+      <FileReviewDialog ref="fileReviewDialog" @refreshData="goReview"/>
     </div>
   </div>
 </template>
@@ -151,6 +151,7 @@
 import { ref, onMounted } from "vue";
 import { ArrowLeftBold } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
+import router from "@/routers";
 import VuePdfEmbed from "vue-pdf-embed";
 // optional styles
 import "vue-pdf-embed/dist/styles/annotationLayer.css";
@@ -247,6 +248,13 @@ onMounted(() => {
 const goBack = () => {
   window.history.back();
 };
+
+const goReview = () => {
+  router.replace('/file/manager/review')
+  setTimeout(() => {
+    window.location.reload()
+  }, 100)
+}
 </script>
 
 <style scoped>

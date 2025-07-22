@@ -62,6 +62,7 @@
 import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { fileInfoGetReuseList, fileInfoReview } from "@/api/modules/fileInfo";
+import dayjs from "dayjs";
 
 const visible = ref(false);
 const filteredMembers = ref([]);
@@ -87,11 +88,18 @@ const open = (data?: any) => {
   reviewData.fileStatus = 1;
   reviewData.checkType = data.checkType;
   reviewData.reviewRemark = "";
+  const infoMap = {
+    "待审查": 0,
+    "通过": 1,
+    "驳回": 2,
+    "撤回": 3,
+    "拒绝": 4
+  }
   let obj: HistoryRecord = {
     applyReason: data.applyReason,
-    applyTime: data.applyTime,
+    applyTime: dayjs(data.applyTime).format("YYYY-MM-DD HH:mm:ss"),
     fileCount: data.fileCount,
-    fileStatus: data.fileStatus
+    fileStatus: infoMap[data.applyResult]
   };
   reviewData.historyRecords.push(obj);
   visible.value = true;
