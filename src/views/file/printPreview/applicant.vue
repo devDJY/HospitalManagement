@@ -210,6 +210,7 @@ function printTestPDF() {
     action: "printfile",
     cert: "https://rmyydy.com/soft/rmyydy.com.ctf",
     content: 'https://rmyydy.com/soft/test.pdf',
+    printer: selectedPrinter.value,
     format: "pdf_url",
     // 下面是可选字段:
     papersize: printSettings.value.paperSize, // 指定输出纸张类型。整数值，8为A3；9为A4；11为A5等等
@@ -227,19 +228,19 @@ function printTestPDF() {
   };
   // @ts-ignore
   var pw = GetPrintWorld(); //获取一个打天下对象。不提供URL参数，意为本机的打天下打印服务器（"ws://127.0.0.1:8888"）。
+  console.log('print info:');
+  console.log(printJson);
   if (!pw.Act(printJson)) {
     //数据发送失败
     alert(pw.GetLastError());
   }
-  console.log('print info:');
-  console.log(printJson);
-  pw.Act(printJson);
 }
 
 function printPDF() {
   const printJson = {
     action: "printfile",
     content: printSettings.value.attachmentUrl,
+    printer: selectedPrinter.value,
     cert: "https://rmyydy.com/soft/rmyydy.com.ctf",
     format: "pdf_url",
     // 下面是可选字段:
@@ -260,13 +261,12 @@ function printPDF() {
   };
   // @ts-ignore
   var pw = GetPrintWorld(); //获取一个打天下对象。不提供URL参数，意为本机的打天下打印服务器（"ws://127.0.0.1:8888"）。
+  console.log('print info:');
+  console.log(printJson);
   if (!pw.Act(printJson)) {
     //数据发送失败
     alert(pw.GetLastError());
   }
-  console.log('print info:');
-  console.log(printJson);
-  pw.Act(printJson);
 }
 
 onMounted(() => {
