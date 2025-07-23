@@ -131,7 +131,7 @@ const getStatusText = (status: number) => {
     3: "撤回",
     4: "拒绝"
   };
-  return statusMap[status] || "未知状态";
+  return statusMap[status] || "待审查";
 };
 // 获取状态标签类型
 const getStatusType = (status: string) => {
